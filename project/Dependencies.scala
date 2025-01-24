@@ -45,7 +45,7 @@ object Dependencies {
     "com.fasterxml.jackson.module"    %% "jackson-module-scala",
   ).map(_ % jacksonVersion)
 
-  val playJson = "org.playframework" %% "play-json" % "3.0.0"
+  val playJson = "org.playframework" %% "play-json" % "3.0.4"
 
   val slf4jVersion = "2.0.7"
   val slf4j        = Seq("slf4j-api", "jul-to-slf4j", "jcl-over-slf4j").map("org.slf4j" % _ % slf4jVersion)
@@ -79,10 +79,10 @@ object Dependencies {
         javaxInject,
       ) ++ scalaParserCombinators(scalaVersion) ++ specs2Deps.map(_ % Test)
 
-  val nettyVersion = "4.1.100.Final"
+  val nettyVersion = "4.1.117.Final"
 
   val netty = Seq(
-    "com.typesafe.netty" % "netty-reactive-streams-http"  % "2.0.10",
+    "com.typesafe.netty" % "netty-reactive-streams-http"  % "2.0.13",
     ("io.netty"          % "netty-transport-native-epoll" % nettyVersion).classifier("linux-x86_64")
   ) ++ specs2Deps.map(_ % Test)
 
@@ -131,13 +131,13 @@ object Dependencies {
     logback % Test
   )
 
-  val caffeineVersion = "3.1.8"
+  val caffeineVersion = "3.2.0"
   val playCaffeineDeps = Seq(
     "com.github.ben-manes.caffeine" % "caffeine" % caffeineVersion,
     "com.github.ben-manes.caffeine" % "jcache"   % caffeineVersion
   )
 
-  val playWsStandaloneVersion = "3.0.0"
+  val playWsStandaloneVersion = "3.0.6"
   val playWsDeps = Seq(
     "com.typesafe.play" %% "play-ws-standalone"      % playWsStandaloneVersion,
     "com.typesafe.play" %% "play-ws-standalone-xml"  % playWsStandaloneVersion,
