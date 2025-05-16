@@ -48,7 +48,7 @@ case include @ Include(path, router) => {
         }
         case route: Route => {
           @markLines(route)
-          case @(routeIdentifier(route, pathIndex, index))(params@@_) =>
+          case @(routeIdentifier(route, pathIndex, index))(@if(route.call.routeParams.forall(_.fixed)){_}else{params}) =>
             named("@(route.call.controller).@(route.call.method)") @ob
               call@(routeBinding(route)) @ob @localNames(route)
                   @injectedControllerMethodCall(route, dep.ident, x => safeKeyword(x.nameClean))
