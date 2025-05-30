@@ -31,7 +31,7 @@ object BuildSettings {
 
   /** These settings are used by all projects. */
   def playCommonSettings: Seq[Setting[_]] = Def.settings(
-    scalaVersion    := "3.6.3",
+    scalaVersion    := "3.7.0",
     ivyLoggingLevel := UpdateLogging.DownloadOnly,
     resolvers ++= Resolver.sonatypeOssRepos("releases"), // sync ScriptedTools.scala
     resolvers ++= Seq(

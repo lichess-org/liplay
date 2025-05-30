@@ -103,12 +103,12 @@ lazy val PlayFramework = Project("Play-Framework", file("."))
   .enablePlugins(PlayRootProject)
   .settings(
     playCommonSettings,
-    scalaVersion                    := (scalaVersion in PlayProject).value,
-    crossScalaVersions              := Nil,
+    scalaVersion                     := (scalaVersion in PlayProject).value,
+    crossScalaVersions               := Nil,
     (playBuildRepoName in ThisBuild) := "playframework",
     (concurrentRestrictions in Global) += Tags.limit(Tags.Test, 1),
     libraryDependencies ++= runtime(scalaVersion.value),
     mimaReportBinaryIssues := (()),
-    publish / skip := true,
+    publish / skip         := true,
   )
   .aggregate((userProjects ++ nonUserProjects): _*)
