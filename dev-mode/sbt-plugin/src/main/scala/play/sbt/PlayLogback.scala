@@ -14,7 +14,7 @@ object PlayLogback extends AutoPlugin {
   override def requires = PlayService
 
   // add this plugin automatically if Play is added.
-  override def trigger = AllRequirements
+  override def trigger = allRequirements
 
   override def projectSettings = Seq(
     libraryDependencies ++= {

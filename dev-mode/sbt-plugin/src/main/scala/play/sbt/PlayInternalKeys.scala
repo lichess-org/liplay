@@ -7,9 +7,9 @@ package play.sbt
 import sbt._
 import sbt.Keys._
 
-object PlayInternalKeys {
+object PlayInternalKeys extends sbt.BuildSyntax {
 
-  val playDependencyClasspath = taskKey[Classpath](
+  val playDependencyClasspath = taskKey[Def.Classpath](
     "The classpath containing all the jar dependencies of the project"
   )
   val playCommonClassloader = taskKey[ClassLoader](

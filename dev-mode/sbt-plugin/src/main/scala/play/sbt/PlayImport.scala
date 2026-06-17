@@ -5,12 +5,15 @@
 package play.sbt
 
 import sbt._
+import sbt.librarymanagement.ModuleID
+import sbt.librarymanagement.syntax._
+import sbt.internal.util.FeedbackProvidedException
 
 /**
  * Declares the default imports for Play plugins.
  */
 object PlayImport {
-  val Production = config("production")
+  val Production = sbt.librarymanagement.Configuration.of("Production", "production")
 
   def component(id: String) = "com.typesafe.play" %% id % play.core.PlayVersion.current
 
