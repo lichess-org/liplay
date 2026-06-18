@@ -5,11 +5,15 @@
 import sbt._
 import Keys._
 
-import buildinfo.BuildInfo
-
 object Dependencies {
   val akkaVersion: String = sys.props.getOrElse("akka.version", "2.6.20")
   val akkaHttpVersion     = sys.props.getOrElse("akka.http.version", "10.2.10")
+
+  // sync with documentation/project/plugins.sbt
+  val sbtTwirlVersion: String = sys.props.getOrElse("twirl.version", "1.6.0-M7")
+  // when updating sbtNativePackager version, be sure to also update the documentation links in
+  // documentation/manual/working/commonGuide/production/Deploying.md
+  val sbtNativePackagerVersion = "1.9.11"
 
   val playJsonVersion = "2.10.0-RC7"
 
@@ -126,8 +130,8 @@ object Dependencies {
     Seq(
       typesafeConfig,
       slf4jSimple,
-      sbtDep("com.typesafe.play" % "sbt-twirl"           % BuildInfo.sbtTwirlVersion),
-      sbtDep("com.github.sbt"    % "sbt-native-packager" % BuildInfo.sbtNativePackagerVersion),
+      sbtDep("com.typesafe.play" % "sbt-twirl"           % sbtTwirlVersion),
+      sbtDep("com.github.sbt"    % "sbt-native-packager" % sbtNativePackagerVersion),
       sbtDep("com.typesafe.sbt"  % "sbt-web"             % "1.4.4"),
       logback             % Test
     ) ++ specs2Deps.map(_ % Test)
