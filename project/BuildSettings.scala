@@ -51,7 +51,9 @@ object BuildSettings {
     ),
     evictionSettings,
     ivyConfigurations ++= Seq(SourcesApplication),
-    javacOptions ++= Seq("-encoding", "UTF-8", "-Xlint:unchecked", "-Xlint:deprecation"),
+    javacOptions ++= Seq("-encoding", "UTF-8"),
+    // -Xlint is a javac flag that javadoc rejects, so scope it to compile (keeps `doc`/publishLocal working).
+    (Compile / compile / javacOptions) ++= Seq("-Xlint:unchecked", "-Xlint:deprecation"),
     (Compile / doc / scalacOptions) := {
       // disable the new scaladoc feature for scala 2.12+ (https://github.com/scala/scala-dev/issues/249 and https://github.com/scala/bug/issues/11340)
       CrossVersion.partialVersion(scalaVersion.value) match {
@@ -119,6 +121,9 @@ object BuildSettings {
     // * run a publishLocal in the changes projects for fast feedback loops
     scriptedDependencies := (()), // drop Test/compile & publishLocal
     scriptedBufferLog := false,
+    // The scripted test projects reference the plugin via sys.props("project.version").
+    // (interplay used to provide this; reproduce it explicitly.)
+    scriptedLaunchOpts += s"-Dproject.version=${version.value}",
     scriptedLaunchOpts ++= Seq(
       s"-Dsbt.boot.directory=${file(sys.props("user.home")) / ".sbt" / "boot"}",
       "-Xmx512m",

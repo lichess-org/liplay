@@ -41,6 +41,11 @@ lazy val SbtPluginProject = PlaySbtPluginProject("Sbt-Plugin", "dev-mode/sbt-plu
   )
   .dependsOn(SbtRoutesCompilerProject, PlayExceptionsProject)
 
+// Provides the ScriptedTools auto plugin used by the sbt-plugin scripted tests.
+lazy val SbtScriptedToolsProject = PlaySbtPluginProject("Sbt-Scripted-Tools", "dev-mode/sbt-scripted-tools")
+  .enablePlugins(SbtPlugin)
+  .dependsOn(SbtPluginProject)
+
 // These projects are aggregate by the root project and every
 // task (compile, test, publish, etc) executed for the root
 // project will also be executed for them:
@@ -54,6 +59,7 @@ lazy val userProjects = Seq[ProjectReference](
 lazy val nonUserProjects = Seq[ProjectReference](
   SbtRoutesCompilerProject,
   SbtPluginProject,
+  SbtScriptedToolsProject,
 )
 
 lazy val PlayFramework = Project("Play-Framework", file("."))

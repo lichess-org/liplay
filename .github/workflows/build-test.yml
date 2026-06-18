@@ -24,9 +24,30 @@ jobs:
       cmd: |
         sbt Sbt-Plugin/compile
 
+  scripted-tests:
+    name: Scripted Tests
+    needs:
+      - "build"
+    uses: playframework/.github/.github/workflows/cmd.yml@v3
+    with:
+      java: 11
+      cmd: |
+        SCALA_CROSS_VERSIONS=`sbt -batch -error 'print Sbt-Routes-Compiler/crossScalaVersions' | tail -1 | tr -d '*[]"' | xargs`
+        # publishLocal everything the scripted tests resolve (sbt-scripted-tools -> sbt-plugin -> routes-compiler, play-exceptions)
+        sbt \
+          Play-Exceptions/publishLocal \
+          Sbt-Routes-Compiler/publishLocal \
+          Sbt-Plugin/publishLocal \
+          Sbt-Scripted-Tools/publishLocal \
+          "project Sbt-Plugin" \
+          "set scriptedLaunchOpts += \"-Dscala.version=2.12.x\"" \
+          "set scriptedLaunchOpts += \"-Dscala.crossversions=$SCALA_CROSS_VERSIONS\"" \
+          "scripted play-sbt-plugin/show-versions"
+
   finish:
     name: Finish
     if: github.event_name == 'pull_request'
     needs: # Should be last
       - "build"
+      - "scripted-tests"
     uses: playframework/.github/.github/workflows/rtm.yml@v3

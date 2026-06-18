@@ -36,8 +36,11 @@ class RoutesCompilerSpec extends Specification with FileMatchers {
       RoutesCompiler.compile(RoutesCompilerTask(file, Seq.empty, true, true, false), InjectedRoutesGenerator, tmp)
 
       new File(tmp, "generating/Routes.scala") must exist
-      new File(tmp, "controllers/ReverseRoutes.scala") must exist
-      new File(tmp, "controllers/routes.java") must exist
+      // lila customization (see RoutesGenerator.generateReverseRouters): the "controllers"
+      // package is stripped, so its reverse router lands at the root, while other packages keep
+      // their path. No Java/JavaScript reverse routers are generated anymore.
+      new File(tmp, "ReverseRoutes.scala") must exist
+      new File(tmp, "controller/ReverseRoutes.scala") must exist
     }
 
     "check if there are no routes using overloaded handler methods" in withTempDir { tmp =>

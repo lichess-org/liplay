@@ -4,7 +4,6 @@
 
 package play.sbt.scriptedtools
 
-import java.nio.file.Files
 import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
 
@@ -15,13 +14,11 @@ import javax.net.ssl.X509TrustManager
 
 import scala.annotation.tailrec
 import scala.collection.mutable.ListBuffer
-import scala.sys.process.Process
 
 import sbt._
 import sbt.Keys._
 
 import play.sbt.routes.RoutesCompiler.autoImport._
-import play.sbt.run.PlayRun
 
 object ScriptedTools extends AutoPlugin {
   override def trigger = allRequirements
@@ -145,36 +142,6 @@ object ScriptedTools extends AutoPlugin {
         }
       (status, contents)
     } finally conn.disconnect()
-  }
-
-  val assertProcessIsStopped: Command = Command.args("assertProcessIsStopped", "") { (state, args) =>
-    val pidFile = Project.extract(state).get(Universal / stagingDirectory) / "RUNNING_PID"
-    if (!pidFile.exists())
-      sys.error("RUNNING_PID file not found. Can't assert the process is stopped without knowing the process ID.")
-    val pid = Files.readAllLines(pidFile.getAbsoluteFile.toPath).get(0)
-
-    println("Preparing to stop Prod...")
-    args match {
-      case Seq("simulate-downing") => verifyResourceContains("/simulate-downing", 200, Nil)
-      case _                       => PlayRun.stop(state)
-    }
-    println("Prod is stopping.")
-
-    def processIsRunning(pid: String) = Process("jps").!!.split("\n").contains(s"$pid ProdServerStart")
-
-    // Use a polling loop of at most 30sec. Without it,
-    // the test moves on before the app has finished to shut down
-    val secs = 10
-    val end  = System.currentTimeMillis() + secs * 1000
-    do {
-      println(s"Is the PID file deleted already? ${!pidFile.exists()}")
-      TimeUnit.SECONDS.sleep(3)
-    } while (processIsRunning(pid) && System.currentTimeMillis() < end)
-
-    if (processIsRunning(pid))
-      throw new RuntimeException(s"Assertion failed: Process $pid didn't stop in $secs seconds.")
-
-    state
   }
 
   val dumpRoutesSourceOnCompilationFailure = {
