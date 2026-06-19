@@ -20,7 +20,7 @@ jobs:
     name: Build the sbt plugin
     uses: playframework/.github/.github/workflows/cmd.yml@v3
     with:
-      java: 11
+      java: 17
       cmd: |
         sbt Sbt-Plugin/compile
 
@@ -30,7 +30,7 @@ jobs:
       - "build"
     uses: playframework/.github/.github/workflows/cmd.yml@v3
     with:
-      java: 11
+      java: 17
       cmd: |
         # publishLocal everything the scripted tests resolve (sbt-scripted-tools -> sbt-plugin -> routes-compiler, play-exceptions),
         # then run the scripted test. scala.version / scala.crossversions / project.version are provided
