@@ -4,7 +4,6 @@
 
 package play.sbt.scriptedtools
 
-import java.nio.file.Files
 import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
 
@@ -15,13 +14,12 @@ import javax.net.ssl.X509TrustManager
 
 import scala.annotation.tailrec
 import scala.collection.mutable.ListBuffer
-import scala.sys.process.Process
 
 import sbt._
 import sbt.Keys._
+import sbt.ProjectExtra.{ inConfig, given }
 
 import play.sbt.routes.RoutesCompiler.autoImport._
-import play.sbt.run.PlayRun
 
 object ScriptedTools extends AutoPlugin {
   override def trigger = allRequirements
@@ -95,7 +93,8 @@ object ScriptedTools extends AutoPlugin {
     val messages = ListBuffer.empty[String]
     try {
       if (ssl) setupSsl()
-      val loc = if (ssl) url(s"https://localhost:9443$path") else url(s"http://localhost:9000$path")
+      // sbt 2.0's `url(...)` returns a URI; callUrlImpl wants a java.net.URL.
+      val loc = if (ssl) url(s"https://localhost:9443$path").toURL else url(s"http://localhost:9000$path").toURL
 
       val (requestStatus, contents) = callUrlImpl(loc, headers: _*)
 
@@ -126,7 +125,7 @@ object ScriptedTools extends AutoPlugin {
   }
 
   def callUrl(path: String, headers: (String, String)*): (Int, String) = {
-    callUrlImpl(url(s"http://localhost:9000$path"), headers: _*)
+    callUrlImpl(url(s"http://localhost:9000$path").toURL, headers: _*)
   }
 
   private def callUrlImpl(url: URL, headers: (String, String)*): (Int, String) = {
@@ -147,44 +146,16 @@ object ScriptedTools extends AutoPlugin {
     } finally conn.disconnect()
   }
 
-  val assertProcessIsStopped: Command = Command.args("assertProcessIsStopped", "") { (state, args) =>
-    val pidFile = Project.extract(state).get(Universal / stagingDirectory) / "RUNNING_PID"
-    if (!pidFile.exists())
-      sys.error("RUNNING_PID file not found. Can't assert the process is stopped without knowing the process ID.")
-    val pid = Files.readAllLines(pidFile.getAbsoluteFile.toPath).get(0)
-
-    println("Preparing to stop Prod...")
-    args match {
-      case Seq("simulate-downing") => verifyResourceContains("/simulate-downing", 200, Nil)
-      case _                       => PlayRun.stop(state)
-    }
-    println("Prod is stopping.")
-
-    def processIsRunning(pid: String) = Process("jps").!!.split("\n").contains(s"$pid ProdServerStart")
-
-    // Use a polling loop of at most 30sec. Without it,
-    // the test moves on before the app has finished to shut down
-    val secs = 10
-    val end  = System.currentTimeMillis() + secs * 1000
-    do {
-      println(s"Is the PID file deleted already? ${!pidFile.exists()}")
-      TimeUnit.SECONDS.sleep(3)
-    } while (processIsRunning(pid) && System.currentTimeMillis() < end)
-
-    if (processIsRunning(pid))
-      throw new RuntimeException(s"Assertion failed: Process $pid didn't stop in $secs seconds.")
-
-    state
-  }
-
   val dumpRoutesSourceOnCompilationFailure = {
     val settings = Seq(
-      compile := {
+      // sbt 2.0 caches `compile` (output CompileAnalysis has no JsonFormat); this override only
+      // adds a failure-dump side effect, so opt out of caching.
+      compile := Def.uncached {
         compile.result.value match {
-          case Value(v) => v
-          case Inc(inc) =>
+          case Result.Value(v) => v
+          case Result.Inc(inc) =>
             // If there was a compilation error, dump generated routes files so we can read them
-            ((Compile / routes / target).value ** AllPassFilter).filter(_.isFile).get.foreach { file =>
+            ((Compile / routes / target).value ** AllPassFilter).filter(_.isFile).get().foreach { file =>
               println(s"Dumping $file:")
               IO.readLines(file).zipWithIndex.foreach {
                 case (line, index) => println(f"${index + 1}%4d: $line")

@@ -2,23 +2,25 @@
  * Copyright (C) from 2022 The Play Framework Contributors <https://github.com/playframework>, 2011-2021 Lightbend Inc. <https://www.lightbend.com>
  */
 import java.util.regex.Pattern
-import com.typesafe.tools.mima.core.ProblemFilters
-import com.typesafe.tools.mima.core._
-import com.typesafe.tools.mima.plugin.MimaKeys._
-import com.typesafe.tools.mima.plugin.MimaPlugin
-import interplay._
-import interplay.PlayBuildBase.autoImport._
-import interplay.ScalaVersions._
 import sbt._
 import sbt.Keys._
 import sbt.ScriptedPlugin.autoImport._
+import sbt.plugins.SbtPlugin
 
 import scala.sys.process.stringToProcess
 import scala.util.control.NonFatal
 
 object BuildSettings {
 
-  val playVersion = "2.8.18-lila_1.26"
+  val playVersion = "2.0.0-RC2"
+
+  // Scala/sbt versions previously provided by interplay's ScalaVersions/SbtVersions.
+  val scala213 = "2.13.10"
+  // The sbt-plugin and sbt-routes-compiler are built against the sbt 2.0 API (Scala 3). The
+  // meta-build itself stays on sbt 1.12 (project/build.properties); only the plugin project's
+  // `pluginCrossBuild / sbtVersion` selects the sbt-2 jars to compile against.
+  val scala3 = "3.8.4"
+  val sbt2   = "2.0.0"
 
   /** File header settings.  */
   private def fileUriRegexFilter(pattern: String): FileFilter = new FileFilter {
@@ -42,6 +44,7 @@ object BuildSettings {
 
   /** These settings are used by all projects. */
   def playCommonSettings: Seq[Setting[_]] = Def.settings(
+    organization := "org.lichess.play",
     ivyLoggingLevel := UpdateLogging.DownloadOnly,
     resolvers ++= Resolver.sonatypeOssRepos("releases"), // sync ScriptedTools.scala
     resolvers ++= Seq(
@@ -51,7 +54,9 @@ object BuildSettings {
     ),
     evictionSettings,
     ivyConfigurations ++= Seq(SourcesApplication),
-    javacOptions ++= Seq("-encoding", "UTF-8", "-Xlint:unchecked", "-Xlint:deprecation"),
+    javacOptions ++= Seq("-encoding", "UTF-8"),
+    // -Xlint is a javac flag that javadoc rejects, so scope it to compile (keeps `doc`/publishLocal working).
+    (Compile / compile / javacOptions) ++= Seq("-Xlint:unchecked", "-Xlint:deprecation"),
     (Compile / doc / scalacOptions) := {
       // disable the new scaladoc feature for scala 2.12+ (https://github.com/scala/scala-dev/issues/249 and https://github.com/scala/bug/issues/11340)
       CrossVersion.partialVersion(scalaVersion.value) match {
@@ -70,51 +75,11 @@ object BuildSettings {
     version := playVersion
   )
 
-  // Versions of previous minor releases being checked for binary compatibility
-  val mimaPreviousVersion: Option[String] = Some("2.8.0")
-
   /**
    * These settings are used by all projects that are part of the runtime, as opposed to the development mode of Play.
    */
   def playRuntimeSettings: Seq[Setting[_]] = Def.settings(
     playCommonSettings,
-    mimaPreviousArtifacts := mimaPreviousVersion.map { version =>
-      val cross = if (crossPaths.value) CrossVersion.binary else CrossVersion.disabled
-      (organization.value %% moduleName.value % version).cross(cross)
-    }.toSet,
-    mimaBinaryIssueFilters ++= Seq(
-      //Remove deprecated methods from Http
-      ProblemFilters.exclude[DirectMissingMethodProblem]("play.mvc.Http#RequestImpl.this"),
-      // Remove deprecated methods from HttpRequestHandler
-      ProblemFilters.exclude[DirectMissingMethodProblem]("play.api.http.DefaultHttpRequestHandler.filterHandler"),
-      ProblemFilters.exclude[DirectMissingMethodProblem]("play.api.http.DefaultHttpRequestHandler.this"),
-      ProblemFilters.exclude[DirectMissingMethodProblem]("play.api.http.JavaCompatibleHttpRequestHandler.this"),
-      // Refactor params of runEvolutions (ApplicationEvolutions however is private anyway)
-      ProblemFilters.exclude[IncompatibleMethTypeProblem]("play.api.db.evolutions.ApplicationEvolutions.runEvolutions"),
-      // Removed @varargs (which removed the array forwarder method)
-      ProblemFilters.exclude[DirectMissingMethodProblem]("play.api.libs.typedmap.DefaultTypedMap.-"),
-      // Add .addAttrs(...) varargs and override methods to Request/RequestHeader and TypedMap's
-      ProblemFilters.exclude[ReversedMissingMethodProblem]("play.mvc.Http#Request.addAttrs"),
-      ProblemFilters.exclude[ReversedMissingMethodProblem]("play.mvc.Http#RequestHeader.addAttrs"),
-      ProblemFilters.exclude[ReversedMissingMethodProblem]("play.api.libs.typedmap.TypedMap.+"),
-      ProblemFilters.exclude[ReversedMissingMethodProblem]("play.api.libs.typedmap.TypedMap.-"),
-      ProblemFilters.exclude[IncompatibleMethTypeProblem]("play.api.libs.typedmap.DefaultTypedMap.-"),
-      // Remove outdated (internal) method
-      ProblemFilters.exclude[DirectMissingMethodProblem]("play.api.libs.streams.Execution.defaultExecutionContext"),
-      // Add allowEmptyFiles config to allow empty file uploads
-      ProblemFilters.exclude[DirectMissingMethodProblem]("play.api.http.ParserConfiguration.apply"),
-      ProblemFilters.exclude[DirectMissingMethodProblem]("play.api.http.ParserConfiguration.copy"),
-      ProblemFilters.exclude[DirectMissingMethodProblem]("play.api.http.ParserConfiguration.this"),
-      ProblemFilters.exclude[IncompatibleSignatureProblem]("play.api.http.ParserConfiguration.curried"),
-      ProblemFilters.exclude[IncompatibleSignatureProblem]("play.api.http.ParserConfiguration.tupled"),
-      ProblemFilters.exclude[IncompatibleSignatureProblem]("play.api.http.ParserConfiguration.unapply"),
-      ProblemFilters.exclude[MissingTypesProblem]("play.api.http.ParserConfiguration$"),
-      // Add Result attributes
-      ProblemFilters.exclude[DirectMissingMethodProblem]("play.api.mvc.Result.apply"),
-      ProblemFilters.exclude[DirectMissingMethodProblem]("play.api.mvc.Result.copy"),
-      ProblemFilters.exclude[DirectMissingMethodProblem]("play.api.mvc.Result.this"),
-      ProblemFilters.exclude[IncompatibleSignatureProblem]("play.api.mvc.Result.unapply")
-    ),
     (Compile / unmanagedSourceDirectories) += {
       val suffix = CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((x, y)) => s"$x.$y"
@@ -124,35 +89,20 @@ object BuildSettings {
     }
   )
 
+  def disablePublishing = Def.settings(
+    (publish / skip) := true,
+    publishLocal := {},
+  )
+
   /** A project that is shared between the sbt runtime and the Play runtime. */
   def PlayNonCrossBuiltProject(name: String, dir: String): Project = {
     Project(name, file(dir))
-      .enablePlugins(PlaySbtLibrary)
       .settings(playRuntimeSettings: _*)
       .settings(
         autoScalaLibrary := false,
         crossPaths := false,
-        crossScalaVersions := Seq("2.13.10")
-      )
-  }
-
-  /** A project that is only used when running in development. */
-  def PlayDevelopmentProject(name: String, dir: String): Project = {
-    Project(name, file(dir))
-      .enablePlugins(PlayLibrary)
-      .settings(
-        playCommonSettings,
-        mimaPreviousArtifacts := Set.empty,
-      )
-  }
-
-  /** A project that is in the Play runtime. */
-  def PlayCrossBuiltProject(name: String, dir: String): Project = {
-    Project(name, file(dir))
-      .enablePlugins(PlayLibrary, AkkaSnapshotRepositories)
-      .settings(playRuntimeSettings: _*)
-      .settings(
-        scalacOptions += "-release:11"
+        scalaVersion := scala213,
+        crossScalaVersions := Seq(scala213)
       )
   }
 
@@ -164,6 +114,12 @@ object BuildSettings {
     // * run a publishLocal in the changes projects for fast feedback loops
     scriptedDependencies := (()), // drop Test/compile & publishLocal
     scriptedBufferLog := false,
+    // The scripted test projects reference the plugin via sys.props("project.version"), and
+    // ScriptedTools.scalaVersionFromJavaProperties() reads scala.version/scala.crossversions.
+    // interplay used to provide these; reproduce them from the build (single source of truth).
+    scriptedLaunchOpts += s"-Dproject.version=${version.value}",
+    scriptedLaunchOpts += s"-Dscala.version=${scalaVersion.value}",
+    scriptedLaunchOpts += s"-Dscala.crossversions=${crossScalaVersions.value.mkString(" ")}",
     scriptedLaunchOpts ++= Seq(
       s"-Dsbt.boot.directory=${file(sys.props("user.home")) / ".sbt" / "boot"}",
       "-Xmx512m",
@@ -174,30 +130,26 @@ object BuildSettings {
     scripted := scripted.tag(Tags.Test).evaluated,
   )
 
-  def disablePublishing = Def.settings(
-    (publish / skip) := true,
-    publishLocal := {},
-  )
-
   /** A project that runs in the sbt runtime. */
   def PlaySbtProject(name: String, dir: String): Project = {
     Project(name, file(dir))
-      .enablePlugins(PlaySbtLibrary)
       .settings(
         playCommonSettings,
-        mimaPreviousArtifacts := Set.empty,
+        scalaVersion := scala3,
       )
   }
 
   /** A project that *is* an sbt plugin. */
   def PlaySbtPluginProject(name: String, dir: String): Project = {
     Project(name, file(dir))
-      .enablePlugins(PlaySbtPlugin)
+      .enablePlugins(SbtPlugin)
       .settings(
         playCommonSettings,
         playScriptedSettings,
+        scalaVersion := scala3,
+        // Compile the plugin against the sbt 2.0 API even though the launcher is sbt 1.12.
+        (pluginCrossBuild / sbtVersion) := sbt2,
         (Test / fork) := false,
-        mimaPreviousArtifacts := Set.empty,
       )
   }
 }

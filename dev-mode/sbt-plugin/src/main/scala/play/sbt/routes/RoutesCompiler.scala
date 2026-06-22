@@ -13,12 +13,20 @@ import play.routes.compiler.RoutesCompiler.RoutesCompilerTask
 
 import sbt._
 import sbt.Keys._
+import sbt.io.IO
+import sbt.io.syntax._
+import sbt.librarymanagement.Configurations.{ Compile, Test }
+import sbt.util.Logger
+import sbt.ProjectExtra.{ inConfig, given }
+import sbt.std.TaskExtra._
+import sbt.internal.util.FeedbackProvidedException
 
 import xsbti.Position
 
+import java.io.File
 import java.util.Optional
 import scala.collection.mutable
-import com.typesafe.sbt.web.incremental._
+import scala.jdk.OptionConverters._
 
 object RoutesKeys {
   val routesCompilerTasks = TaskKey[Seq[RoutesCompilerTask]]("playRoutesTasks", "The routes files to compile")
@@ -49,7 +57,8 @@ object RoutesKeys {
   object LazyProjectReference {
     import scala.language.implicitConversions
     implicit def fromProjectReference(ref: => ProjectReference): LazyProjectReference = new LazyProjectReference(ref)
-    implicit def fromProject(project: => Project): LazyProjectReference               = new LazyProjectReference(project)
+    implicit def fromProject(project: => Project): LazyProjectReference =
+      new LazyProjectReference(LocalProject(project.id))
   }
 
   val aggregateReverseRoutes = SettingKey[Seq[LazyProjectReference]](
@@ -61,6 +70,8 @@ object RoutesKeys {
 }
 
 object RoutesCompiler extends AutoPlugin {
+  private val slash = new sbt.SlashSyntax {}
+  import slash._
   import RoutesKeys._
 
   override def trigger = noTrigger
@@ -74,7 +85,7 @@ object RoutesCompiler extends AutoPlugin {
 
   def routesSettings = Seq(
     routes / sources := Nil,
-    routesCompilerTasks := Def.taskDyn {
+    routesCompilerTasks := Def.uncached(Def.taskDyn {
       val generateReverseRouterValue  = generateReverseRouter.value
       val generateForwardRouterValue  = generateForwardRouter.value
       val namespaceReverseRouterValue = namespaceReverseRouter.value
@@ -82,35 +93,37 @@ object RoutesCompiler extends AutoPlugin {
       val routesImportValue           = routesImport.value
 
       // Aggregate all the routes file tasks that we want to compile the reverse routers for.
-      aggregateReverseRoutes.value
-        .map { agg =>
-          (agg.project / configuration.value / routesCompilerTasks)
-        }
-        .join
-        .map {
-          (aggTasks: Seq[Seq[RoutesCompilerTask]]) =>
-            // Aggregated tasks need to have forwards router compilation disabled and reverse router compilation enabled.
-            val reverseRouterTasks = aggTasks.flatten.map { task =>
-              task.copy(forwardsRouter = false, reverseRouter = true)
-            }
+      val aggregated: Def.Initialize[Task[Seq[Seq[RoutesCompilerTask]]]] =
+        aggregateReverseRoutes.value
+          .map { agg =>
+            (agg.project / configuration.value / routesCompilerTasks)
+          }
+          .join
 
-            // Find the routes compile tasks for this project
-            val thisProjectTasks = sourcesInRoutes.map { file =>
-              RoutesCompilerTask(
-                file,
-                routesImportValue,
-                forwardsRouter = generateForwardRouterValue,
-                reverseRouter = generateReverseRouterValue,
-                namespaceReverseRouter = namespaceReverseRouterValue
-              )
-            }
-
-            thisProjectTasks ++ reverseRouterTasks
+      Def.task {
+        val aggTasks = aggregated.value
+        // Aggregated tasks need to have forwards router compilation disabled and reverse router compilation enabled.
+        val reverseRouterTasks = aggTasks.flatten.map { task =>
+          task.copy(forwardsRouter = false, reverseRouter = true)
         }
-    }.value,
-    Defaults.ConfigGlobal / watchSources ++= (routes / sources).value,
+
+        // Find the routes compile tasks for this project
+        val thisProjectTasks = sourcesInRoutes.map { file =>
+          RoutesCompilerTask(
+            file,
+            routesImportValue,
+            forwardsRouter = generateForwardRouterValue,
+            reverseRouter = generateReverseRouterValue,
+            namespaceReverseRouter = namespaceReverseRouterValue
+          )
+        }
+
+        thisProjectTasks ++ reverseRouterTasks
+      }
+    }.value),
+    Scope.Global / watchSources ++= Def.uncached((routes / sources).value),
     routes / target := crossTarget.value / "routes" / Defaults.nameForSrc(configuration.value.name),
-    routes := compileRoutesFiles.value,
+    routes := Def.uncached(compileRoutesFiles.value),
     sourceGenerators += Def.task(routes.value).taskValue,
     managedSourceDirectories += (routes / target).value
   )
@@ -140,11 +153,11 @@ object RoutesCompiler extends AutoPlugin {
     }.value,
     namespaceReverseRouter := false,
     routesGenerator := InjectedRoutesGenerator,
-    sourcePositionMappers += routesPositionMapper
+    sourcePositionMappers += Def.uncached(routesPositionMapper)
   )
 
   private val routesPositionMapper: Position => Option[Position] = position => {
-    position.sourceFile.asScala.collect {
+    position.sourceFile.toScala.collect {
       case GeneratedSource(generatedSource) => new MappedPos(position, generatedSource)
     }
   }
@@ -152,8 +165,8 @@ object RoutesCompiler extends AutoPlugin {
   private final class MappedPos(generatedPosition: Position, generatedSource: GeneratedSource) extends Position {
     private val source = generatedSource.source.get
 
-    lazy val line        = generatedPosition.line.asScala.flatMap(l => generatedSource.mapLine(l).map(Int.box(_))).asJava
-    lazy val lineContent = line.asScala.flatMap(l => IO.read(source).split('\n').lift(l - 1)).getOrElse("")
+    lazy val line        = generatedPosition.line.toScala.flatMap(l => generatedSource.mapLine(l).map(Int.box(_))).toJava
+    lazy val lineContent = line.toScala.flatMap(l => IO.read(source).split('\n').lift(l - 1)).getOrElse("")
     val offset           = Optional.empty[Integer]
     val pointer          = Optional.empty[Integer]
     val pointerSpace     = Optional.empty[String]
@@ -189,24 +202,17 @@ object RoutesCompiler extends AutoPlugin {
       cacheDirectory: File,
       log: Logger
   ): Seq[File] = {
-    val ops = tasks.map(task => RoutesCompilerOp(task, generator.id, PlayVersion.current))
-    val (products, errors) = syncIncremental(cacheDirectory, ops) { (opsToRun: Seq[RoutesCompilerOp]) =>
-      val errs = Seq.newBuilder[RoutesCompilationError]
+    val errs     = Seq.newBuilder[RoutesCompilationError]
+    val products = Seq.newBuilder[File]
 
-      val opResults: Map[RoutesCompilerOp, OpResult] = opsToRun.map { op =>
-        play.routes.compiler.RoutesCompiler.compile(op.task, generator, generatedDir) match {
-          case Right(inputs) =>
-            op -> OpSuccess(Set(op.task.file), inputs.toSet)
-
-          case Left(details) =>
-            errs ++= details
-            op -> OpFailure
-        }
-      }(scala.collection.breakOut)
-
-      opResults -> errs.result()
+    tasks.foreach { task =>
+      play.routes.compiler.RoutesCompiler.compile(task, generator, generatedDir) match {
+        case Right(inputs) => products ++= inputs
+        case Left(details) => errs ++= details
+      }
     }
 
+    val errors = errs.result()
     if (errors.nonEmpty) {
       val exceptions = errors.map {
         case RoutesCompilationError(source, message, line, column) =>
@@ -216,7 +222,7 @@ object RoutesCompiler extends AutoPlugin {
       throw exceptions.head
     }
 
-    products.to[Seq]
+    products.result()
   }
 
   private def reportCompilationError(log: Logger, error: PlayException.ExceptionSource) = {
@@ -240,7 +246,6 @@ object RoutesCompiler extends AutoPlugin {
   }
 }
 
-private case class RoutesCompilerOp(task: RoutesCompilerTask, generatorId: String, playVersion: String)
 
 case class RoutesCompilationException(source: File, message: String, atLine: Option[Int], column: Option[Int])
     extends PlayException.ExceptionSource("Compilation error", message)

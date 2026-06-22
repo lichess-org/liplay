@@ -5,13 +5,16 @@
 import sbt._
 import Keys._
 
-import buildinfo.BuildInfo
-
 object Dependencies {
-  val akkaVersion: String = sys.props.getOrElse("akka.version", "2.6.20")
-  val akkaHttpVersion     = sys.props.getOrElse("akka.http.version", "10.2.10")
 
-  val playJsonVersion = "2.10.0-RC7"
+  // sync with documentation/project/plugins.sbt
+  val sbtTwirlVersion: String = sys.props.getOrElse("twirl.version", "1.6.0-M7")
+  // The sbt-2 twirl plugin moved to the org.playframework.twirl org (see sbtDependencies).
+  val sbt2TwirlVersion = "2.1.0-M9"
+  // when updating sbtNativePackager version, be sure to also update the documentation links in
+  // documentation/manual/working/commonGuide/production/Deploying.md
+  val sbtNativePackagerVersion = "1.11.4"
+
 
   val logback = "ch.qos.logback" % "logback-classic" % "1.4.4"
 
@@ -31,33 +34,9 @@ object Dependencies {
     "org.scalacheck" %% "scalacheck"        % "1.17.0"      % Test
   )
 
-  val jacksonVersion  = "2.13.4"
-  val jacksonDatabind = Seq("com.fasterxml.jackson.core" % "jackson-databind" % "2.13.4.2")
-  val jacksons = Seq(
-    "com.fasterxml.jackson.core"     % "jackson-core",
-    "com.fasterxml.jackson.core"     % "jackson-annotations",
-    "com.fasterxml.jackson.datatype" % "jackson-datatype-jdk8",
-    "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310"
-  ).map(_ % jacksonVersion) ++ jacksonDatabind
-  // Overrides additional jackson deps pulled in by akka-serialization-jackson
-  // https://github.com/akka/akka/blob/v2.6.19/project/Dependencies.scala#L129-L137
-  // https://github.com/akka/akka/blob/b08a91597e26056d9eea4a216e745805b9052a2a/build.sbt#L257
-  // Can be removed as soon as akka upgrades to same jackson version like Play uses
-  val akkaSerializationJacksonOverrides = Seq(
-    "com.fasterxml.jackson.dataformat" % "jackson-dataformat-cbor",
-    "com.fasterxml.jackson.module"     % "jackson-module-parameter-names",
-    "com.fasterxml.jackson.module"     %% "jackson-module-scala",
-  ).map(_ % jacksonVersion)
-
-  val playJson = "com.typesafe.play" %% "play-json" % playJsonVersion
-
   val slf4jVersion = "2.0.3"
   val slf4j        = Seq("slf4j-api", "jul-to-slf4j", "jcl-over-slf4j").map("org.slf4j" % _ % slf4jVersion)
   val slf4jSimple  = "org.slf4j" % "slf4j-simple" % slf4jVersion
-
-  val guava      = "com.google.guava"         % "guava"        % "31.1-jre"
-  val findBugs   = "com.google.code.findbugs" % "jsr305"       % "3.0.2" // Needed by guava
-  val mockitoAll = "org.mockito"              % "mockito-core" % "4.8.0"
 
   def scalaParserCombinators(scalaVersion: String) =
     Seq("org.scala-lang.modules" %% "scala-parser-combinators" % {
@@ -66,45 +45,6 @@ object Dependencies {
         case _            => "2.1.1"
       }
     })
-
-  val springFrameworkVersion = "5.3.23"
-
-  val joda = Seq(
-    "joda-time" % "joda-time"    % "2.11.2",
-    "org.joda"  % "joda-convert" % "2.2.2"
-  )
-
-  val junitInterface = "com.github.sbt" % "junit-interface" % "0.13.3"
-  val junit          = "junit"          % "junit"           % "4.13.2"
-
-  def runtime(scalaVersion: String) =
-    slf4j ++
-      Seq("akka-actor", "akka-actor-typed", "akka-slf4j", "akka-serialization-jackson")
-        .map("com.typesafe.akka" %% _ % akkaVersion) ++
-      Seq("akka-testkit", "akka-actor-testkit-typed")
-        .map("com.typesafe.akka" %% _ % akkaVersion % Test) ++
-      jacksons ++
-      akkaSerializationJacksonOverrides ++
-      Seq(
-        playJson,
-        guava,
-        "javax.inject"                                              % "javax.inject" % "1",
-      ) ++ scalaParserCombinators(scalaVersion) ++ specs2Deps.map(_ % Test)
-
-  val nettyVersion = "4.1.84.Final"
-
-  val netty = Seq(
-    "com.typesafe.netty" % "netty-reactive-streams-http" % "2.0.7",
-    ("io.netty" % "netty-transport-native-epoll" % nettyVersion).classifier("linux-x86_64")
-  ) ++ specs2Deps.map(_ % Test)
-
-  val akkaHttp = "com.typesafe.akka" %% "akka-http-core" % akkaHttpVersion
-
-  val akkaHttp2Support = "com.typesafe.akka" %% "akka-http2-support" % akkaHttpVersion
-
-  val cookieEncodingDependencies = slf4j
-
-  val jimfs = "com.google.jimfs" % "jimfs" % "1.2"
 
   def routesCompilerDependencies(scalaVersion: String) = {
     specs2CoreDeps.map(_ % Test) ++ Seq(specsMatcherExtra % Test) ++ scalaParserCombinators(scalaVersion) ++ (logback % Test :: Nil)
@@ -126,43 +66,15 @@ object Dependencies {
     Seq(
       typesafeConfig,
       slf4jSimple,
-      sbtDep("com.typesafe.play" % "sbt-twirl"           % BuildInfo.sbtTwirlVersion),
-      sbtDep("com.github.sbt"    % "sbt-native-packager" % BuildInfo.sbtNativePackagerVersion),
-      sbtDep("com.typesafe.sbt"  % "sbt-web"             % "1.4.4"),
+      // sbt-2 twirl plugin lives under the org.playframework.twirl org (was com.typesafe.play on sbt-1).
+      sbtDep("org.playframework.twirl" % "sbt-twirl"           % sbt2TwirlVersion),
+      sbtDep("com.github.sbt"          % "sbt-native-packager" % sbtNativePackagerVersion),
+      // NB: sbt-web is intentionally dropped — it has no sbt-2 build and the ported plugin sources
+      // no longer use it.
       logback             % Test
-    ) ++ specs2Deps.map(_ % Test)
+      // specs2CoreDeps (not specs2Deps): specs2-mock has no Scala-3 build at 4.17.0, and the
+      // sbt-plugin has no test sources using it.
+    ) ++ specs2CoreDeps.map(_ % Test)
   }
 
-  val streamsDependencies = Seq(
-    "org.reactivestreams"   % "reactive-streams" % "1.0.4",
-    "com.typesafe.akka"     %% "akka-stream" % akkaVersion,
-  ) ++ specs2CoreDeps.map(_ % Test)
-
-  val playServerDependencies = specs2Deps.map(_ % Test) ++ Seq(
-    guava   % Test,
-    logback % Test
-  )
-
-  val caffeineVersion = "3.0.6"
-  val playCaffeineDeps = Seq(
-    "com.github.ben-manes.caffeine" % "caffeine" % caffeineVersion,
-    "com.github.ben-manes.caffeine" % "jcache"   % caffeineVersion
-  )
-
-  val playWsStandaloneVersion = "2.2.0-M2"
-  val playWsDeps = Seq(
-    "com.typesafe.play" %% "play-ws-standalone"      % playWsStandaloneVersion,
-    "com.typesafe.play" %% "play-ws-standalone-xml"  % playWsStandaloneVersion,
-    "com.typesafe.play" %% "play-ws-standalone-json" % playWsStandaloneVersion,
-    // Update transitive Akka version as needed:
-    "com.typesafe.akka"                        %% "akka-stream" % akkaVersion
-  ) ++ (specs2Deps :+ specsMatcherExtra).map(_ % Test) :+ mockitoAll % Test
-
-  // Must use a version of ehcache that supports jcache 1.0.0
-  val playAhcWsDeps = Seq(
-    "com.typesafe.play"             %% "play-ahc-ws-standalone" % playWsStandaloneVersion,
-    "com.typesafe.play"             % "shaded-asynchttpclient"  % playWsStandaloneVersion,
-    "com.typesafe.play"             % "shaded-oauth"            % playWsStandaloneVersion,
-    "com.github.ben-manes.caffeine" % "jcache"                  % caffeineVersion % Test,
-  )
 }
