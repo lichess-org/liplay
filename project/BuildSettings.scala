@@ -11,7 +11,7 @@ import scala.util.control.NonFatal
 
 object BuildSettings {
 
-  val playVersion = "2.8.18-lila_3.22"
+  val playVersion = "2.8.18-lila_3.23"
 
   val SourcesApplication = config("sources").hide
 
