@@ -51,9 +51,7 @@ lazy val PlayProject = Project("Play", file("core/play"))
 lazy val PlayServerProject = Project("Play-Server", file("transport/server/play-server"))
   .settings(playCommonSettings)
   .settings(libraryDependencies ++= playServerDependencies)
-  .dependsOn(
-    PlayProject,
-  )
+  .dependsOn(PlayProject)
 
 lazy val PlayNettyServerProject = Project("Play-Netty-Server", file("transport/server/play-netty-server"))
   .settings(playCommonSettings)
@@ -81,14 +79,7 @@ lazy val PlayConfiguration = Project("Play-Configuration", file("core/play-confi
   .dependsOn(PlayExceptionsProject)
 
 lazy val PlayFramework = Project("Play-Framework", file("."))
-  .settings(
-    playCommonSettings,
-    scalaVersion                     := (scalaVersion in PlayProject).value,
-    crossScalaVersions               := Nil,
-    (concurrentRestrictions in Global) += Tags.limit(Tags.Test, 1),
-    libraryDependencies ++= runtime(scalaVersion.value),
-    publish / skip         := true,
-  )
+  .settings(publish / skip := true)
   .aggregate(
     PlayProject,
     PlayNettyServerProject,
