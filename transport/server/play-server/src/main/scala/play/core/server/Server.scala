@@ -72,7 +72,6 @@ object Server {
         errorHandler: HttpErrorHandler,
         req: RequestHeader
     ): PartialFunction[Throwable, (RequestHeader, Handler)] = {
-      case e: ThreadDeath         => throw e
       case e: VirtualMachineError => throw e
       case e: Throwable =>
         val errorResult = errorHandler.onServerError(req, e)

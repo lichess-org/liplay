@@ -102,7 +102,6 @@ object Reflect {
       } catch {
         case e: ClassNotFoundException if !notFoundFatal => None
         case e: VirtualMachineError                      => throw e
-        case e: ThreadDeath                              => throw e
         case e: Throwable =>
           throw new PlayException(s"Cannot load $key", s"$key [$className] was not loaded.", e)
       }
@@ -136,7 +135,6 @@ object Reflect {
       createInstance(getClass(fqcn, classLoader))
     } catch {
       case e: VirtualMachineError => throw e
-      case e: ThreadDeath         => throw e
       case e: Throwable =>
         val name = simpleName(implicitly[ClassTag[T]].runtimeClass)
         throw new PlayException(s"Cannot load $name", s"$name [$fqcn] cannot be instantiated.", e)
