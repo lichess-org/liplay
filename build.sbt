@@ -3,7 +3,6 @@
 import BuildSettings._
 import Dependencies._
 import Generators._
-import interplay.PlayBuildBase.autoImport._
 import sbt.Keys.parallelExecution
 import sbt._
 import sbt.io.Path._
@@ -17,13 +16,20 @@ scalacOptions ++= Seq(
   "-release:21",
 )
 
-lazy val StreamsProject = PlayCrossBuiltProject("Play-Streams", "core/play-streams")
+lazy val StreamsProject = Project("Play-Streams", file("core/play-streams"))
+  .settings(playCommonSettings)
   .settings(libraryDependencies ++= streamsDependencies)
 
-lazy val PlayExceptionsProject = PlayNonCrossBuiltProject("Play-Exceptions", "core/play-exceptions")
+lazy val PlayExceptionsProject = Project("Play-Exceptions", file("core/play-exceptions"))
+  .settings(playCommonSettings)
+  .settings(
+    autoScalaLibrary := false,
+    crossPaths       := false,
+  )
 
-lazy val PlayProject = PlayCrossBuiltProject("Play", "core/play")
+lazy val PlayProject = Project("Play", file("core/play"))
   .enablePlugins(SbtTwirl)
+  .settings(playCommonSettings)
   .settings(
     libraryDependencies ++= runtime(scalaVersion.value) ++ scalacheckDependencies ++ cookieEncodingDependencies :+
       jimfs % Test,
@@ -42,17 +48,20 @@ lazy val PlayProject = PlayCrossBuiltProject("Play", "core/play")
   )
   .dependsOn(PlayExceptionsProject, PlayConfiguration, StreamsProject)
 
-lazy val PlayServerProject = PlayCrossBuiltProject("Play-Server", "transport/server/play-server")
+lazy val PlayServerProject = Project("Play-Server", file("transport/server/play-server"))
+  .settings(playCommonSettings)
   .settings(libraryDependencies ++= playServerDependencies)
   .dependsOn(
     PlayProject,
   )
 
-lazy val PlayNettyServerProject = PlayCrossBuiltProject("Play-Netty-Server", "transport/server/play-netty-server")
+lazy val PlayNettyServerProject = Project("Play-Netty-Server", file("transport/server/play-netty-server"))
+  .settings(playCommonSettings)
   .settings(libraryDependencies ++= netty)
   .dependsOn(PlayServerProject)
 
-lazy val PlayLogback = PlayCrossBuiltProject("Play-Logback", "core/play-logback")
+lazy val PlayLogback = Project("Play-Logback", file("core/play-logback"))
+  .settings(playCommonSettings)
   .settings(
     libraryDependencies += logback,
     parallelExecution in Test := false,
@@ -61,26 +70,23 @@ lazy val PlayLogback = PlayCrossBuiltProject("Play-Logback", "core/play-logback"
   )
   .dependsOn(PlayProject)
 
-lazy val PlayConfiguration = PlayCrossBuiltProject("Play-Configuration", "core/play-configuration")
+lazy val PlayConfiguration = Project("Play-Configuration", file("core/play-configuration"))
+  .settings(playCommonSettings)
   .settings(
     libraryDependencies ++= Seq(typesafeConfig, slf4jApi) ++ specs2Deps.map(_ % Test),
     (Test / parallelExecution) := false,
-    mimaPreviousArtifacts      := Set.empty,
     // quieten deprecation warnings in tests
     (scalacOptions in Test) := (scalacOptions in Test).value.diff(Seq("-deprecation"))
   )
   .dependsOn(PlayExceptionsProject)
 
 lazy val PlayFramework = Project("Play-Framework", file("."))
-  .enablePlugins(PlayRootProject)
   .settings(
     playCommonSettings,
     scalaVersion                     := (scalaVersion in PlayProject).value,
     crossScalaVersions               := Nil,
-    (playBuildRepoName in ThisBuild) := "playframework",
     (concurrentRestrictions in Global) += Tags.limit(Tags.Test, 1),
     libraryDependencies ++= runtime(scalaVersion.value),
-    mimaReportBinaryIssues := (()),
     publish / skip         := true,
   )
   .aggregate(

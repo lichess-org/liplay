@@ -5,10 +5,8 @@ lazy val plugins = (project in file(".")).settings(
 
 enablePlugins(BuildInfoPlugin)
 
-val mima              = "1.1.1"
-val scalafmt          = "2.4.6"
-val sbtTwirl: String  = sys.props.getOrElse("twirl.version", "1.6.1") // sync with documentation/project/plugins.sbt
-val interplay: String = sys.props.getOrElse("interplay.version", "3.1.7")
+val scalafmt         = "2.4.6"
+val sbtTwirl: String = sys.props.getOrElse("twirl.version", "1.6.1") // sync with documentation/project/plugins.sbt
 
 buildInfoKeys := Seq[BuildInfoKey](
   "sbtTwirlVersion" -> sbtTwirl,
@@ -18,12 +16,5 @@ logLevel := Level.Warn
 
 scalacOptions ++= Seq("-deprecation", "-language:_")
 
-addSbtPlugin("com.typesafe.play" % "interplay"       % interplay)
 addSbtPlugin("com.typesafe.play" % "sbt-twirl"       % sbtTwirl)
-addSbtPlugin("com.typesafe"      % "sbt-mima-plugin" % mima)
 addSbtPlugin("org.scalameta"     % "sbt-scalafmt"    % scalafmt)
-addSbtPlugin("com.github.sbt"    % "sbt-ci-release"  % "1.5.11")
-
-addSbtPlugin("com.lightbend.akka" % "sbt-akka-version-check" % "0.1")
-
-resolvers += Resolver.typesafeRepo("releases")
