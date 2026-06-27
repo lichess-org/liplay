@@ -29,11 +29,11 @@ import scala.concurrent.Future
  * GET     /assets/\uFEFF*file               controllers.ExternalAssets.at(path="relativeToYourApp", file)
  * }}}
  */
-class ExternalAssets @Inject() (environment: Environment)(implicit ec: ExecutionContext, fileMimeTypes: FileMimeTypes)
+class ExternalAssets @Inject() (environment: Environment)(using ec: ExecutionContext, fileMimeTypes: FileMimeTypes)
     extends ControllerHelpers {
   val AbsolutePath = """^(/|[a-zA-Z]:\\).*""".r
 
-  private val Action = new ActionBuilder.IgnoringBody()(_root_.controllers.Execution.trampoline)
+  private val Action = new ActionBuilder.IgnoringBody()(using _root_.controllers.Execution.trampoline)
 
   /**
    * Generates an `Action` that serves a static resource from an external folder
@@ -48,7 +48,7 @@ class ExternalAssets @Inject() (environment: Environment)(implicit ec: Execution
         case _               => new File(environment.getFile(rootPath), file)
       }
 
-      if (fileToServe.exists) {
+      if fileToServe.exists then {
         Ok.sendFile(fileToServe, inline = true).withHeaders(CACHE_CONTROL -> "max-age=3600")
       } else {
         NotFound

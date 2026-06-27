@@ -98,8 +98,8 @@ object Files {
     def copyTo(to: Path, replace: Boolean): Path = {
       val destination =
         try
-          if (replace) JFiles.copy(path, to, StandardCopyOption.REPLACE_EXISTING)
-          else if (!to.toFile.exists()) JFiles.copy(path, to)
+          if replace then JFiles.copy(path, to, StandardCopyOption.REPLACE_EXISTING)
+          else if !to.toFile.exists() then JFiles.copy(path, to)
           else to
         catch {
           case _: FileAlreadyExistsException => to
@@ -151,9 +151,9 @@ object Files {
     def moveTo(to: Path, replace: Boolean): Path = {
       val destination =
         try {
-          if (replace)
+          if replace then
             JFiles.move(path, to, StandardCopyOption.REPLACE_EXISTING)
-          else if (!to.toFile.exists())
+          else if !to.toFile.exists() then
             JFiles.move(path, to)
           else to
         } catch {
@@ -312,7 +312,7 @@ object Files {
      */
     applicationLifecycle.addStopHook { () =>
       Future.successful {
-        if (JFiles.isDirectory(playTempFolder)) {
+        if JFiles.isDirectory(playTempFolder) then {
           JFiles.walkFileTree(
             playTempFolder,
             new SimpleFileVisitor[Path] {
@@ -383,7 +383,7 @@ object Files {
             }
           }
           .getOrElse(Seq.empty)
-      }(blockingExecutionContext)
+      }(using blockingExecutionContext)
     }
 
     def delete(path: Path): Unit = {
@@ -399,7 +399,7 @@ object Files {
       cancellable.foreach(_.cancel())
     }
 
-    if (config.enabled) {
+    if config.enabled then {
       import config.*
       playTempFolder match {
         case Some(folder) =>
@@ -411,7 +411,7 @@ object Files {
       }
 
       cancellable = Some(
-        actorSystem.scheduler.scheduleAtFixedRate(initialDelay, interval) { () => reap() }(actorSystem.dispatcher)
+        actorSystem.scheduler.scheduleAtFixedRate(initialDelay, interval) { () => reap() }(using actorSystem.dispatcher)
       )
     }
   }

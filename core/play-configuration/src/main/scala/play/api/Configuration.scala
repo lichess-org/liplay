@@ -15,7 +15,7 @@ import java.time.temporal.TemporalAmount
 import com.typesafe.config.*
 import org.slf4j.LoggerFactory
 
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 import scala.concurrent.duration.Duration
 import scala.concurrent.duration.FiniteDuration
 import scala.io.Codec
@@ -45,7 +45,7 @@ object Configuration {
       // Iterating through the system properties is prone to ConcurrentModificationExceptions
       // (such as in unit tests), which is why Typesafe config maintains a cache for it.
       // So, if the passed in properties *are* the system properties, don't parse it ourselves.
-      val userDefinedProperties = if (properties eq System.getProperties) {
+      val userDefinedProperties = if properties eq System.getProperties then {
         ConfigFactory.empty()
       } else {
         ConfigFactory.parseProperties(properties)
@@ -146,7 +146,7 @@ object Configuration {
       message: String,
       origin: Option[ConfigOrigin] = None,
       e: Option[Throwable] = None
-  )(implicit codec: Codec): PlayException = {
+  )(using codec: Codec): PlayException = {
     origin
       .map(o => {
         /*
@@ -177,14 +177,14 @@ object Configuration {
       val buffer = new Array[Byte](8192)
       var len    = stream.read(buffer)
       val out    = new ByteArrayOutputStream() // Doesn't need closing
-      while (len != -1) {
+      while len != -1 do {
         out.write(buffer, 0, len)
         len = stream.read(buffer)
       }
       out.toByteArray
     } finally {
       try {
-        if (stream != null) {
+        if stream != null then {
           stream.close()
         }
       } catch {
@@ -236,7 +236,7 @@ case class Configuration(underlying: Config) {
    */
   private def readValue[T](path: String, v: => T): Option[T] = {
     try {
-      if (underlying.hasPathOrNull(path)) Some(v) else None
+      if underlying.hasPathOrNull(path) then Some(v) else None
     } catch {
       case NonFatal(e) => throw reportError(path, e.getMessage, Some(e))
     }
@@ -250,16 +250,16 @@ case class Configuration(underlying: Config) {
   /**
    * Get the config at the given path.
    */
-  def get[A](path: String)(implicit loader: ConfigLoader[A]): A = {
+  def get[A](path: String)(using loader: ConfigLoader[A]): A = {
     loader.load(underlying, path)
   }
 
   /**
    * Get the config at the given path and validate against a set of valid values.
    */
-  def getAndValidate[A](path: String, values: Set[A])(implicit loader: ConfigLoader[A]): A = {
+  def getAndValidate[A](path: String, values: Set[A])(using loader: ConfigLoader[A]): A = {
     val value = get(path)
-    if (!values(value)) {
+    if !values(value) then {
       throw reportError(path, s"Incorrect value, one of (${values.mkString(", ")}) was expected.")
     }
     value
@@ -269,9 +269,9 @@ case class Configuration(underlying: Config) {
    * Get a value that may either not exist or be null. Note that this is not generally considered idiomatic Config
    * usage. Instead you should define all config keys in a reference.conf file.
    */
-  def getOptional[A](path: String)(implicit loader: ConfigLoader[A]): Option[A] = {
+  def getOptional[A](path: String)(using loader: ConfigLoader[A]): Option[A] = {
     try {
-      if (underlying.hasPath(path)) Some(get[A](path)) else None
+      if underlying.hasPath(path) then Some(get[A](path)) else None
     } catch {
       case NonFatal(e) => throw reportError(path, e.getMessage, Some(e))
     }
@@ -293,7 +293,7 @@ case class Configuration(underlying: Config) {
    * Each value in the map will fallback to the object loaded from prototype.\$path.
    */
   def getPrototypedMap(path: String, prototypePath: String = "prototype.$path"): Map[String, Configuration] = {
-    val prototype = if (prototypePath.isEmpty) {
+    val prototype = if prototypePath.isEmpty then {
       underlying
     } else {
       underlying.getConfig(prototypePath.replace("$path", path))
@@ -332,7 +332,7 @@ case class Configuration(underlying: Config) {
    */
   def getDeprecatedWithFallback(path: String, deprecated: String, parent: String = ""): Configuration = {
     val config = get[Config](path)
-    val merged = if (underlying.hasPath(deprecated)) {
+    val merged = if underlying.hasPath(deprecated) then {
       reportDeprecation(path, deprecated)
       get[Config](deprecated).withFallback(config)
     } else config
@@ -420,7 +420,7 @@ case class Configuration(underlying: Config) {
    * @return a configuration exception
    */
   def reportError(path: String, message: String, e: Option[Throwable] = None): PlayException = {
-    val origin = Option(if (underlying.hasPath(path)) underlying.getValue(path).origin else underlying.root.origin)
+    val origin = Option(if underlying.hasPath(path) then underlying.getValue(path).origin else underlying.root.origin)
     Configuration.configError(message, origin, e)
   }
 
@@ -470,8 +470,8 @@ object ConfigLoader {
     ConfigLoader(_.getDurationList).map(_.asScala.map(javaDurationToScala).toSeq)
 
   implicit val durationLoader: ConfigLoader[Duration] = ConfigLoader { config => path =>
-    if (config.getIsNull(path)) Duration.Inf
-    else if (config.getString(path) == "infinite") Duration.Inf
+    if config.getIsNull(path) then Duration.Inf
+    else if config.getString(path) == "infinite" then Duration.Inf
     else finiteDurationLoader.load(config, path)
   }
 
@@ -520,10 +520,10 @@ object ConfigLoader {
   /**
    * Loads a value, interpreting a null value as None and any other value as Some(value).
    */
-  implicit def optionLoader[A](implicit valueLoader: ConfigLoader[A]): ConfigLoader[Option[A]] =
-    (config, path) => if (config.getIsNull(path)) None else Some(valueLoader.load(config, path))
+  implicit def optionLoader[A](using valueLoader: ConfigLoader[A]): ConfigLoader[Option[A]] =
+    (config, path) => if config.getIsNull(path) then None else Some(valueLoader.load(config, path))
 
-  implicit def mapLoader[A](implicit valueLoader: ConfigLoader[A]): ConfigLoader[Map[String, A]] =
+  implicit def mapLoader[A](using valueLoader: ConfigLoader[A]): ConfigLoader[Map[String, A]] =
     (config, path) => {
       val obj  = config.getObject(path)
       val conf = obj.toConfig
@@ -548,7 +548,7 @@ object ConfigLoader {
     val s   = new StringBuilder()
     val len = input.length
     var pos = 0
-    while (pos < len) {
+    while pos < len do {
       input.charAt(pos) match {
         // Standard Lookup
         case '\'' => s.append("\\'")

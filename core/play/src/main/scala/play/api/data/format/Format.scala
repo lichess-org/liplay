@@ -102,7 +102,7 @@ object Formats {
   }
 
   private def numberFormatter[T](convert: String => T, real: Boolean = false): Formatter[T] = {
-    val (formatString, errorString) = if (real) ("format.real", "error.real") else ("format.numeric", "error.number")
+    val (formatString, errorString) = if real then ("format.real", "error.real") else ("format.numeric", "error.number")
     new Formatter[T] {
       override val format = Some(formatString -> Nil)
       def bind(key: String, data: Map[String, String]) =
@@ -156,7 +156,7 @@ object Formats {
             precision
               .map {
                 case (p, s) =>
-                  if (bd.precision - bd.scale > p - s) {
+                  if bd.precision - bd.scale > p - s then {
                     throw new java.lang.ArithmeticException("Invalid precision")
                   }
                   bd.setScale(s)

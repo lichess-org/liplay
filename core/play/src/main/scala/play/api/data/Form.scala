@@ -96,14 +96,14 @@ case class Form[T](mapping: Mapping[T], data: Map[String, String], errors: Seq[F
    *
    * @return a copy of this form filled with the new data
    */
-  def bindFromRequest()(implicit request: play.api.mvc.Request[?], formBinding: FormBinding): Form[T] = {
+  def bindFromRequest()(using request: play.api.mvc.Request[?], formBinding: FormBinding): Form[T] = {
     bindFromRequest(formBinding(request))
   }
 
   def bindFromRequest(data: Map[String, Seq[String]]): Form[T] = {
     val map = data.foldLeft(Map.empty[String, String]) {
       case (s, (key, values)) =>
-        if (key.endsWith("[]")) {
+        if key.endsWith("[]") then {
           val k = key.dropRight(2)
           s ++ values.zipWithIndex.map { case (v, i) => s"$k[$i]" -> v }
         } else {
@@ -310,7 +310,7 @@ case class Field(
    * @param key Relative key.
    */
   def apply(key: String): Field = {
-    form(Option(name).filterNot(_.isEmpty).map(_ + (if (key(0) == '[') "" else ".")).getOrElse("") + key)
+    form(Option(name).filterNot(_.isEmpty).map(_ + (if key(0) == '[' then "" else ".")).getOrElse("") + key)
   }
 
   /**
@@ -409,9 +409,9 @@ private[data] object FormUtils {
       maxChars: Long,
       maxDepth: Int,
   ): Map[String, String] = {
-    if (cumulativeChars > maxChars)
+    if cumulativeChars > maxChars then
       throw FormJsonExpansionTooLarge(maxChars)
-    if (context.depth > maxDepth)
+    if context.depth > maxDepth then
       throw FormJsonExpansionTooDeep(maxDepth)
     context match {
       case FromJsonTerm              => form
@@ -477,7 +477,7 @@ private[data] object FormUtils {
     override val depth: Int     = parent.depth + 1
     override def value: JsValue = values(idx)
     override val prefix: String = s"${parent.prefix}[$idx]"
-    override lazy val next: FromJsonContext = if (idx + 1 < values.length) {
+    override lazy val next: FromJsonContext = if idx + 1 < values.length then {
       FromJsonArray(parent, values, idx + 1)
     } else {
       parent.next
@@ -487,12 +487,12 @@ private[data] object FormUtils {
       extends FromJsonContextValue {
     override val depth: Int     = parent.depth + 1
     override def value: JsValue = fields(idx)._2
-    override val prefix: String = if (parent.prefix.isEmpty) {
+    override val prefix: String = if parent.prefix.isEmpty then {
       fields(idx)._1
     } else {
       parent.prefix + "." + fields(idx)._1
     }
-    override lazy val next: FromJsonContext = if (idx + 1 < fields.length) {
+    override lazy val next: FromJsonContext = if idx + 1 < fields.length then {
       FromJsonObject(parent, fields, idx + 1)
     } else {
       parent.next
@@ -634,7 +634,7 @@ trait Mapping[T] { self =>
    * @return the new mapping
    */
   def verifying(error: => String, constraint: (T => Boolean)): Mapping[T] = {
-    verifying(Constraint((t: T) => if (constraint(t)) Valid else Invalid(Seq(ValidationError(error)))))
+    verifying(Constraint((t: T) => if constraint(t) then Valid else Invalid(Seq(ValidationError(error)))))
   }
 
   /**
@@ -814,7 +814,7 @@ case class RepeatedMapping[T](
   def bind(data: Map[String, String]): Either[Seq[FormError], List[T]] = {
     val allErrorsOrItems: Seq[Either[Seq[FormError], T]] =
       RepeatedMapping.indexes(key, data).map(i => wrapped.withPrefix(s"$key[$i]").bind(data))
-    if (allErrorsOrItems.forall(_.isRight)) {
+    if allErrorsOrItems.forall(_.isRight) then {
       Right(allErrorsOrItems.map(_.toOption.get).toList).flatMap(applyConstraints)
     } else {
       Left(allErrorsOrItems.collect { case Left(errors) => errors }.flatten)
@@ -950,7 +950,7 @@ case class OptionalMapping[T](wrapped: Mapping[T], constraints: Seq[Constraint[O
  * @param constraints the constraints associated with this field.
  */
 case class FieldMapping[T](key: String = "", constraints: Seq[Constraint[T]] = Nil)(
-    implicit val binder: Formatter[T]
+    using val binder: Formatter[T]
 ) extends Mapping[T] {
 
   /**
@@ -983,7 +983,7 @@ case class FieldMapping[T](key: String = "", constraints: Seq[Constraint[T]] = N
    * @return the same mapping with a new binder
    */
   def as(binder: Formatter[T]): Mapping[T] = {
-    this.copy()(binder)
+    this.copy()(using binder)
   }
 
   /**

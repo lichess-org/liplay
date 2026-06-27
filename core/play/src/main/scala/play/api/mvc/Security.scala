@@ -134,7 +134,7 @@ object Security {
       userinfo: RequestHeader => Option[U],
       defaultParser: BodyParser[AnyContent],
       onUnauthorized: RequestHeader => Result = implicit request => Unauthorized("unauthorized")
-  )(implicit val executionContext: ExecutionContext)
+  )(using val executionContext: ExecutionContext)
       extends ActionBuilder[({ type R[A] = AuthenticatedRequest[A, U] })#R, AnyContent] {
     lazy val parser = defaultParser
 
@@ -165,7 +165,7 @@ object Security {
         userinfo: RequestHeader => Option[U],
         defaultParser: BodyParser[AnyContent],
         onUnauthorized: RequestHeader => Result = DefaultUnauthorized
-    )(implicit ec: ExecutionContext): AuthenticatedBuilder[U] = {
+    )(using ec: ExecutionContext): AuthenticatedBuilder[U] = {
       new AuthenticatedBuilder(userinfo, defaultParser, onUnauthorized)
     }
   }

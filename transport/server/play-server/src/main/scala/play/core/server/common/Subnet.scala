@@ -10,10 +10,10 @@ import com.google.common.net.InetAddresses
 
 private[common] case class Subnet(ip: InetAddress, cidr: Option[Int] = None) {
   private def remainderOfMask =
-    for {
+    for
       m      <- cidr
       result <- maskBits(m % 8)
-    } yield result
+    yield result
 
   private def maskBits(leadingBits: Int) = leadingBits match {
     case i if i < 1 || i > 7 => None
@@ -24,11 +24,11 @@ private[common] case class Subnet(ip: InetAddress, cidr: Option[Int] = None) {
     val mask = cidr.getOrElse(ip.getAddress.length * 8)
     ip.getClass == otherIp.getClass &&
     ip.getAddress.take(mask / 8).toList.equals(otherIp.getAddress.take(mask / 8).toList) &&
-    (for {
+    (for
       a <- ip.getAddress.drop(mask / 8).headOption
       b <- otherIp.getAddress.drop(mask / 8).headOption
       c <- remainderOfMask
-    } yield (a & c) == (b & c)).getOrElse(true)
+    yield (a & c) == (b & c)).getOrElse(true)
   }
 }
 

@@ -235,7 +235,7 @@ trait BuiltInComponents extends AkkaComponents with AkkaTypedComponents {
   }
 
   lazy val playBodyParsers: PlayBodyParsers =
-    PlayBodyParsers(tempFileCreator, httpErrorHandler, httpConfiguration.parser)(materializer)
+    PlayBodyParsers(tempFileCreator, httpErrorHandler, httpConfiguration.parser)(using materializer)
   lazy val defaultBodyParser: BodyParser[AnyContent]  = playBodyParsers.default
   lazy val defaultActionBuilder: DefaultActionBuilder = DefaultActionBuilder(defaultBodyParser)
 

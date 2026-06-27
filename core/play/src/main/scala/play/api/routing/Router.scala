@@ -116,7 +116,7 @@ object Router {
    * between, ignoring a final slash in the new prefix or an initial slash in the existing prefix.
    */
   def concatPrefix(newPrefix: String, existingPrefix: String): String = {
-    if (existingPrefix.isEmpty || existingPrefix == "/") {
+    if existingPrefix.isEmpty || existingPrefix == "/" then {
       newPrefix
     } else {
       newPrefix.stripSuffix("/") + "/" + existingPrefix.stripPrefix("/")
@@ -129,9 +129,9 @@ object Router {
  */
 trait SimpleRouter extends Router { self =>
   def withPrefix(prefix: String): Router = {
-    if (prefix == "/") self
+    if prefix == "/" then self
     else {
-      val prefixTrailingSlash = if (prefix.endsWith("/")) prefix else prefix + "/"
+      val prefixTrailingSlash = if prefix.endsWith("/") then prefix else prefix + "/"
       val prefixed: PartialFunction[RequestHeader, RequestHeader] = {
         case rh: RequestHeader if rh.path == prefix || rh.path.startsWith(prefixTrailingSlash) =>
           val newPath = "/" + rh.path.drop(prefixTrailingSlash.length)

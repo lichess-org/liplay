@@ -31,7 +31,7 @@ private[play] object PlayIO {
       val buffer = new Array[Byte](8192)
       var len    = stream.read(buffer)
       val out    = new ByteArrayOutputStream() // Doesn't need closing
-      while (len != -1) {
+      while len != -1 do {
         out.write(buffer, 0, len)
         len = stream.read(buffer)
       }
@@ -51,21 +51,21 @@ private[play] object PlayIO {
    *
    * Closes the stream.
    */
-  def readStreamAsString(stream: InputStream)(implicit codec: Codec): String = {
+  def readStreamAsString(stream: InputStream)(using codec: Codec): String = {
     new String(readStream(stream), codec.name)
   }
 
   /**
    * Read the URL as a String.
    */
-  def readUrlAsString(url: URL)(implicit codec: Codec): String = {
+  def readUrlAsString(url: URL)(using codec: Codec): String = {
     readStreamAsString(url.openStream())
   }
 
   /**
    * Read the file as a String.
    */
-  def readFileAsString(file: Path)(implicit codec: Codec): String = {
+  def readFileAsString(file: Path)(using codec: Codec): String = {
     readStreamAsString(Files.newInputStream(file))
   }
 
@@ -76,7 +76,7 @@ private[play] object PlayIO {
    */
   def closeQuietly(closeable: Closeable) = {
     try {
-      if (closeable != null) {
+      if closeable != null then {
         closeable.close()
       }
     } catch {

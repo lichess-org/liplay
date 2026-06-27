@@ -57,7 +57,7 @@ case class Session(data: Map[String, String] = Map.empty) {
    * @param kvs an `Iterable` containing key-value pairs to add.
    */
   def ++(kvs: Iterable[(String, String)]): Session = {
-    for ((k, v) <- kvs) require(v != null, s"Session value for $k cannot be null")
+    for (k, v) <- kvs do require(v != null, s"Session value for $k cannot be null")
     copy(data ++ kvs)
   }
 

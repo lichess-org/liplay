@@ -4,7 +4,7 @@
 
 package play.core.server.common
 
-import play.api.mvc._
+import play.api.mvc.*
 
 /**
  * This exception occurs when the Play server experiences an error

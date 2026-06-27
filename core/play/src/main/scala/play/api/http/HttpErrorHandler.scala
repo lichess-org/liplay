@@ -360,7 +360,7 @@ class JsonHttpErrorHandler(environment: Environment) extends HttpErrorHandler {
    * @param message The error message.
    */
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
-    if (play.api.http.Status.isClientError(statusCode)) {
+    if play.api.http.Status.isClientError(statusCode) then {
       Future.successful(Results.Status(statusCode)(error(Json.obj("message" -> message))))
     } else {
       throw new IllegalArgumentException(

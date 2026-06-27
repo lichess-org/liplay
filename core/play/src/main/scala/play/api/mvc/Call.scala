@@ -27,17 +27,17 @@ case class Call(method: String, url: String, fragment: String = null) {
    * // == "http://\$host/url", or "https://\$host/url" if secure
    * }}}
    */
-  def absoluteURL()(implicit request: RequestHeader): String =
+  def absoluteURL()(using request: RequestHeader): String =
     absoluteURL(request.secure)
 
   /**
    * Transform this call to an absolute URL.
    */
-  def absoluteURL(secure: Boolean)(implicit request: RequestHeader): String =
-    "http" + (if (secure) "s" else "") + "://" + request.host + this.url + this.appendFragment
+  def absoluteURL(secure: Boolean)(using request: RequestHeader): String =
+    "http" + (if secure then "s" else "") + "://" + request.host + this.url + this.appendFragment
 
   protected def appendFragment =
-    if (fragment != null && !fragment.trim.isEmpty) s"#$fragment"
+    if fragment != null && !fragment.trim.isEmpty then s"#$fragment"
     else ""
 
   /**
@@ -52,7 +52,7 @@ case class Call(method: String, url: String, fragment: String = null) {
    * // == "../url"
    * }}}
    */
-  def relative(implicit request: RequestHeader): String = this.relativeTo(request.path)
+  def relative(using request: RequestHeader): String = this.relativeTo(request.path)
 
   def relativeTo(startPath: String) = play.core.Paths.relative(startPath, url) + appendFragment
 

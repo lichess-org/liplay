@@ -66,7 +66,7 @@ object FormUrlEncodedParser {
     }.asJava
   }
 
-  private[this] val parameterDelimiter = "[&;]".r
+  private val parameterDelimiter = "[&;]".r
 
   /**
    * Do the basic parsing into a sequence of key/value pairs
@@ -76,7 +76,7 @@ object FormUrlEncodedParser {
    */
   private def parseToPairs(data: String, encoding: String): Seq[(String, String)] = {
     val split = parameterDelimiter.split(data)
-    if (split.length == 1 && split(0).isEmpty) {
+    if split.length == 1 && split(0).isEmpty then {
       Seq.empty
     } else {
       ArraySeq.unsafeWrapArray(split.map { param =>

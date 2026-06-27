@@ -53,7 +53,7 @@ object Multipart {
   @deprecated("Use the overloaded partParser method that takes the allowEmptyFiles flag", "2.9.0")
   def partParser[A](maxMemoryBufferSize: Long, errorHandler: HttpErrorHandler)(
       partHandler: Accumulator[Part[Source[ByteString, ?]], Either[Result, A]]
-  )(implicit mat: Materializer): BodyParser[A] = partParser(maxMemoryBufferSize, false, errorHandler)(partHandler)
+  )(using mat: Materializer): BodyParser[A] = partParser(maxMemoryBufferSize, false, errorHandler)(partHandler)
 
   /**
    * Parses the stream into a stream of [[play.api.mvc.MultipartFormData.Part]] to be handled by `partHandler`.
@@ -65,12 +65,12 @@ object Multipart {
    */
   def partParser[A](maxMemoryBufferSize: Long, allowEmptyFiles: Boolean, errorHandler: HttpErrorHandler)(
       partHandler: Accumulator[Part[Source[ByteString, ?]], Either[Result, A]]
-  )(implicit mat: Materializer): BodyParser[A] = BodyParser { request =>
-    val maybeBoundary = for {
+  )(using mat: Materializer): BodyParser[A] = BodyParser { request =>
+    val maybeBoundary = for
       mt         <- request.mediaType
       (_, value) <- mt.parameters.find(_._1.equalsIgnoreCase("boundary"))
       boundary   <- value
-    } yield boundary
+    yield boundary
 
     maybeBoundary
       .map { boundary =>
@@ -80,7 +80,7 @@ object Multipart {
           .prefixAndTail(1)
           .map {
             case (Seq(Left(part: FilePart[_])), body) =>
-              part.copy[Source[ByteString, _]](
+              part.copy[Source[ByteString, ?]](
                 ref = body.collect {
                   case Right(bytes) => bytes
                 },
@@ -115,7 +115,7 @@ object Multipart {
       maxMemoryBufferSize: Long,
       filePartHandler: FilePartHandler[A],
       errorHandler: HttpErrorHandler
-  )(implicit mat: Materializer): BodyParser[MultipartFormData[A]] =
+  )(using mat: Materializer): BodyParser[MultipartFormData[A]] =
     multipartParser(maxMemoryBufferSize, false, filePartHandler, errorHandler)
 
   /**
@@ -131,7 +131,7 @@ object Multipart {
       allowEmptyFiles: Boolean,
       filePartHandler: FilePartHandler[A],
       errorHandler: HttpErrorHandler
-  )(implicit mat: Materializer): BodyParser[MultipartFormData[A]] = BodyParser { request =>
+  )(using mat: Materializer): BodyParser[MultipartFormData[A]] = BodyParser { request =>
     partParser(maxMemoryBufferSize, allowEmptyFiles, errorHandler) {
       val handleFileParts = Flow[Part[Source[ByteString, ?]]].mapAsync(1) {
         case filePart: FilePart[Source[ByteString, ?]] =>
@@ -229,11 +229,11 @@ object Multipart {
           escape = true
         case '"' =>
           buffer.append('"')
-          if (!escape)
+          if !escape then
             quote = !quote
           escape = false
         case ';' =>
-          if (!quote) {
+          if !quote then {
             addPart()
           } else {
             buffer.append(';')
@@ -249,7 +249,7 @@ object Multipart {
     }
 
     def unapply(headers: Map[String, String]): Option[(String, String, Option[String], String)] = {
-      for {
+      for
         values <-
           headers
             .get("content-disposition")
@@ -271,13 +271,13 @@ object Multipart {
         partName        <- values.get("name")
         fileName        <- values.get("filename")
         contentType = headers.get("content-type")
-      } yield (partName, fileName, contentType, dispositionType)
+      yield (partName, fileName, contentType, dispositionType)
     }
   }
 
   private[play] object PartInfoMatcher {
     def unapply(headers: Map[String, String]): Option[String] = {
-      for {
+      for
         values <-
           headers
             .get("content-disposition")
@@ -295,7 +295,7 @@ object Multipart {
         _        <- values.get("form-data")
         _        <- Option(values.contains("filename")).filter(_ == false)
         partName <- values.get("name")
-      } yield partName
+      yield partName
     }
   }
 
@@ -312,7 +312,7 @@ object Multipart {
   private def byteChar(input: ByteString, ix: Int): Char = byteAt(input, ix).toChar
 
   private def byteAt(input: ByteString, ix: Int): Byte =
-    if (ix < input.length) input(ix) else throw NotEnoughDataException
+    if ix < input.length then input(ix) else throw NotEnoughDataException
 
   private object NotEnoughDataException extends RuntimeException(null, null, false, false)
 
@@ -355,7 +355,7 @@ object Multipart {
       def apply(parse: => StateResult): ContinueParsing = new ContinueParsing(parse)
     }
 
-    private[this] val needle: Array[Byte] = {
+    private val needle: Array[Byte] = {
       val array = new Array[Byte](boundary.length + 4)
       array(0) = '\r'.toByte
       array(1) = '\n'.toByte
@@ -381,25 +381,25 @@ object Multipart {
         private var terminated                = false
 
         override def onPush(): Unit = {
-          if (!terminated) {
+          if !terminated then {
             state(grab(in))
-            if (output.nonEmpty) push(out, dequeue())
-            else if (!terminated) pull(in)
+            if output.nonEmpty then push(out, dequeue())
+            else if !terminated then pull(in)
             else completeStage()
           } else completeStage()
         }
 
         override def onPull(): Unit = {
-          if (output.nonEmpty)
+          if output.nonEmpty then
             push(out, dequeue())
-          else if (isClosed(in)) {
-            if (!terminated) push(out, Left(ParseError("Unexpected end of input")))
+          else if isClosed(in) then {
+            if !terminated then push(out, Left(ParseError("Unexpected end of input")))
             completeStage()
           } else pull(in)
         }
 
         override def onUpstreamFinish(): Unit = {
-          if (isAvailable(out)) onPull()
+          if isAvailable(out) then onPull()
         }
 
         setHandlers(in, out, this)
@@ -418,10 +418,10 @@ object Multipart {
           // we don't use boyerMoore here because we are testing for the boundary *without* a
           // preceding CRLF and at a known location (the very beginning of the entity)
           try {
-            if (boundary(input, 0)) {
+            if boundary(input, 0) then {
               val ix = boundaryLength
-              if (crlf(input, ix)) handleParsingState(parseHeader(input, ix + 2, 0))
-              else if (doubleDash(input, ix)) terminate()
+              if crlf(input, ix) then handleParsingState(parseHeader(input, ix + 2, 0))
+              else if doubleDash(input, ix) then terminate()
               else parsePreamble(input, 0)
             } else parsePreamble(input, 0)
           } catch {
@@ -433,8 +433,8 @@ object Multipart {
           try {
             @tailrec def rec(index: Int): Done = {
               val needleEnd = boyerMoore.nextIndex(input, index) + needle.length
-              if (crlf(input, needleEnd)) handleParsingState(parseHeader(input, needleEnd + 2, 0))
-              else if (doubleDash(input, needleEnd)) terminate()
+              if crlf(input, needleEnd) then handleParsingState(parseHeader(input, needleEnd + 2, 0))
+              else if doubleDash(input, needleEnd) then terminate()
               else rec(needleEnd)
             }
             rec(offset)
@@ -483,10 +483,10 @@ object Multipart {
                     contentType,
                     dispositionType
                   )
-                  if (allowEmptyFiles) {
+                  if allowEmptyFiles then {
                     processFilePart(input)
                   } else {
-                    if (fileName.trim.nonEmpty) {
+                    if fileName.trim.nonEmpty then {
                       checkEmptyBody(input, partStart, totalMemoryBufferSize)(newInput => processFilePart(newInput))(
                         newInput => handleBadPart(newInput, partStart, totalMemoryBufferSize, headers)
                       )
@@ -508,14 +508,14 @@ object Multipart {
         )(empty: (ByteString) => StateResult): StateResult = {
           try {
             val currentPartEnd = boyerMoore.nextIndex(input, partStart)
-            if (currentPartEnd - partStart == 0) {
+            if currentPartEnd - partStart == 0 then {
               empty(input)
             } else {
               nonEmpty(input)
             }
           } catch {
             case NotEnoughDataException => // "not enough data" here means not enough data to locate the needle. However we might not even need the needle...
-              if (partStart <= input.length - needle.length) {
+              if partStart <= input.length - needle.length then {
                 // There was already enough space in the input to contain the needle, but it wasn't found in the try block above.
                 // This means the needle will start at some position _after_ partStart and there will for sure be data between
                 // partStart and the start of the needle -> the body is definitely not empty.
@@ -540,7 +540,7 @@ object Multipart {
             contentType: Option[String],
             dispositionType: String
         ): StateResult = {
-          if (memoryBufferSize > maxMemoryBufferSize) {
+          if memoryBufferSize > maxMemoryBufferSize then {
             bufferExceeded(s"Memory buffer full ($maxMemoryBufferSize) on part $partName")
           } else {
             emit(FilePart(partName, fileName, contentType, (), -1, dispositionType, (_: Any) => None))
@@ -552,10 +552,10 @@ object Multipart {
           try {
             val currentPartEnd = boyerMoore.nextIndex(input, offset)
             val needleEnd      = currentPartEnd + needle.length
-            if (crlf(input, needleEnd)) {
+            if crlf(input, needleEnd) then {
               emit(input.slice(offset, currentPartEnd))
               ContinueParsing(parseHeader(input, needleEnd + 2, memoryBufferSize))
-            } else if (doubleDash(input, needleEnd)) {
+            } else if doubleDash(input, needleEnd) then {
               emit(input.slice(offset, currentPartEnd))
               terminate()
             } else {
@@ -565,7 +565,7 @@ object Multipart {
             case NotEnoughDataException =>
               // we cannot emit all input bytes since the end of the input might be the start of the next boundary
               val emitEnd = input.length - needle.length - 2
-              if (emitEnd > offset) {
+              if emitEnd > offset then {
                 emit(input.slice(offset, emitEnd))
                 continue(input.drop(emitEnd), 0)(handleFileData(_, _, memoryBufferSize))
               } else {
@@ -579,12 +579,12 @@ object Multipart {
             val currentPartEnd      = boyerMoore.nextIndex(input, partStart)
             val needleEnd           = currentPartEnd + needle.length
             val newMemoryBufferSize = memoryBufferSize + (currentPartEnd - partStart)
-            if (newMemoryBufferSize > maxMemoryBufferSize) {
+            if newMemoryBufferSize > maxMemoryBufferSize then {
               bufferExceeded("Memory buffer full on part " + partName)
-            } else if (crlf(input, needleEnd)) {
+            } else if crlf(input, needleEnd) then {
               emit(DataPart(partName, input.slice(partStart, currentPartEnd).utf8String))
               ContinueParsing(parseHeader(input, needleEnd + 2, newMemoryBufferSize))
-            } else if (doubleDash(input, needleEnd)) {
+            } else if doubleDash(input, needleEnd) then {
               emit(DataPart(partName, input.slice(partStart, currentPartEnd).utf8String))
               terminate()
             } else {
@@ -592,7 +592,7 @@ object Multipart {
             }
           } catch {
             case NotEnoughDataException =>
-              if (memoryBufferSize + (input.length - partStart - needle.length) > maxMemoryBufferSize) {
+              if memoryBufferSize + (input.length - partStart - needle.length) > maxMemoryBufferSize then {
                 bufferExceeded("Memory buffer full on part " + partName)
               }
               continue(input, partStart)(handleDataPart(_, _, memoryBufferSize, partName))
@@ -608,10 +608,10 @@ object Multipart {
           try {
             val currentPartEnd = boyerMoore.nextIndex(input, partStart)
             val needleEnd      = currentPartEnd + needle.length
-            if (crlf(input, needleEnd)) {
+            if crlf(input, needleEnd) then {
               emit(BadPart(headers))
               ContinueParsing(parseHeader(input, needleEnd + 2, memoryBufferSize))
-            } else if (doubleDash(input, needleEnd)) {
+            } else if doubleDash(input, needleEnd) then {
               emit(BadPart(headers))
               terminate()
             } else {
@@ -623,7 +623,7 @@ object Multipart {
           }
         }
 
-        def emit(bytes: ByteString): Unit = if (bytes.nonEmpty) {
+        def emit(bytes: ByteString): Unit = if bytes.nonEmpty then {
           output = output.enqueue(Right(bytes))
         }
 
@@ -685,12 +685,12 @@ object Multipart {
   private class BoyerMoore(needle: Array[Byte]) {
     require(needle.length > 0, "needle must be non-empty")
 
-    private[this] val nl1 = needle.length - 1
+    private val nl1 = needle.length - 1
 
-    private[this] val charTable: Array[Int] = {
+    private val charTable: Array[Int] = {
       val table = Array.fill(256)(needle.length)
       @tailrec def rec(i: Int): Unit =
-        if (i < nl1) {
+        if i < nl1 then {
           table(needle(i) & 0xff) = nl1 - i
           rec(i + 1)
         }
@@ -698,23 +698,23 @@ object Multipart {
       table
     }
 
-    private[this] val offsetTable: Array[Int] = {
+    private val offsetTable: Array[Int] = {
       val table = new Array[Int](needle.length)
 
       @tailrec def isPrefix(i: Int, j: Int): Boolean =
         i == needle.length || needle(i) == needle(j) && isPrefix(i + 1, j + 1)
       @tailrec def loop1(i: Int, lastPrefixPosition: Int): Unit =
-        if (i >= 0) {
-          val nextLastPrefixPosition = if (isPrefix(i + 1, 0)) i + 1 else lastPrefixPosition
+        if i >= 0 then {
+          val nextLastPrefixPosition = if isPrefix(i + 1, 0) then i + 1 else lastPrefixPosition
           table(nl1 - i) = nextLastPrefixPosition - i + nl1
           loop1(i - 1, nextLastPrefixPosition)
         }
       loop1(nl1, needle.length)
 
       @tailrec def suffixLength(i: Int, j: Int, result: Int): Int =
-        if (i >= 0 && needle(i) == needle(j)) suffixLength(i - 1, j - 1, result + 1) else result
+        if i >= 0 && needle(i) == needle(j) then suffixLength(i - 1, j - 1, result + 1) else result
       @tailrec def loop2(i: Int): Unit =
-        if (i < nl1) {
+        if i < nl1 then {
           val sl = suffixLength(i, nl1, 0)
           table(sl) = nl1 - i + sl
           loop2(i + 1)
@@ -730,8 +730,8 @@ object Multipart {
     def nextIndex(haystack: ByteString, offset: Int): Int = {
       @tailrec def rec(i: Int, j: Int): Int = {
         val byte = byteAt(haystack, i)
-        if (needle(j) == byte) {
-          if (j == 0) i // found
+        if needle(j) == byte then {
+          if j == 0 then i // found
           else rec(i - 1, j - 1)
         } else rec(i + math.max(offsetTable(nl1 - j), charTable(byte & 0xff)), nl1)
       }

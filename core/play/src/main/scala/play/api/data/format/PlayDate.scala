@@ -16,8 +16,8 @@ private[play] object PlayDate {
 }
 
 private[play] class PlayDate(accessor: TemporalAccessor) {
-  private[this] def getOrDefault(field: TemporalField, default: Int): Int = {
-    if (accessor.isSupported(field)) accessor.get(field) else default
+  private def getOrDefault(field: TemporalField, default: Int): Int = {
+    if accessor.isSupported(field) then accessor.get(field) else default
   }
 
   def toZonedDateTime(zoneId: ZoneId): ZonedDateTime = {

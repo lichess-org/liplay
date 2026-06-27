@@ -30,7 +30,7 @@ import play.api.http.Status.*
 private[mvc] case class ByteRange(start: Long, end: Long) extends Ordered[ByteRange] {
   override def compare(that: ByteRange): Int = {
     val startCompare = this.start - that.start
-    if (startCompare != 0) startCompare.toInt
+    if startCompare != 0 then startCompare.toInt
     else (this.end - that.end).toInt
   }
 
@@ -162,7 +162,7 @@ private[mvc] object Range {
       val firstByte = asOptionLong(first)
       val lastByte  = asOptionLong(last)
 
-      if ((firstByte ++ lastByte).isEmpty) return None // unsatisfiable range
+      if (firstByte ++ lastByte).isEmpty then return None // unsatisfiable range
 
       entityLength
         .map(entityLen => WithEntityLengthRange(entityLen, firstByte, lastByte))
@@ -170,7 +170,7 @@ private[mvc] object Range {
     case _ => None // unsatisfiable range
   }
 
-  private def asOptionLong(string: String) = if (string.isEmpty) None else Some(string.toLong)
+  private def asOptionLong(string: String) = if string.isEmpty then None else Some(string.toLong)
 }
 
 private[mvc] trait RangeSet {
@@ -200,7 +200,7 @@ private[mvc] trait RangeSet {
   //    excluding those ranges that were deemed unsatisfiable or that were
   //    coalesced into other ranges.
   def normalize: RangeSet = {
-    if (isValid) {
+    if isValid then {
       flattenRanges.sorted match {
         case seq if seq.isEmpty => UnsatisfiableRangeSet(entityLength)
         case seq                => SatisfiableRangeSet(entityLength, ranges = coalesce(seq.toList).map(Option.apply))
@@ -460,7 +460,7 @@ object RangeResult {
       case _: NoHeaderRangeSet =>
         entityLength match {
           case Some(entityLen) =>
-            if (entityLen > 0) {
+            if entityLen > 0 then {
               val (_, source) = getSource(0L)
               Result(
                 ResponseHeader(status = OK, headers = commonHeaders),
@@ -493,13 +493,13 @@ object RangeResult {
 
           override def onPush(): Unit = {
             val element = grab(in)
-            if (toSkip >= element.length)
+            if toSkip >= element.length then
               pull(in)
             else {
               val data = element.drop(toSkip.toInt).take(math.min(remaining, Int.MaxValue).toInt)
               remaining -= data.size
               push(out, data)
-              if (remaining <= 0) completeStage()
+              if remaining <= 0 then completeStage()
             }
             toSkip -= element.length
           }

@@ -12,7 +12,7 @@ import com.google.common.net.InetAddresses
 import play.core.server.common.ForwardedHeaderHandler.ForwardedHeaderVersion
 import play.core.server.common.ForwardedHeaderHandler.Rfc7239
 import play.core.server.common.ForwardedHeaderHandler.Xforwarded
-import play.core.server.common.NodeIdentifierParser._
+import play.core.server.common.NodeIdentifierParser.*
 
 import scala.util.Try
 import scala.util.parsing.combinator.RegexParsers

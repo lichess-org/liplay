@@ -65,10 +65,10 @@ object EncodingPreference {
   def ordering(compareByName: (String, String) => Int): Ordering[EncodingPreference] =
     (a: EncodingPreference, b: EncodingPreference) => {
       val qCompare = a.q.compare(b.q)
-      val compare  = if (qCompare != 0) -qCompare else compareByName(a.name, b.name)
-      if (compare != 0) compare
-      else if (a.matchesAny) 1
-      else if (b.matchesAny) -1
+      val compare  = if qCompare != 0 then -qCompare else compareByName(a.name, b.name)
+      if compare != 0 then compare
+      else if a.matchesAny then 1
+      else if b.matchesAny then -1
       else 0
     }
 }
@@ -115,14 +115,14 @@ trait AcceptEncoding {
     val filteredMatches = preferences.filter(e => e.q > 0 && choices.exists(e.matches))
     // get top preference by finding max q and then getting preferred option among those
     val preference =
-      if (filteredMatches.isEmpty) None
+      if filteredMatches.isEmpty then None
       else {
         val maxQ = filteredMatches.maxBy(_.q).q
         filteredMatches
           .filter(maxQ == _.q)
           .minByOption { pref =>
             val idx = choices.indexWhere(pref.matches)
-            if (idx == -1) Int.MaxValue else idx
+            if idx == -1 then Int.MaxValue else idx
           }
       }
     // return the name of the encoding if it matches any, otherwise identity if it is accepted by the client
@@ -161,7 +161,7 @@ object AcceptEncoding {
   def parseHeader(acceptEncoding: String): Seq[EncodingPreference] = {
     AcceptEncodingParser(new CharSequenceReader(acceptEncoding)) match {
       case AcceptEncodingParser.Success(encs: Seq[EncodingPreference], next) =>
-        if (!next.atEnd) {
+        if !next.atEnd then {
           logger.debug(s"Unable to parse part of Accept-Encoding header '${next.source}'")
         }
         encs

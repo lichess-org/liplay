@@ -230,7 +230,7 @@ object QueryStringBindable {
   implicit object bindableChar extends QueryStringBindable[Char] {
     def bind(key: String, params: Map[String, Seq[String]]) =
       params.get(key).flatMap(_.headOption).filter(_.nonEmpty).map { value =>
-        if (value.length == 1) {
+        if value.length == 1 then {
           Right(value.charAt(0))
         } else {
           Left(s"Cannot parse parameter $key with value '$value' as Char: $key must be exactly one digit in length.")
@@ -370,7 +370,7 @@ object QueryStringBindable {
   }
 
   private def unbindSeq[T: QueryStringBindable](key: String, values: Iterable[T]): String = {
-    (for (value <- values) yield {
+    (for value <- values yield {
       implicitly[QueryStringBindable[T]].unbind(key, value)
     }).mkString("&")
   }
@@ -422,7 +422,7 @@ object PathBindable {
    */
   implicit object bindableChar extends PathBindable[Char] {
     def bind(key: String, value: String) = {
-      if (value.length != 1)
+      if value.length != 1 then
         Left(s"Cannot parse parameter $key with value '$value' as Char: $key must be exactly one digit in length.")
       else Right(value.charAt(0))
     }
@@ -490,7 +490,7 @@ object PathBindable {
    */
   private[play] lazy val pathBindableRegister: Map[Class[?], PathBindable[?]] = {
     import scala.language.existentials
-    def register[T](implicit pb: PathBindable[T], ct: ClassTag[T]) = ct.runtimeClass -> pb
+    def register[T](using pb: PathBindable[T], ct: ClassTag[T]) = ct.runtimeClass -> pb
     Map(
       register[String],
       register[UUID]

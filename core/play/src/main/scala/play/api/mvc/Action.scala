@@ -74,7 +74,7 @@ trait Action[A] extends EssentialAction {
         val request = Request(rh, a)
         logger.trace("Invoking action with request: " + request)
         apply(request)
-    }(ExecCtxUtils.prepare(executionContext))
+    }(using ExecCtxUtils.prepare(executionContext))
 
   /** @return The execution context to run the action in */
   def executionContext: ExecutionContext
@@ -92,7 +92,7 @@ trait Action[A] extends EssentialAction {
  */
 trait BodyParser[+A] extends (RequestHeader => Accumulator[ByteString, Either[Result, A]]) {
   // "with Any" because we need to prevent 2.12 SAM inference here
-  self: BodyParser[A] with Any =>
+  self: BodyParser[A] & Any =>
 
   /**
    * Uses the provided function to transform the BodyParser's computed result
@@ -104,11 +104,11 @@ trait BodyParser[+A] extends (RequestHeader => Accumulator[ByteString, Either[Re
    * @return the transformed body parser
    * @see play.api.libs.streams.Accumulator.map
    */
-  def map[B](f: A => B)(implicit ec: ExecutionContext): BodyParser[B] = {
+  def map[B](f: A => B)(using ec: ExecutionContext): BodyParser[B] = {
     // prepare execution context as body parser object may cross thread boundary
     implicit val pec = ExecCtxUtils.prepare(ec)
     new BodyParser[B] {
-      def apply(request: RequestHeader) = self(request).map(_.map(f))(pec)
+      def apply(request: RequestHeader) = self(request).map(_.map(f))(using pec)
       override def toString             = self.toString
     }
   }
@@ -123,15 +123,15 @@ trait BodyParser[+A] extends (RequestHeader => Accumulator[ByteString, Either[Re
    * @see [[map]]
    * @see play.api.libs.streams.Accumulator.mapFuture[B]
    */
-  def mapM[B](f: A => Future[B])(implicit ec: ExecutionContext): BodyParser[B] = {
+  def mapM[B](f: A => Future[B])(using ec: ExecutionContext): BodyParser[B] = {
     // prepare execution context as body parser object may cross thread boundary
     implicit val pec = ExecCtxUtils.prepare(ec)
     new BodyParser[B] {
       def apply(request: RequestHeader) =
         self(request).mapFuture {
-          case Right(a) => f(a).map(Right.apply)(Execution.trampoline) // safe to execute `Right.apply` in same thread
+          case Right(a) => f(a).map(Right.apply)(using Execution.trampoline) // safe to execute `Right.apply` in same thread
           case left     => Future.successful(left.asInstanceOf[Either[Result, B]])
-        }(pec)
+        }(using pec)
       override def toString = self.toString
     }
   }
@@ -155,11 +155,11 @@ trait BodyParser[+A] extends (RequestHeader => Accumulator[ByteString, Either[Re
    *        The context is prepared on the calling thread.
    * @return the transformed body parser
    */
-  def validate[B](f: A => Either[Result, B])(implicit ec: ExecutionContext): BodyParser[B] = {
+  def validate[B](f: A => Either[Result, B])(using ec: ExecutionContext): BodyParser[B] = {
     // prepare execution context as body parser object may cross thread boundary
     implicit val pec = ExecCtxUtils.prepare(ec)
     new BodyParser[B] {
-      def apply(request: RequestHeader) = self(request).map(_.flatMap(f))(pec)
+      def apply(request: RequestHeader) = self(request).map(_.flatMap(f))(using pec)
       override def toString             = self.toString
     }
   }
@@ -173,7 +173,7 @@ trait BodyParser[+A] extends (RequestHeader => Accumulator[ByteString, Either[Re
    * @return the transformed body parser
    * @see [[validate]]
    */
-  def validateM[B](f: A => Future[Either[Result, B]])(implicit ec: ExecutionContext): BodyParser[B] = {
+  def validateM[B](f: A => Future[Either[Result, B]])(using ec: ExecutionContext): BodyParser[B] = {
     // prepare execution context as body parser object may cross thread boundary
     implicit val pec = ExecCtxUtils.prepare(ec)
     new BodyParser[B] {
@@ -181,7 +181,7 @@ trait BodyParser[+A] extends (RequestHeader => Accumulator[ByteString, Either[Re
         self(request).mapFuture {
           case Right(a) => f(a) // safe to execute `Done.apply` in same thread
           case Left(e)  => Future.successful(Left(e))
-        }(pec)
+        }(using pec)
       override def toString = self.toString
     }
   }
@@ -406,15 +406,15 @@ trait ActionBuilder[+R[_], B] extends ActionFunction[Request, R] {
 }
 
 object ActionBuilder {
-  class IgnoringBody()(implicit ec: ExecutionContext)
-      extends ActionBuilderImpl(BodyParsers.utils.ignore[AnyContent](AnyContentAsEmpty))(ec)
+  class IgnoringBody()(using ec: ExecutionContext)
+      extends ActionBuilderImpl(BodyParsers.utils.ignore[AnyContent](AnyContentAsEmpty))(using ec)
 
   /**
    * An ActionBuilder that ignores the body passed into it. This uses the trampoline execution context, which
    * executes in the current thread. Since using this execution context in user code can cause unexpected
    * consequences, this method is private[play].
    */
-  private[play] lazy val ignoringBody: ActionBuilder[Request, AnyContent] = new IgnoringBody()(Execution.trampoline)
+  private[play] lazy val ignoringBody: ActionBuilder[Request, AnyContent] = new IgnoringBody()(using Execution.trampoline)
 }
 
 /**
@@ -426,20 +426,20 @@ object ActionBuilder {
 trait DefaultActionBuilder extends ActionBuilder[Request, AnyContent]
 
 object DefaultActionBuilder {
-  def apply(parser: BodyParser[AnyContent])(implicit ec: ExecutionContext): DefaultActionBuilder =
+  def apply(parser: BodyParser[AnyContent])(using ec: ExecutionContext): DefaultActionBuilder =
     new DefaultActionBuilderImpl(parser)
 }
 
-class ActionBuilderImpl[B](val parser: BodyParser[B])(implicit val executionContext: ExecutionContext)
+class ActionBuilderImpl[B](val parser: BodyParser[B])(using val executionContext: ExecutionContext)
     extends ActionBuilder[Request, B] {
   def invokeBlock[A](request: Request[A], block: (Request[A]) => Future[Result]) = block(request)
 }
 
-class DefaultActionBuilderImpl(parser: BodyParser[AnyContent])(implicit ec: ExecutionContext)
+class DefaultActionBuilderImpl(parser: BodyParser[AnyContent])(using ec: ExecutionContext)
     extends ActionBuilderImpl(parser)
     with DefaultActionBuilder {
   @Inject
-  def this(parser: BodyParsers.Default)(implicit ec: ExecutionContext) = this(parser: BodyParser[AnyContent])
+  def this(parser: BodyParsers.Default)(using ec: ExecutionContext) = this(parser: BodyParser[AnyContent])
 }
 
 /* NOTE: the following are all example uses of ActionFunction, each subtly
@@ -463,7 +463,7 @@ trait ActionRefiner[-R[_], +P[_]] extends ActionFunction[R, P] {
   protected def refine[A](request: R[A]): Future[Either[Result, P[A]]]
 
   final def invokeBlock[A](request: R[A], block: P[A] => Future[Result]) =
-    refine(request).flatMap(_.fold(Future.successful, block))(executionContext)
+    refine(request).flatMap(_.fold(Future.successful, block))(using executionContext)
 }
 
 /**
@@ -481,7 +481,7 @@ trait ActionTransformer[-R[_], +P[_]] extends ActionRefiner[R, P] {
    */
   protected def transform[A](request: R[A]): Future[P[A]]
 
-  final def refine[A](request: R[A]) = transform(request).map(Right(_))(executionContext)
+  final def refine[A](request: R[A]) = transform(request).map(Right(_))(using executionContext)
 }
 
 /**
@@ -501,5 +501,5 @@ trait ActionFilter[R[_]] extends ActionRefiner[R, R] {
    */
   protected def filter[A](request: R[A]): Future[Option[Result]]
 
-  protected final def refine[A](request: R[A]) = filter(request).map(_.toLeft(request))(executionContext)
+  protected final def refine[A](request: R[A]) = filter(request).map(_.toLeft(request))(using executionContext)
 }

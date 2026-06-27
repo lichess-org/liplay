@@ -11,7 +11,7 @@ import java.util.UUID
 /**
  * An extractor that extracts from a String using a [[play.api.mvc.PathBindable]].
  */
-class PathBindableExtractor[T](implicit pb: PathBindable[T]) {
+class PathBindableExtractor[T](using pb: PathBindable[T]) {
   self =>
 
   /**
@@ -39,7 +39,7 @@ class PathBindableExtractor[T](implicit pb: PathBindable[T]) {
     val bound = s.collect {
       case self(value) => value
     }
-    if (bound.sizeIs == s.length) {
+    if bound.sizeIs == s.length then {
       Some(bound)
     } else {
       None

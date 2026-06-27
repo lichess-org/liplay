@@ -72,7 +72,7 @@ object EventSource {
       val sb = new StringBuilder
       name.foreach(sb.append("event: ").append(_).append('\n'))
       id.foreach(sb.append("id: ").append(_).append('\n'))
-      for (line <- data.split("(\r?\n)|\r", -1)) {
+      for line <- data.split("(\r?\n)|\r", -1) do {
         sb.append("data: ").append(line).append('\n')
       }
       sb.append('\n')
@@ -90,18 +90,18 @@ object EventSource {
      * and the nameExtractor and idExtractor will implicitly resolve to `None`.
      */
     def apply[A](a: A)(
-        implicit dataExtractor: EventDataExtractor[A],
+        using dataExtractor: EventDataExtractor[A],
         nameExtractor: EventNameExtractor[A],
         idExtractor: EventIdExtractor[A]
     ): Event = {
       Event(dataExtractor.eventData(a), idExtractor.eventId(a), nameExtractor.eventName(a))
     }
 
-    implicit def writeable(implicit codec: Codec): Writeable[Event] = {
+    implicit def writeable(using codec: Codec): Writeable[Event] = {
       Writeable(event => codec.encode(event.formatted))
     }
 
-    implicit def contentType(implicit codec: Codec): ContentTypeOf[Event] = {
+    implicit def contentType(using codec: Codec): ContentTypeOf[Event] = {
       ContentTypeOf(Some(ContentTypes.EVENT_STREAM))
     }
   }

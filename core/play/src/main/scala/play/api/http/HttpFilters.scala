@@ -86,7 +86,7 @@ class EnabledFilters @Inject() (env: Environment, configuration: Configuration, 
         val disabledSet = configuration.get[Seq[String]](disabledKey).toSet
         val enabledList = configuration.get[Seq[String]](enabledKey).filterNot(disabledSet.contains)
 
-        for (filterClassName <- enabledList) yield {
+        for filterClassName <- enabledList yield {
           try {
             val filterClass: Class[EssentialFilter] =
               env.classLoader.loadClass(filterClassName).asInstanceOf[Class[EssentialFilter]]
@@ -108,7 +108,7 @@ class EnabledFilters @Inject() (env: Environment, configuration: Configuration, 
   }
 
   private def printMessageInDevMode(): Unit = {
-    if (env.mode == play.api.Mode.Dev) {
+    if env.mode == play.api.Mode.Dev then {
       val b = new StringBuffer()
       b.append(s"Enabled Filters (see <$url>):\n\n")
       filters.foreach(f => b.append(s"    ${f.getClass.getCanonicalName}\n"))

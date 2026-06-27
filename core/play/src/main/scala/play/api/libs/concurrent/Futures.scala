@@ -154,7 +154,7 @@ trait LowPriorityFuturesImplicits {
      * @param futures the implicit Futures.
      * @return the future that completes first, either the failed future, or the operation.
      */
-    def withTimeout(timeoutDuration: FiniteDuration)(implicit futures: Futures): Future[T] = {
+    def withTimeout(timeoutDuration: FiniteDuration)(using futures: Futures): Future[T] = {
       futures.timeout(timeoutDuration)(future)
     }
 
@@ -172,7 +172,7 @@ trait LowPriorityFuturesImplicits {
      * @param futures the implicit Futures.
      * @return the future that completes first, either the failed future, or the operation.
      */
-    def withTimeout(implicit akkaTimeout: akka.util.Timeout, futures: Futures): Future[T] = {
+    def withTimeout(using akkaTimeout: akka.util.Timeout, futures: Futures): Future[T] = {
       futures.timeout(akkaTimeout.duration)(future)
     }
 
@@ -184,7 +184,7 @@ trait LowPriorityFuturesImplicits {
      * @return the future delayed by the specified duration.
      */
     @deprecated("Use future.withDelay(duration) or futures.delayed(duration)(future)", "2.6.6")
-    def withDelay[A](duration: FiniteDuration)(future: Future[A])(implicit futures: Futures): Future[A] = {
+    def withDelay[A](duration: FiniteDuration)(future: Future[A])(using futures: Futures): Future[A] = {
       futures.delayed(duration)(future)
     }
 
@@ -195,14 +195,14 @@ trait LowPriorityFuturesImplicits {
      * @param futures the implicit Futures.
      * @return the future delayed by the specified duration.
      */
-    def withDelay(duration: FiniteDuration)(implicit futures: Futures): Future[T] = {
+    def withDelay(duration: FiniteDuration)(using futures: Futures): Future[T] = {
       futures.delayed(duration)(future)
     }
   }
 }
 
 object Futures extends LowPriorityFuturesImplicits {
-  implicit def actorSystemToFutures(implicit actorSystem: ActorSystem): Futures = {
+  implicit def actorSystemToFutures(using actorSystem: ActorSystem): Futures = {
     new DefaultFutures(actorSystem)
   }
 }

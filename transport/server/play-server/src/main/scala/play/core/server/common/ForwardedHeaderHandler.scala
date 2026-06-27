@@ -13,7 +13,7 @@ import play.api.mvc.Headers
 import play.core.server.common.NodeIdentifierParser.Ip
 
 import scala.annotation.tailrec
-import ForwardedHeaderHandler._
+import ForwardedHeaderHandler.*
 import play.api.mvc.request.RemoteConnection
 
 /**
@@ -83,11 +83,11 @@ private[server] class ForwardedHeaderHandler(configuration: ForwardedHeaderHandl
       @tailrec
       def scan(prev: RemoteConnection): RemoteConnection = {
         // Check if there's a forwarded header for us to scan.
-        if (headerEntries.hasNext) {
+        if headerEntries.hasNext then {
           // There is a forwarded header from 'prev', so lets check if 'prev' is trusted.
           // If it's a trusted proxy then process the header, otherwise just use 'prev'.
 
-          if (configuration.isTrustedProxy(prev.remoteAddress)) {
+          if configuration.isTrustedProxy(prev.remoteAddress) then {
             // 'prev' is a trusted proxy, so we process the next entry.
             val entry = headerEntries.next()
             configuration.parseEntry(entry) match {
@@ -154,7 +154,7 @@ private[server] object ForwardedHeaderHandler {
      * Not RFC compliant. To be compliant we need proper header field parsing.
      */
     private def unquote(s: String): String = {
-      if (s.length >= 2 && s.charAt(0) == '"' && s.charAt(s.length - 1) == '"') {
+      if s.length >= 2 && s.charAt(0) == '"' && s.charAt(s.length - 1) == '"' then {
         s.substring(1, s.length - 1)
       } else s
     }
@@ -166,10 +166,10 @@ private[server] object ForwardedHeaderHandler {
      */
     def forwardedHeaders(headers: Headers): Seq[ForwardedEntry] = version match {
       case Rfc7239 => {
-        val params = for {
+        val params = for
           fhs <- headers.getAll("Forwarded")
           fh  <- fhs.split(",\\s*")
-        } yield fh
+        yield fh
           .split(";")
           .iterator
           .flatMap {
@@ -194,7 +194,7 @@ private[server] object ForwardedHeaderHandler {
         def h(h: Headers, key: String) = h.getAll(key).flatMap(s => s.split(",\\s*")).map(unquote)
         val forHeaders                 = h(headers, "X-Forwarded-For")
         val protoHeaders               = h(headers, "X-Forwarded-Proto")
-        if (forHeaders.length == protoHeaders.length) {
+        if forHeaders.length == protoHeaders.length then {
           forHeaders.zip(protoHeaders).map {
             case (f, p) => ForwardedEntry(Some(f), Some(p))
           }

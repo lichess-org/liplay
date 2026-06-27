@@ -33,7 +33,7 @@ trait Request[+A] extends RequestHeader {
    */
   override def hasBody: Boolean = {
     import play.api.http.HeaderNames.*
-    if (headers.get(CONTENT_LENGTH).isDefined || headers.get(TRANSFER_ENCODING).isDefined) {
+    if headers.get(CONTENT_LENGTH).isDefined || headers.get(TRANSFER_ENCODING).isDefined then {
       // A relevant header is set, which means this is a real request or a fake request used for testing where the user
       // cared about setting the headers. We can just use them to see if a body exists. In a real life production application,
       // where clients basically always send these headers when applicable (for requests that send bodies like POST, etc.)

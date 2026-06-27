@@ -10,7 +10,7 @@ import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
 import org.slf4j.LoggerFactory
-import play.api._
+import play.api.*
 import play.api.libs.Codecs
 import play.api.mvc.Cookie.SameSite
 import play.core.cookie.encoding.ClientCookieDecoder
@@ -19,7 +19,7 @@ import play.core.cookie.encoding.ServerCookieDecoder
 import play.core.cookie.encoding.ServerCookieEncoder
 
 import java.nio.charset.StandardCharsets
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 import scala.util.Failure
 import scala.util.Success
 
@@ -84,10 +84,10 @@ case class SecretConfiguration(secret: String = "changeme", provider: Option[Str
  *               discarded if a single cookie is found to be invalid.
  */
 case class CookiesConfiguration(strict: Boolean = true) {
-  val serverEncoder: ServerCookieEncoder = if (strict) ServerCookieEncoder.STRICT else ServerCookieEncoder.LAX
-  val serverDecoder: ServerCookieDecoder = if (strict) ServerCookieDecoder.STRICT else ServerCookieDecoder.LAX
-  val clientEncoder: ClientCookieEncoder = if (strict) ClientCookieEncoder.STRICT else ClientCookieEncoder.LAX
-  val clientDecoder: ClientCookieDecoder = if (strict) ClientCookieDecoder.STRICT else ClientCookieDecoder.LAX
+  val serverEncoder: ServerCookieEncoder = if strict then ServerCookieEncoder.STRICT else ServerCookieEncoder.LAX
+  val serverDecoder: ServerCookieDecoder = if strict then ServerCookieDecoder.STRICT else ServerCookieDecoder.LAX
+  val clientEncoder: ClientCookieEncoder = if strict then ClientCookieEncoder.STRICT else ClientCookieEncoder.LAX
+  val clientDecoder: ClientCookieDecoder = if strict then ClientCookieDecoder.STRICT else ClientCookieDecoder.LAX
 }
 
 /**
@@ -171,7 +171,7 @@ object HttpConfiguration {
   def parseSameSite(config: Configuration, key: String): Option[SameSite] = {
     config.get[Option[String]](key).flatMap { value =>
       val result = SameSite.parse(value)
-      if (result.isEmpty) {
+      if result.isEmpty then {
         val values = SameSite.values.mkString(", ")
         logger.warn(s"""Assuming $key = null, since "$value" is not a valid SameSite value ($values)""")
       }
@@ -206,7 +206,7 @@ object HttpConfiguration {
         case Some(depKey) => config.getDeprecated[String](key, depKey)
         case None         => config.get[String](key)
       }
-      if (!path.startsWith("/")) {
+      if !path.startsWith("/") then {
         throw config.globalError(s"$key must start with a /")
       }
       path
@@ -216,7 +216,7 @@ object HttpConfiguration {
     val sessionPath = getPath("play.http.session.path")
     val flashPath   = getPath("play.http.flash.path")
 
-    if (config.has("mimetype")) {
+    if config.has("mimetype") then {
       throw config.globalError("mimetype replaced by play.http.fileMimeTypes map")
     }
 

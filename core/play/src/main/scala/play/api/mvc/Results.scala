@@ -51,9 +51,9 @@ final class ResponseHeader(
   val headers: Map[String, String] = TreeMap[String, String]()(using CaseInsensitiveOrdered) ++ _headers
 
   // validate headers so we know this response header is well formed
-  for ((name, value) <- headers) {
-    if (name eq null) throw new NullPointerException("Response header names cannot be null!")
-    if (value eq null) throw new NullPointerException(s"Response header '$name' has null value!")
+  for (name, value) <- headers do {
+    if name eq null then throw new NullPointerException("Response header names cannot be null!")
+    if value eq null then throw new NullPointerException(s"Response header '$name' has null value!")
   }
 
   def copy(
@@ -103,7 +103,7 @@ object ResponseHeader {
   ): ResponseHeader =
     new ResponseHeader(status, headers)
   def unapply(rh: ResponseHeader): Option[(Int, Map[String, String], Option[String])] =
-    if (rh eq null) None else Some((rh.status, rh.headers, rh.reasonPhrase))
+    if rh eq null then None else Some((rh.status, rh.headers, rh.reasonPhrase))
 }
 
 object Result {
@@ -112,7 +112,7 @@ object Result {
    * Logs a redirect warning for flashing (in dev mode) if the status code is not 3xx
    */
   @inline def warnFlashingIfNotRedirect(flash: Flash, header: ResponseHeader): Unit = {
-    if (!flash.isEmpty && !Status.isRedirect(header.status)) {
+    if !flash.isEmpty && !Status.isRedirect(header.status) then {
       Logger("play")
         .forMode(Mode.Dev)
         .warn(
@@ -193,7 +193,7 @@ case class Result(
    */
   def withCookies(cookies: Cookie*): Result = {
     val filteredCookies = newCookies.filter(cookie => !cookies.exists(_.name == cookie.name))
-    if (cookies.isEmpty) this else copy(newCookies = filteredCookies ++ cookies)
+    if cookies.isEmpty then this else copy(newCookies = filteredCookies ++ cookies)
   }
 
   /**
@@ -295,7 +295,7 @@ case class Result(
    * @param request Current request
    * @return The session carried by this result. Reads the request’s session if this result does not modify the session.
    */
-  def session(implicit request: RequestHeader): Session = newSession.getOrElse(request.session)
+  def session(using request: RequestHeader): Session = newSession.getOrElse(request.session)
 
   /**
    * Example:
@@ -307,7 +307,7 @@ case class Result(
    * @param request Current request
    * @return A copy of this result with `values` added to its session scope.
    */
-  def addingToSession(values: (String, String)*)(implicit request: RequestHeader): Result =
+  def addingToSession(values: (String, String)*)(using request: RequestHeader): Result =
     withSession(new Session(session.data ++ values.toMap))
 
   /**
@@ -320,7 +320,7 @@ case class Result(
    * @param request Current request
    * @return A copy of this result with `keys` removed from its session scope.
    */
-  def removingFromSession(keys: String*)(implicit request: RequestHeader): Result =
+  def removingFromSession(keys: String*)(using request: RequestHeader): Result =
     withSession(new Session(session.data -- keys))
 
   override def toString = s"Result(${header})"
@@ -338,17 +338,17 @@ case class Result(
     val allCookies = {
       val setCookieCookies = cookieHeaderEncoding.decodeSetCookieHeader(header.headers.getOrElse(SET_COOKIE, ""))
       val session = newSession.map { data =>
-        if (data.isEmpty) sessionBaker.discard.toCookie else sessionBaker.encodeAsCookie(data)
+        if data.isEmpty then sessionBaker.discard.toCookie else sessionBaker.encodeAsCookie(data)
       }
       val flash = newFlash
-        .map { data => if (data.isEmpty) flashBaker.discard.toCookie else flashBaker.encodeAsCookie(data) }
+        .map { data => if data.isEmpty then flashBaker.discard.toCookie else flashBaker.encodeAsCookie(data) }
         .orElse {
-          if (requestHasFlash) Some(flashBaker.discard.toCookie) else None
+          if requestHasFlash then Some(flashBaker.discard.toCookie) else None
         }
       setCookieCookies ++ session ++ flash ++ newCookies
     }
 
-    if (allCookies.isEmpty) {
+    if allCookies.isEmpty then {
       this
     } else {
       withHeaders(SET_COOKIE -> cookieHeaderEncoding.encodeSetCookieHeader(allCookies))
@@ -467,7 +467,7 @@ object Results extends Results {
    * @return
    */
   private[play] def addQueryStringParams(url: String, queryStringParams: Map[String, Seq[String]]): String = {
-    if (queryStringParams.isEmpty) {
+    if queryStringParams.isEmpty then {
       url
     } else {
       val queryString: String = queryStringParams
@@ -478,7 +478,7 @@ object Results extends Results {
         }
         .mkString("&")
 
-      url + (if (url.contains("?")) "&" else "?") + queryString
+      url + (if url.contains("?") then "&" else "?") + queryString
     }
   }
 
@@ -494,11 +494,11 @@ object Results extends Results {
    * @see [[https://tools.ietf.org/html/rfc6266#section-4.2]]
    */
   def contentDispositionHeader(inline: Boolean, name: Option[String]): Map[String, String] =
-    if (!inline || name.exists(_.nonEmpty))
+    if !inline || name.exists(_.nonEmpty) then
       Map(
         CONTENT_DISPOSITION -> {
           val builder = new JStringBuilder
-          builder.append(if (inline) "inline" else "attachment")
+          builder.append(if inline then "inline" else "attachment")
           name.foreach(filename => {
             builder.append("; ")
             HttpHeaderParameterEncoding.encodeToBuilder("filename", filename, builder)
@@ -525,7 +525,7 @@ trait Results {
      *
      * @param content The content to send.
      */
-    def apply[C](content: C)(implicit writeable: Writeable[C]): Result = {
+    def apply[C](content: C)(using writeable: Writeable[C]): Result = {
       Result(
         header,
         writeable.toEntity(content)
@@ -533,7 +533,7 @@ trait Results {
     }
 
     private def streamFile(file: Source[ByteString, ?], name: Option[String], length: Option[Long], inline: Boolean)(
-        implicit fileMimeTypes: FileMimeTypes
+        using fileMimeTypes: FileMimeTypes
     ): Result = {
       Result(
         ResponseHeader(
@@ -564,7 +564,7 @@ trait Results {
         inline: Boolean = true,
         fileName: java.io.File => Option[String] = Option(_).map(_.getName),
         onClose: () => Unit = () => ()
-    )(implicit ec: ExecutionContext, fileMimeTypes: FileMimeTypes): Result = {
+    )(using ec: ExecutionContext, fileMimeTypes: FileMimeTypes): Result = {
       sendPath(content.toPath, inline, (p: Path) => fileName(p.toFile), onClose)
     }
 
@@ -584,7 +584,7 @@ trait Results {
         inline: Boolean = true,
         fileName: Path => Option[String] = Option(_).map(_.getFileName.toString),
         onClose: () => Unit = () => ()
-    )(implicit ec: ExecutionContext, fileMimeTypes: FileMimeTypes): Result = {
+    )(using ec: ExecutionContext, fileMimeTypes: FileMimeTypes): Result = {
       val io = FileIO
         .fromPath(content)
         .mapMaterializedValue(_.onComplete { _ => onClose() })
@@ -609,7 +609,7 @@ trait Results {
         inline: Boolean = true,
         fileName: String => Option[String] = Option(_).map(_.split('/').last),
         onClose: () => Unit = () => ()
-    )(implicit ec: ExecutionContext, fileMimeTypes: FileMimeTypes): Result = {
+    )(using ec: ExecutionContext, fileMimeTypes: FileMimeTypes): Result = {
       val stream = classLoader.getResourceAsStream(resource)
       val io = StreamConverters
         .fromInputStream(() => stream)
@@ -630,7 +630,7 @@ trait Results {
      * @param contentType an optional content type.
      */
     def chunked[C](content: Source[C, ?], contentType: Option[String] = None)(
-        implicit writeable: Writeable[C]
+        using writeable: Writeable[C]
     ): Result = {
       Result(
         header = header,
@@ -656,7 +656,7 @@ trait Results {
      *      {@code implicit writeable} if unknown.
      */
     def chunked[C](content: Source[C, ?], inline: Boolean, fileName: Option[String])(
-        implicit writeable: Writeable[C],
+        using writeable: Writeable[C],
         fileMimeTypes: FileMimeTypes
     ): Result = {
       Result(
@@ -679,7 +679,7 @@ trait Results {
      * @param contentType an optional content type.
      */
     def streamed[C](content: Source[C, ?], contentLength: Option[Long], contentType: Option[String] = None)(
-        implicit writeable: Writeable[C]
+        using writeable: Writeable[C]
     ): Result = {
       Result(
         header = header,
@@ -703,7 +703,7 @@ trait Results {
      *      {@code implicit writeable} if unknown.
      */
     def streamed[C](content: Source[C, ?], contentLength: Option[Long], inline: Boolean, fileName: Option[String])(
-        implicit writeable: Writeable[C],
+        using writeable: Writeable[C],
         fileMimeTypes: FileMimeTypes
     ): Result = {
       Result(
@@ -739,7 +739,7 @@ trait Results {
      *      if unknown.
      */
     def sendEntity(entity: HttpEntity, inline: Boolean, fileName: Option[String])(
-        implicit fileMimeTypes: FileMimeTypes
+        using fileMimeTypes: FileMimeTypes
     ): Result = {
       Result(
         header = header.copy(headers = header.headers ++ Results.contentDispositionHeader(inline, fileName)),
@@ -929,7 +929,7 @@ trait Results {
    * @param status HTTP status for redirect, such as SEE_OTHER, MOVED_TEMPORARILY or MOVED_PERMANENTLY
    */
   def Redirect(url: String, queryStringParams: Map[String, Seq[String]] = Map.empty, status: Int = SEE_OTHER) = {
-    if (!play.api.http.Status.isRedirect(status)) {
+    if !play.api.http.Status.isRedirect(status) then {
       Results.logger
         .forMode(Mode.Dev)
         .warn(s"You are using status code $status which is not a redirect code!")

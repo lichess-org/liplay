@@ -58,7 +58,7 @@ final case class Binding[T](
   def eagerly(): Binding[T] = copy(eager = true)
 
   override def toString = {
-    val eagerDesc = if (eager) " eagerly" else ""
+    val eagerDesc = if eager then " eagerly" else ""
     s"$source:\nBinding($key to ${target.getOrElse("self")}${scope.fold("")(" in " + _)}$eagerDesc)"
   }
 }
@@ -232,7 +232,7 @@ final case class BindingKey[T](clazz: Class[T], qualifier: Option[QualifierAnnot
   }
 
   private def validateTargetNonAbstract[T](target: Class[T]): Class[T] = {
-    if (target.isInterface || Modifier.isAbstract(target.getModifiers)) {
+    if target.isInterface || Modifier.isAbstract(target.getModifiers) then {
       throw new PlayException(
         "Cannot bind abstract target",
         s"""You have attempted to bind $target as a construction target for $this, however, $target is abstract. If you wish to bind this as an alias, bind it to a ${classOf[

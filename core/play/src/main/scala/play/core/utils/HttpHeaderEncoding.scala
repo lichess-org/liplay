@@ -112,7 +112,7 @@ private[play] object HttpHeaderParameterEncoding {
         // the 'token' or 'quoted printable' encoding, however it's
         // simpler to use the subset of characters that is also valid
         // for extended attributes.
-        if (codePoint >= 0 && codePoint <= 255 && PartialQuotedText.get(codePoint)) {
+        if codePoint >= 0 && codePoint <= 255 && PartialQuotedText.get(codePoint) then {
           builder.append(codePoint.toChar)
         } else {
           // Set flag because we need to render an extended parameter.
@@ -131,8 +131,8 @@ private[play] object HttpHeaderParameterEncoding {
     // - https://tools.ietf.org/html/rfc5987#section-4.2
     // - https://tools.ietf.org/html/rfc6266#section-4.3 (for Content-Disposition filename parameter)
 
-    if (hasExtendedChars) {
-      def hexDigit(x: Int): Char = (if (x < 10) x + '0' else x - 10 + 'a').toChar
+    if hasExtendedChars then {
+      def hexDigit(x: Int): Char = (if x < 10 then x + '0' else x - 10 + 'a').toChar
 
       // From https://tools.ietf.org/html/rfc5987#section-3.2.1:
       //
@@ -156,8 +156,8 @@ private[play] object HttpHeaderParameterEncoding {
       // 2.1 of [RFC3986].
 
       val bytes = value.getBytes(CharacterSetName)
-      for (b <- bytes) {
-        if (AttrChar.get(b & 0xff)) {
+      for b <- bytes do {
+        if AttrChar.get(b & 0xff) then {
           builder.append(b.toChar)
         } else {
           builder.append('%')

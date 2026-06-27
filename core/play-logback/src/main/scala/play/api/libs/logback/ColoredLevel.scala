@@ -4,9 +4,9 @@
 
 package play.api.libs.logback
 
-import ch.qos.logback.classic._
-import ch.qos.logback.classic.pattern._
-import ch.qos.logback.classic.spi._
+import ch.qos.logback.classic.*
+import ch.qos.logback.classic.pattern.*
+import ch.qos.logback.classic.spi.*
 
 /**
  * A logback converter generating colored, lower-case level names.

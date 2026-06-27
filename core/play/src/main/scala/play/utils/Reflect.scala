@@ -44,7 +44,7 @@ object Reflect {
       ScalaTrait,
       Default <: ScalaTrait
   ](environment: Environment, config: Configuration, key: String, defaultClassName: String)(
-      implicit
+      using
       scalaTrait: SubClassOf[ScalaTrait],
       default: ClassTag[Default]
   ): Seq[Binding[?]] = {
@@ -92,7 +92,7 @@ object Reflect {
       key: String,
       defaultClassName: String
   )(
-      implicit
+      using
       scalaTrait: SubClassOf[ScalaTrait],
       default: ClassTag[Default]
   ): Option[Class[? <: ScalaTrait]] = {
@@ -146,14 +146,14 @@ object Reflect {
   def getClass[T: ClassTag](fqcn: String, classLoader: ClassLoader): Class[? <: T] = {
     val c = Class.forName(fqcn, false, classLoader).asInstanceOf[Class[? <: T]]
     val t = implicitly[ClassTag[T]].runtimeClass
-    if (t.isAssignableFrom(c)) c
+    if t.isAssignableFrom(c) then c
     else throw new ClassCastException(s"$t is not assignable from $c")
   }
 
   def createInstance[T: ClassTag](clazz: Class[?]): T = {
     val o = clazz.getDeclaredConstructor().newInstance()
     val t = implicitly[ClassTag[T]].runtimeClass
-    if (t.isInstance(o)) o.asInstanceOf[T]
+    if t.isInstance(o) then o.asInstanceOf[T]
     else throw new ClassCastException(clazz.getName + " is not an instance of " + t)
   }
 
@@ -164,7 +164,7 @@ object Reflect {
 
   class SubClassOf[T](val runtimeClass: Class[T]) {
     def unapply(clazz: Class[?]): Option[Class[? <: T]] = {
-      if (runtimeClass.isAssignableFrom(clazz)) {
+      if runtimeClass.isAssignableFrom(clazz) then {
         Some(clazz.asInstanceOf[Class[? <: T]])
       } else {
         None

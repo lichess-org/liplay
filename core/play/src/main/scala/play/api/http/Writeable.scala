@@ -5,12 +5,12 @@
 package play.api.http
 
 import akka.util.ByteString
-import play.api.mvc._
-import play.api.libs.json._
+import play.api.mvc.*
+import play.api.libs.json.*
 import play.api.mvc.MultipartFormData.FilePart
 import play.core.formatters.Multipart
 
-import scala.annotation._
+import scala.annotation.*
 
 /**
  * Transform a value of type A to a Byte Array.
@@ -34,7 +34,7 @@ object Writeable extends DefaultWriteables {
    * Creates a `Writeable[A]` using a content type for `A` available in the implicit scope
    * @param transform Serializing function
    */
-  def apply[A](transform: A => ByteString)(implicit ct: ContentTypeOf[A]): Writeable[A] =
+  def apply[A](transform: A => ByteString)(using ct: ContentTypeOf[A]): Writeable[A] =
     new Writeable(transform, ct.mimeType)
 }
 
@@ -47,7 +47,7 @@ trait LowPriorityWriteables {
    * `Writeable` for `play.twirl.api.Content` values.
    */
   implicit def writeableOf_Content[C <: play.twirl.api.Content](
-      implicit codec: Codec,
+      using codec: Codec,
       ct: ContentTypeOf[C]
   ): Writeable[C] = {
     Writeable(content => codec.encode(content.body))
@@ -63,7 +63,7 @@ trait DefaultWriteables extends LowPriorityWriteables {
    * `Writeable` for `play.twirl.api.Xml` values. Trims surrounding whitespace.
    */
   implicit def writeableOf_XmlContent(
-      implicit codec: Codec,
+      using codec: Codec,
       ct: ContentTypeOf[play.twirl.api.Xml]
   ): Writeable[play.twirl.api.Xml] = {
     Writeable(xml => codec.encode(xml.body.trim))
@@ -72,21 +72,21 @@ trait DefaultWriteables extends LowPriorityWriteables {
   /**
    * `Writeable` for `NodeSeq` values - literal Scala XML.
    */
-  implicit def writeableOf_NodeSeq[C <: scala.xml.NodeSeq](implicit codec: Codec): Writeable[C] = {
+  implicit def writeableOf_NodeSeq[C <: scala.xml.NodeSeq](using codec: Codec): Writeable[C] = {
     Writeable(xml => codec.encode(xml.toString))
   }
 
   /**
    * `Writeable` for `NodeBuffer` values - literal Scala XML.
    */
-  implicit def writeableOf_NodeBuffer(implicit codec: Codec): Writeable[scala.xml.NodeBuffer] = {
+  implicit def writeableOf_NodeBuffer(using codec: Codec): Writeable[scala.xml.NodeBuffer] = {
     Writeable(xml => codec.encode(xml.toString))
   }
 
   /**
    * `Writeable` for `urlEncodedForm` values
    */
-  implicit def writeableOf_urlEncodedForm(implicit codec: Codec): Writeable[Map[String, Seq[String]]] = {
+  implicit def writeableOf_urlEncodedForm(using codec: Codec): Writeable[Map[String, Seq[String]]] = {
     import java.net.URLEncoder
     Writeable(formData =>
       codec.encode(
@@ -137,12 +137,12 @@ trait DefaultWriteables extends LowPriorityWriteables {
       contentType: Option[String]
   ): Writeable[MultipartFormData[A]] = {
     // If the passed contentType already provides a boundary, we (re)use it for the Content-Disposition header
-    val maybeBoundary = for {
+    val maybeBoundary = for
       mt         <- contentType.flatMap(MediaType.parse(_))
       (_, value) <- mt.parameters.find(_._1.equalsIgnoreCase("boundary"))
       boundary   <- value
-    } yield boundary
-    writeableOf_MultipartFormData(maybeBoundary)(codec)
+    yield boundary
+    writeableOf_MultipartFormData(maybeBoundary)(using codec)
   }
 
   /**
@@ -153,7 +153,7 @@ trait DefaultWriteables extends LowPriorityWriteables {
    */
   def writeableOf_MultipartFormData[A](
       boundary: Option[String]
-  )(implicit codec: Codec): Writeable[MultipartFormData[A]] = {
+  )(using codec: Codec): Writeable[MultipartFormData[A]] = {
     val resolvedBoundary = boundary.getOrElse(Multipart.randomBoundary())
 
     def formatDataParts(data: Map[String, Seq[String]]) = {
@@ -184,7 +184,7 @@ trait DefaultWriteables extends LowPriorityWriteables {
       transform = { (form: MultipartFormData[A]) =>
         formatDataParts(form.dataParts) ++ ByteString(form.files.flatMap { file =>
           filePartHeader(file) ++ file.transformRefToBytes() ++ codec.encode("\r\n")
-        }: _*) ++ codec.encode(s"--$resolvedBoundary--")
+        }*) ++ codec.encode(s"--$resolvedBoundary--")
       },
       contentType = Some(s"multipart/form-data; boundary=$resolvedBoundary")
     )
@@ -198,7 +198,7 @@ trait DefaultWriteables extends LowPriorityWriteables {
   /**
    * Straightforward `Writeable` for String values.
    */
-  implicit def wString(implicit codec: Codec): Writeable[String] = Writeable[String](str => codec.encode(str))
+  implicit def wString(using codec: Codec): Writeable[String] = Writeable[String](str => codec.encode(str))
 
   /**
    * Straightforward `Writeable` for Array[Byte] values.

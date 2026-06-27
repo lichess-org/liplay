@@ -23,7 +23,7 @@ trait Cell[+A] {
    */
   def evaluated: Boolean
 
-  override def toString: String = if (evaluated) s"Container<$value>" else "Container<?>"
+  override def toString: String = if evaluated then s"Container<$value>" else "Container<?>"
 }
 
 object Cell {
@@ -65,7 +65,7 @@ abstract class LazyCell[A] extends Cell[A] {
   protected def create: A
 
   override def value: A = {
-    if (createdValue == emptyMarker) {
+    if createdValue == emptyMarker then {
       createdValue = create
     }
     createdValue

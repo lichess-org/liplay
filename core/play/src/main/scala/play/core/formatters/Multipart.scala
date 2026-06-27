@@ -21,9 +21,9 @@ import play.api.mvc.MultipartFormData
 import scala.annotation.tailrec
 
 object Multipart {
-  private[this] def CrLf = "\r\n"
+  private def CrLf = "\r\n"
 
-  private[this] val alphabet = "-_1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".getBytes(US_ASCII)
+  private val alphabet = "-_1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".getBytes(US_ASCII)
 
   /**
    * Transforms a `Source[MultipartFormData.Part]` to a `Source[ByteString]`
@@ -55,8 +55,8 @@ object Multipart {
    *                                  <a href="https://tools.ietf.org/html/rfc2046#section-5.1.1">rfc2046</a>
    */
   def randomBoundary(length: Int = 18, random: java.util.Random = ThreadLocalRandom.current()): String = {
-    if (length < 1 || length > 70) throw new IllegalArgumentException("length can't be greater than 70 or less than 1")
-    val bytes: Seq[Byte] = for (byte <- 1 to length) yield {
+    if length < 1 || length > 70 then throw new IllegalArgumentException("length can't be greater than 70 or less than 1")
+    val bytes: Seq[Byte] = for byte <- 1 to length yield {
       alphabet(random.nextInt(alphabet.length))
     }
     new String(bytes.toArray, US_ASCII)
@@ -82,7 +82,7 @@ object Multipart {
 
     def ~~(string: String): this.type = {
       @tailrec def rec(ix: Int = 0): this.type =
-        if (ix < string.length) {
+        if ix < string.length then {
           this ~~ string.charAt(ix)
           rec(ix + 1)
         } else this
@@ -91,8 +91,8 @@ object Multipart {
   }
 
   private class CustomCharsetByteStringFormatter(nioCharset: Charset, sizeHint: Int) extends Formatter {
-    private[this] val charBuffer = CharBuffer.allocate(64)
-    private[this] val builder    = new ByteStringBuilder
+    private val charBuffer = CharBuffer.allocate(64)
+    private val builder    = new ByteStringBuilder
     builder.sizeHint(sizeHint)
 
     def get: ByteString = {
@@ -101,13 +101,13 @@ object Multipart {
     }
 
     def ~~(char: Char): this.type = {
-      if (!charBuffer.hasRemaining) flushCharBuffer()
+      if !charBuffer.hasRemaining then flushCharBuffer()
       charBuffer.put(char)
       this
     }
 
     def ~~(bytes: ByteString): this.type = {
-      if (bytes.nonEmpty) {
+      if bytes.nonEmpty then {
         flushCharBuffer()
         builder ++= bytes
       }
@@ -116,7 +116,7 @@ object Multipart {
 
     private def flushCharBuffer(): Unit = {
       charBuffer.flip()
-      if (charBuffer.hasRemaining) {
+      if charBuffer.hasRemaining then {
         val byteBuffer = nioCharset.encode(charBuffer)
         val bytes      = new Array[Byte](byteBuffer.remaining())
         byteBuffer.get(bytes)
@@ -127,7 +127,7 @@ object Multipart {
   }
 
   private class ByteStringFormatter(sizeHint: Int) extends Formatter {
-    private[this] val builder = new ByteStringBuilder
+    private val builder = new ByteStringBuilder
     builder.sizeHint(sizeHint)
 
     def get: ByteString = builder.result()
@@ -193,12 +193,12 @@ object Multipart {
 
           override def onPull(): Unit = {
             val finishing = isClosed(in)
-            if (finishing && firstBoundaryRendered) {
+            if finishing && firstBoundaryRendered then {
               val f = new ByteStringFormatter(boundary.length + 4)
               renderFinalBoundary(f, boundary)
               push(out, Source.single(f.get))
               completeStage()
-            } else if (finishing) {
+            } else if finishing then {
               completeStage()
             } else {
               pull(in)
@@ -206,7 +206,7 @@ object Multipart {
           }
 
           override def onUpstreamFinish(): Unit = {
-            if (isAvailable(out)) onPull()
+            if isAvailable(out) then onPull()
           }
 
           setHandlers(in, out, this)
@@ -214,7 +214,7 @@ object Multipart {
     }
 
   private def renderBoundary(f: Formatter, boundary: String, suppressInitialCrLf: Boolean = false): Unit = {
-    if (!suppressInitialCrLf) f ~~ CrLf
+    if !suppressInitialCrLf then f ~~ CrLf
     f ~~ '-' ~~ '-' ~~ boundary ~~ CrLf
   }
 

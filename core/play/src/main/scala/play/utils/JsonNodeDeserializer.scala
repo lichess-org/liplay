@@ -70,9 +70,9 @@ private class JsonNodeDeserializer extends JsonDeserializer[JsonNode] {
     val nodeFactory = ctxt.getNodeFactory
 
     val numberType =
-      if ((feats & F_MASK_INT_COERCIONS) != 0) {
-        if (USE_BIG_INTEGER_FOR_INTS.enabledIn(feats)) JsonParser.NumberType.BIG_INTEGER
-        else if (USE_LONG_FOR_INTS.enabledIn(feats)) JsonParser.NumberType.LONG
+      if (feats & F_MASK_INT_COERCIONS) != 0 then {
+        if USE_BIG_INTEGER_FOR_INTS.enabledIn(feats) then JsonParser.NumberType.BIG_INTEGER
+        else if USE_LONG_FOR_INTS.enabledIn(feats) then JsonParser.NumberType.LONG
         else jp.getNumberType
       } else jp.getNumberType
 
@@ -91,14 +91,14 @@ private class JsonNodeDeserializer extends JsonDeserializer[JsonNode] {
     val nodeFactory = ctxt.getNodeFactory
 
     val nt = jp.getNumberType
-    if (nt eq JsonParser.NumberType.BIG_DECIMAL) {
+    if nt eq JsonParser.NumberType.BIG_DECIMAL then {
       nodeFactory.numberNode(jp.getDecimalValue)
 
-    } else if (ctxt.isEnabled(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS)) {
-      if (jp.isNaN) nodeFactory.numberNode(jp.getDoubleValue)
+    } else if ctxt.isEnabled(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS) then {
+      if jp.isNaN then nodeFactory.numberNode(jp.getDoubleValue)
       else nodeFactory.numberNode(jp.getDecimalValue)
 
-    } else if (nt eq JsonParser.NumberType.FLOAT) {
+    } else if nt eq JsonParser.NumberType.FLOAT then {
       nodeFactory.numberNode(jp.getFloatValue)
 
     } else {
@@ -121,16 +121,16 @@ private class JsonNodeDeserializer extends JsonDeserializer[JsonNode] {
     val ob = p.getEmbeddedObject
 
     // should this occur?
-    if (ob == null) {
+    if ob == null then {
       nodeFactory.nullNode
     } else {
       val `type` = ob.getClass
-      if (`type` eq classOf[Array[Byte]]) {
+      if `type` eq classOf[Array[Byte]] then {
         // most common special case
         nodeFactory.binaryNode(ob.asInstanceOf[Array[Byte]])
-      } else if (ob.isInstanceOf[RawValue]) {
+      } else if ob.isInstanceOf[RawValue] then {
         nodeFactory.rawValueNode(ob.asInstanceOf[RawValue])
-      } else if (ob.isInstanceOf[JsonNode]) {
+      } else if ob.isInstanceOf[JsonNode] then {
         ob.asInstanceOf[JsonNode]
       } else {
         nodeFactory.pojoNode(ob)
@@ -146,7 +146,7 @@ private class JsonNodeDeserializer extends JsonDeserializer[JsonNode] {
       ctxt: DeserializationContext,
       parserContext: List[DeserializerContext]
   ): JsonNode = {
-    if (jp.getCurrentToken == null) {
+    if jp.getCurrentToken == null then {
       jp.nextToken()
     }
 

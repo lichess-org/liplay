@@ -110,7 +110,7 @@ private[play] object Execution {
           // while loop. The value of the ThreadLocal will stay as
           // an ArrayDeque until all the scheduled Runnables have been
           // run.
-          while (!runnables.isEmpty) {
+          while !runnables.isEmpty do {
             val runnable = runnables.removeFirst()
             runnable.run()
           }

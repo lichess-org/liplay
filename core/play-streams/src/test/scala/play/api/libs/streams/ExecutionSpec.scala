@@ -21,13 +21,13 @@ class ExecutionSpec extends Specification {
 
   "trampoline" should {
     "execute code in the same thread" in {
-      val f = Future(Thread.currentThread())(trampoline)
+      val f = Future(Thread.currentThread())(using trampoline)
       Await.result(f, waitTime) `must` equalTo(Thread.currentThread())
     }
 
     "not overflow the stack" in {
       def executeRecursively(ec: ExecutionContext, times: Int): Unit = {
-        if (times > 0) {
+        if times > 0 then {
           ec.execute(() => executeRecursively(ec, times - 1))
         }
       }
@@ -42,7 +42,7 @@ class ExecutionSpec extends Specification {
 
       var overflowTimes = 1 << 10
       try {
-        while (overflowTimes > 0) {
+        while overflowTimes > 0 do {
           executeRecursively(overflowingExecutionContext, overflowTimes)
           overflowTimes = overflowTimes << 1
         }
@@ -60,7 +60,7 @@ class ExecutionSpec extends Specification {
       case class TestRunnable(id: Int, children: Runnable*) extends Runnable {
         def run(): Unit = {
           runRecord += id
-          for (c <- children) trampoline.execute(c)
+          for c <- children do trampoline.execute(c)
         }
       }
 

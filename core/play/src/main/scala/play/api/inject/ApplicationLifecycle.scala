@@ -113,13 +113,13 @@ class DefaultApplicationLifecycle @Inject() () extends ApplicationLifecycle {
     logger.debug(s"Executing ApplicationLifecycle.stop() with ${hooks.size()} stop hook(s) registered")
     // run the code only once and memoize the result of the invocation in a Promise.future so invoking
     // the method many times causes a single run producing the same result in all cases.
-    if (started.compareAndSet(false, true)) {
+    if started.compareAndSet(false, true) then {
       // Do we care if one hook executes on another hooks redeeming thread? Hopefully not.
       import play.core.Execution.Implicits.trampoline
 
       @tailrec def clearHooks(previous: Future[Any] = Future.successful[Any](())): Future[Any] = {
         val hook = hooks.poll()
-        if (hook != null) clearHooks(previous.flatMap { _ =>
+        if hook != null then clearHooks(previous.flatMap { _ =>
           val hookFuture = Try(hook()) match {
             case Success(f) => f
             case Failure(e) => Future.failed(e)

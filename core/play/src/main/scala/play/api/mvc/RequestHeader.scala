@@ -290,11 +290,11 @@ trait RequestHeader {
   /**
    * Returns the charset of the request for text-based body
    */
-  lazy val charset: Option[String] = for {
+  lazy val charset: Option[String] = for
     mt      <- mediaType
     param   <- mt.parameters.find(_._1.equalsIgnoreCase("charset"))
     charset <- param._2
-  } yield charset
+  yield charset
 
   /**
    * Attach a body to this header.
@@ -321,11 +321,11 @@ object RequestHeader {
    * @return The items of an Accept* header, with their q-value.
    */
   private[play] def acceptHeader(headers: Headers, headerName: String): Seq[(Double, String)] = {
-    for {
+    for
       header <- headers.get(headerName).toList
       value0 <- header.split(',')
       value = value0.trim
-    } yield {
+    yield {
       RequestHeader.qPattern.findFirstMatchIn(value) match {
         case Some(m) => (m.group(1).toDouble, m.before.toString)
         case None    => (1.0, value) // “The default value is q=1.”

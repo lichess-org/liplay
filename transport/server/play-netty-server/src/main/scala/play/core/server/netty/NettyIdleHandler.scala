@@ -4,7 +4,7 @@
 
 package play.core.server.netty
 
-import io.netty.channel._
+import io.netty.channel.*
 import io.netty.handler.timeout.IdleStateEvent
 import play.api.Logger
 
@@ -13,7 +13,7 @@ private object NettyIdleHandler {
 }
 
 private[play] class NettyIdleHandler extends ChannelInboundHandlerAdapter {
-  import NettyIdleHandler._
+  import NettyIdleHandler.*
 
   /**
    * Originally, this method lived within [[PlayRequestHandler]]. However, the [[PlayRequestHandler]]

@@ -33,12 +33,12 @@ object Resources {
   def isUrlConnectionADirectory(urlConnection: URLConnection) = urlConnection match {
     case file if file.getURL.getProtocol == "file" => new File(file.getURL.toURI).isDirectory
     case jar: JarURLConnection =>
-      if (jar.getJarEntry.isDirectory) {
+      if jar.getJarEntry.isDirectory then {
         true
       } else {
         // JarEntry.isDirectory is rubbish....
         val is = jar.getJarFile.getInputStream(jar.getJarEntry)
-        if (is == null) {
+        if is == null then {
           true
         } else {
           is.close()
@@ -57,7 +57,7 @@ object Resources {
   def closeUrlConnection(connection: URLConnection): Unit = {
     connection match {
       case jar: JarURLConnection =>
-        if (!jar.getUseCaches) {
+        if !jar.getUseCaches then {
           jar.getJarFile.close()
         }
       case other =>
@@ -73,7 +73,7 @@ object Resources {
      * refers to a directory (return null otherwise). */
 
     val path      = url.getPath
-    val pathSlash = if (path.last == '/') path else path + '/'
+    val pathSlash = if path.last == '/' then path else path + '/'
 
     classLoader.getResource(path) != null && classLoader.getResource(pathSlash) != null
   }
@@ -82,9 +82,9 @@ object Resources {
     val path      = url.getPath
     val bangIndex = url.getFile.indexOf("!")
 
-    val startIndex      = if (path.startsWith("zip:")) 4 else 0
+    val startIndex      = if path.startsWith("zip:") then 4 else 0
     val fileUri         = path.substring(startIndex, bangIndex)
-    val fileProtocol    = if (fileUri.startsWith("/")) "file://" else ""
+    val fileProtocol    = if fileUri.startsWith("/") then "file://" else ""
     val absoluteFileUri = fileProtocol + fileUri
 
     val zipFile: File = new File(URI.create(absoluteFileUri))
@@ -93,11 +93,11 @@ object Resources {
 
     try {
       val entry = zip.getEntry(resourcePath)
-      if (entry.isDirectory) true
+      if entry.isDirectory then true
       else {
         val stream = zip.getInputStream(entry)
         val isDir  = stream == null
-        if (stream != null) stream.close()
+        if stream != null then stream.close()
         isDir
       }
     } finally {

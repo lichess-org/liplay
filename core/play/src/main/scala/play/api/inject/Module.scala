@@ -120,7 +120,7 @@ object Modules {
     // Construct the default module if it exists
     // Allow users to add "Module" to the excludes to exclude even attempting to look it up
     val defaultModule =
-      if (excludes.contains(DefaultModuleName)) None
+      if excludes.contains(DefaultModuleName) then None
       else
         try {
           val defaultModuleClass = environment.classLoader.loadClass(DefaultModuleName).asInstanceOf[Class[Any]]

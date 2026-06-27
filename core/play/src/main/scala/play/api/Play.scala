@@ -46,7 +46,7 @@ object Play {
   private[play] def XML = scala.xml.XML.withSAXParser(xercesSaxParserFactory.newSAXParser())
 
   private[play] def privateMaybeApplication: Try[Application] = {
-    if (_currentApp.get != null) {
+    if _currentApp.get != null then {
       Success(_currentApp.get)
     } else {
       Failure(
@@ -82,7 +82,7 @@ object Play {
     val globalApp = app.globalApplicationEnabled
 
     // Stop the current app if the new app needs to replace the current app instance
-    if (globalApp && _currentApp.get != null) {
+    if globalApp && _currentApp.get != null then {
       logger.info("Stopping current application")
       stop(_currentApp.get())
     }
@@ -90,12 +90,12 @@ object Play {
     app.mode match {
       case Mode.Test =>
       case mode =>
-        logger.info(s"Application started ($mode)${if (!globalApp) " (no global state)" else ""}")
+        logger.info(s"Application started ($mode)${if !globalApp then " (no global state)" else ""}")
     }
 
     // Set the current app if the global application is enabled
     // Also set it if the current app is null, in order to display more useful errors if we try to use the app
-    if (globalApp) {
+    if globalApp then {
       logger.warn(
         s"""
            |You are using the deprecated global state to set and access the current running application. If you
@@ -118,7 +118,7 @@ object Play {
    * Stops the given application.
    */
   def stop(app: Application): Unit = {
-    if (app != null) {
+    if app != null then {
       Threads.withContextClassLoader(app.classloader) {
         try {
           Await.ready(app.stop(), Duration.Inf)
@@ -135,5 +135,5 @@ object Play {
   /**
    * A convenient function for getting an implicit materializer from the current application
    */
-  implicit def materializer(implicit app: Application): Materializer = app.materializer
+  implicit def materializer(using app: Application): Materializer = app.materializer
 }

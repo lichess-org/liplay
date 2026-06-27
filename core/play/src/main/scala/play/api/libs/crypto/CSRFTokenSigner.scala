@@ -128,10 +128,10 @@ class DefaultCSRFTokenSigner @Inject() (signer: CookieSigner, clock: Clock) exte
    * Compare two signed tokens
    */
   def compareSignedTokens(tokenA: String, tokenB: String): Boolean = {
-    (for {
+    (for
       rawA <- extractSignedToken(tokenA)
       rawB <- extractSignedToken(tokenB)
-    } yield isEqual(rawA, rawB)).getOrElse(false)
+    yield isEqual(rawA, rawB)).getOrElse(false)
   }
 
   override def constantTimeEquals(a: String, b: String): Boolean = isEqual(a, b)

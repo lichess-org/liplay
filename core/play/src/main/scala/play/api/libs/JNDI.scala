@@ -26,7 +26,7 @@ object JNDI {
     env.put(
       INITIAL_CONTEXT_FACTORY, {
         val icf = System.getProperty(INITIAL_CONTEXT_FACTORY)
-        if (icf == null) {
+        if icf == null then {
           System.setProperty(INITIAL_CONTEXT_FACTORY, IN_MEMORY_JNDI)
           IN_MEMORY_JNDI
         } else {
@@ -38,7 +38,7 @@ object JNDI {
     env.put(
       PROVIDER_URL, {
         val url = System.getProperty(PROVIDER_URL)
-        if (url == null) {
+        if url == null then {
           System.setProperty(PROVIDER_URL, IN_MEMORY_URL)
           IN_MEMORY_URL
         } else {

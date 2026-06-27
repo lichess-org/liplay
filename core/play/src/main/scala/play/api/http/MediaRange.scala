@@ -23,7 +23,7 @@ case class MediaType(mediaType: String, mediaSubType: String, parameters: Seq[(S
       .map { param =>
         "; " + param._1 + param._2
           .map { value =>
-            if (MediaRangeParser.token(new CharSequenceReader(value)).next.atEnd) {
+            if MediaRangeParser.token(new CharSequenceReader(value)).next.atEnd then {
               "=" + value
             } else {
               "=\"" + value.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"") + "\""
@@ -83,7 +83,7 @@ object MediaType {
     def apply(mediaType: String): Option[MediaType] = {
       MediaRangeParser.mediaType(new CharSequenceReader(mediaType)) match {
         case MediaRangeParser.Success(mt: MediaType, next) => {
-          if (!next.atEnd) {
+          if !next.atEnd then {
             logger.debug(s"Unable to parse part of media type '${next.source}'")
           }
           Some(mt)
@@ -106,10 +106,10 @@ object MediaRange {
    * Note: the media types in the list should be without parameters, e.g. `text/html` not `text/html;charset=utf-8`
    */
   def preferred(acceptableRanges: Seq[MediaRange], availableMediaTypes: Seq[String]): Option[String] = {
-    val acceptableTypes = for {
+    val acceptableTypes = for
       mediaRange <- acceptableRanges.sorted.to(LazyList)
       mt         <- availableMediaTypes if mediaRange.accepts(mt)
-    } yield mt
+    yield mt
     acceptableTypes.headOption
   }
 
@@ -120,7 +120,7 @@ object MediaRange {
     def apply(mediaRanges: String): Seq[MediaRange] = {
       MediaRangeParser(new CharSequenceReader(mediaRanges)) match {
         case MediaRangeParser.Success(mrs: List[MediaRange], next) =>
-          if (!next.atEnd) {
+          if !next.atEnd then {
             logger.debug(s"Unable to parse part of media range header '${next.source}'")
           }
           mrs.sorted
@@ -147,23 +147,23 @@ object MediaRange {
    */
   implicit val ordering: Ordering[play.api.http.MediaRange] = new Ordering[play.api.http.MediaRange] {
     def compareQValues(x: Option[BigDecimal], y: Option[BigDecimal]) = {
-      if (x.isEmpty && y.isEmpty) 0
-      else if (x.isEmpty) 1
-      else if (y.isEmpty) -1
+      if x.isEmpty && y.isEmpty then 0
+      else if x.isEmpty then 1
+      else if y.isEmpty then -1
       else x.get.compare(y.get)
     }
 
     def compare(a: play.api.http.MediaRange, b: play.api.http.MediaRange) = {
       val qCompare = compareQValues(a.qValue, b.qValue)
 
-      if (qCompare != 0) -qCompare
-      else if (a.mediaType == b.mediaType) {
-        if (a.mediaSubType == b.mediaSubType) b.parameters.size - a.parameters.size
-        else if (a.mediaSubType == "*") 1
-        else if (b.mediaSubType == "*") -1
+      if qCompare != 0 then -qCompare
+      else if a.mediaType == b.mediaType then {
+        if a.mediaSubType == b.mediaSubType then b.parameters.size - a.parameters.size
+        else if a.mediaSubType == "*" then 1
+        else if b.mediaSubType == "*" then -1
         else 0
-      } else if (a.mediaType == "*") 1
-      else if (b.mediaType == "*") -1
+      } else if a.mediaType == "*" then 1
+      else if b.mediaType == "*" then -1
       else 0
     }
   }
@@ -247,7 +247,7 @@ object MediaRange {
       val qValue = qValueStr.flatMap { q =>
         try {
           val qbd = BigDecimal(q)
-          if (qbd > 1) {
+          if qbd > 1 then {
             logger.debug("Invalid q value: " + q)
             None
           } else {

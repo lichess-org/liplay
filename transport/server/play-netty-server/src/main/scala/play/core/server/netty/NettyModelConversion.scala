@@ -20,16 +20,16 @@ import com.typesafe.netty.http.StreamedHttpRequest
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
 import io.netty.channel.Channel
-import io.netty.handler.codec.http._
+import io.netty.handler.codec.http.*
 import io.netty.handler.ssl.SslHandler
 import io.netty.util.ReferenceCountUtil
 import play.api.Logger
-import play.api.http.HeaderNames._
+import play.api.http.HeaderNames.*
 import play.api.http.HttpChunk
 import play.api.http.HttpEntity
 import play.api.http.HttpErrorHandler
 import play.api.libs.typedmap.TypedMap
-import play.api.mvc._
+import play.api.mvc.*
 import play.api.mvc.request.RemoteConnection
 import play.api.mvc.request.RequestAttrKey
 import play.api.mvc.request.RequestTarget
@@ -37,7 +37,7 @@ import play.core.server.common.ForwardedHeaderHandler
 import play.core.server.common.PathAndQueryParser
 import play.core.server.common.ServerResultUtils
 
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 import scala.concurrent.Future
 import scala.util.control.NonFatal
 import scala.util.Failure
@@ -55,7 +55,7 @@ private[server] class NettyModelConversion(
    * Will return a failure if there's a protocol error or some other error in the header.
    */
   def convertRequest(channel: Channel, request: HttpRequest): Try[RequestHeader] = {
-    if (request.decoderResult.isFailure) {
+    if request.decoderResult.isFailure then {
       Failure(request.decoderResult.cause())
     } else {
       tryToCreateRequest(channel, request)
@@ -124,11 +124,11 @@ private[server] class NettyModelConversion(
       // RICH: This looks like a source of potential security bugs to me!
       val withoutHost        = uriString.dropWhile(_ != '/')
       val withoutQueryString = withoutHost.split('?').head
-      if (withoutQueryString.isEmpty) "/" else withoutQueryString
+      if withoutQueryString.isEmpty then "/" else withoutQueryString
     }
     override lazy val queryMap: Map[String, Seq[String]] = {
       // Very rough parse of query string that doesn't decode
-      if (request.uri.contains("?")) {
+      if request.uri.contains("?") then {
         request.uri
           .split("\\?", 2)(1)
           .split('&')
@@ -174,7 +174,7 @@ private[server] class NettyModelConversion(
     request match {
       case full: FullHttpRequest =>
         val content = httpContentToByteString(full)
-        if (content.isEmpty) {
+        if content.isEmpty then {
           None
         } else {
           Some(Source.single(content))
@@ -199,7 +199,7 @@ private[server] class NettyModelConversion(
       requestHeader: RequestHeader,
       httpVersion: HttpVersion,
       errorHandler: HttpErrorHandler
-  )(implicit mat: Materializer): Future[HttpResponse] = {
+  )(using mat: Materializer): Future[HttpResponse] = {
     resultUtils.resultConversionWithErrorHandling(requestHeader, result, errorHandler) { result =>
       val responseStatus = result.header.reasonPhrase match {
         case Some(phrase) => new HttpResponseStatus(result.header.status, phrase)
@@ -232,11 +232,11 @@ private[server] class NettyModelConversion(
       }
 
       // Content type and length
-      if (resultUtils.mayHaveEntity(result.header.status)) {
+      if resultUtils.mayHaveEntity(result.header.status) then {
         result.body.contentLength.foreach { contentLength =>
-          if (HttpUtil.isContentLengthSet(response)) {
+          if HttpUtil.isContentLengthSet(response) then {
             val manualContentLength = response.headers.get(CONTENT_LENGTH)
-            if (manualContentLength == contentLength.toString) {
+            if manualContentLength == contentLength.toString then {
               logger.info(s"Manual Content-Length header, ignoring manual header.")
             } else {
               logger.warn(
@@ -246,7 +246,7 @@ private[server] class NettyModelConversion(
           }
           HttpUtil.setContentLength(response, contentLength)
         }
-      } else if (HttpUtil.isContentLengthSet(response)) {
+      } else if HttpUtil.isContentLengthSet(response) then {
         val manualContentLength = response.headers.get(CONTENT_LENGTH)
         logger.warn(
           s"Ignoring manual Content-Length ($manualContentLength) since it is not allowed for ${result.header.status} responses."
@@ -254,7 +254,7 @@ private[server] class NettyModelConversion(
         response.headers.remove(CONTENT_LENGTH)
       }
       result.body.contentType.foreach { contentType =>
-        if (response.headers().contains(CONTENT_TYPE)) {
+        if response.headers().contains(CONTENT_TYPE) then {
           logger.warn(
             s"Content-Type set both in header (${response.headers().get(CONTENT_TYPE)}) and attached to entity ($contentType), ignoring content type from entity. To remove this warning, use Result.as(...) to set the content type, rather than setting the header manually."
           )
@@ -266,7 +266,7 @@ private[server] class NettyModelConversion(
       connectionHeader.header.foreach { headerValue => response.headers().set(CONNECTION, headerValue) }
 
       // Netty doesn't add the required Date header for us, so make sure there is one here
-      if (!response.headers().contains(DATE)) {
+      if !response.headers().contains(DATE) then {
         response.headers().add(DATE, dateHeader)
       }
 
@@ -284,20 +284,20 @@ private[server] class NettyModelConversion(
 
   /** Create a Netty streamed response. */
   private def createStreamedResponse(
-      stream: Source[ByteString, _],
+      stream: Source[ByteString, ?],
       httpVersion: HttpVersion,
       responseStatus: HttpResponseStatus
-  )(implicit mat: Materializer) = {
+  )(using mat: Materializer) = {
     val publisher = SynchronousMappedStreams.map(stream.runWith(Sink.asPublisher(false)), byteStringToHttpContent)
     new DefaultStreamedHttpResponse(httpVersion, responseStatus, publisher)
   }
 
   /** Create a Netty chunked response. */
   private def createChunkedResponse(
-      chunks: Source[HttpChunk, _],
+      chunks: Source[HttpChunk, ?],
       httpVersion: HttpVersion,
       responseStatus: HttpResponseStatus
-  )(implicit mat: Materializer) = {
+  )(using mat: Materializer) = {
     val publisher = chunks.runWith(Sink.asPublisher(false))
 
     val httpContentPublisher = SynchronousMappedStreams.map[HttpChunk, HttpContent](
@@ -322,7 +322,7 @@ private[server] class NettyModelConversion(
 
   /** Convert a ByteString to a Netty ByteBuf. */
   private def byteStringToByteBuf(bytes: ByteString): ByteBuf = {
-    if (bytes.isEmpty) {
+    if bytes.isEmpty then {
       Unpooled.EMPTY_BUFFER
     } else {
       Unpooled.wrappedBuffer(bytes.asByteBuffer)

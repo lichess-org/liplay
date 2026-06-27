@@ -44,7 +44,7 @@ sealed trait HttpEntity {
   /**
    * Consume the data from this entity.
    */
-  def consumeData(implicit mat: Materializer): Future[ByteString] = {
+  def consumeData(using mat: Materializer): Future[ByteString] = {
     dataStream.runFold(ByteString.empty)(_ ++ _)
   }
 
@@ -72,8 +72,8 @@ object HttpEntity {
   final case class Strict(data: ByteString, contentType: Option[String]) extends HttpEntity {
     def isKnownEmpty                                     = data.isEmpty
     def contentLength                                    = Some(data.size)
-    def dataStream                                       = if (data.isEmpty) Source.empty[ByteString] else Source.single(data)
-    override def consumeData(implicit mat: Materializer) = Future.successful(data)
+    def dataStream                                       = if data.isEmpty then Source.empty[ByteString] else Source.single(data)
+    override def consumeData(using mat: Materializer) = Future.successful(data)
     def as(contentType: String)                          = copy(contentType = Option(contentType))
   }
 

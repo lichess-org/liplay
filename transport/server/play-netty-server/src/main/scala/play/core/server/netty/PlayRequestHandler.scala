@@ -8,13 +8,13 @@ import java.io.IOException
 import java.util.concurrent.atomic.AtomicLong
 
 import akka.stream.Materializer
-import io.netty.channel._
+import io.netty.channel.*
 import io.netty.handler.codec.TooLongFrameException
-import io.netty.handler.codec.http._
+import io.netty.handler.codec.http.*
 import io.netty.handler.timeout.IdleStateEvent
-import play.api.http._
+import play.api.http.*
 import play.api.libs.streams.Accumulator
-import play.api.mvc._
+import play.api.mvc.*
 import play.api.Application
 import play.api.Logger
 import play.api.Mode
@@ -40,7 +40,7 @@ private[play] class PlayRequestHandler(
     resultUtils: ServerResultUtils,
     modelConversion: NettyModelConversion
 ) extends ChannelInboundHandlerAdapter {
-  import PlayRequestHandler._
+  import PlayRequestHandler.*
 
   // We keep track of whether there are requests in flight.  If there are, we don't respond to read
   // complete, since back pressure is the responsibility of the streams.
@@ -67,7 +67,7 @@ private[play] class PlayRequestHandler(
       val result = app.errorHandler.onClientError(
         requestHeader.addAttr(HttpErrorHandler.Attrs.HttpErrorInfo, HttpErrorInfo("server-backend")),
         statusCode,
-        if (message == null) "" else message
+        if message == null then "" else message
       )
       // If there's a problem in parsing the request, then we should close the connection, once done with it
       requestHeader -> Server.actionForResult(result.map(_.withHeaders(HeaderNames.CONNECTION -> "close")))
@@ -77,12 +77,12 @@ private[play] class PlayRequestHandler(
       case Failure(exception: TooLongFrameException) => clientError(Status.REQUEST_URI_TOO_LONG, exception.getMessage)
       case Failure(exception)                        => clientError(Status.BAD_REQUEST, exception.getMessage)
       case Success(req) =>
-        if (
+        if
           req.headers
             .get(HeaderNames.CONTENT_LENGTH)
             .flatMap(clh => catching(classOf[NumberFormatException]).opt(clh.toLong))
             .exists(_ > maxContentLength)
-        ) {
+        then {
           clientError(Status.REQUEST_ENTITY_TOO_LARGE, "Request Entity Too Large")
         } else Server.getHandlerFor(req, app)
 
@@ -115,7 +115,7 @@ private[play] class PlayRequestHandler(
         lastResponseSent = lastResponseSent.flatMap { _ =>
           // Need an explicit cast to Future[Unit] to help scalac out.
           val f: Future[Unit] = future.map { httpResponse =>
-            if (requestsInFlight.decrementAndGet() == 0) {
+            if requestsInFlight.decrementAndGet() == 0 then {
               // Since we've now gone down to zero, we need to issue a
               // read, in case we ignored an earlier read complete
               ctx.read()
@@ -142,7 +142,7 @@ private[play] class PlayRequestHandler(
     // we don't get in the way of the request body reactive streams,
     // which will be using channel read complete and read to implement
     // their own back pressure
-    if (requestsInFlight.get() == 0) {
+    if requestsInFlight.get() == 0 then {
       ctx.read()
     } else {
       // otherwise forward it, so that any handler publishers downstream
@@ -203,8 +203,8 @@ private[play] class PlayRequestHandler(
     import play.core.Execution.Implicits.trampoline
 
     // Execute the action on the Play default execution context
-    val actionFuture = Future(action(requestHeader))(mat.executionContext)
-    for {
+    val actionFuture = Future(action(requestHeader))(using mat.executionContext)
+    for
       // Execute the action and get a result, calling errorHandler if errors happen in this process
       actionResult <- actionFuture
         .flatMap { acc =>
@@ -227,7 +227,7 @@ private[play] class PlayRequestHandler(
       // Convert the result to a Netty HttpResponse
       convertedResult <- modelConversion
         .convertResult(validatedResult, requestHeader, request.protocolVersion(), app.errorHandler)
-    } yield convertedResult
+    yield convertedResult
   }
 
   /**

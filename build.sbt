@@ -8,7 +8,7 @@ import sbt._
 import sbt.io.Path._
 import org.scalafmt.sbt.ScalafmtPlugin
 
-scalacOptions ++= Seq(
+ThisBuild / scalacOptions ++= Seq(
   "nowarn", // migration
   "-Xcheck-macros",
   "-source:future-migration",

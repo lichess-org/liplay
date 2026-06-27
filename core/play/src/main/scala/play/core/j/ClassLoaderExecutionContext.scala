@@ -70,7 +70,7 @@ class ClassLoaderExecutionContext(contextClassLoader: ClassLoader, delegate: Exe
 
   override def prepare(): ExecutionContext = {
     val delegatePrepared = ExecCtxUtils.prepare(delegate)
-    if (delegatePrepared eq delegate) {
+    if delegatePrepared eq delegate then {
       this
     } else {
       new ClassLoaderExecutionContext(contextClassLoader, delegatePrepared)

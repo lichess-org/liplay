@@ -61,10 +61,10 @@ object PathExtractor {
       parts, {
         // "parse" the path
         val (regexParts, descs) = parts.tail.map { part =>
-          if (part.startsWith("*")) {
+          if part.startsWith("*") then {
             // It's a .* matcher
             "(.*)" + Pattern.quote(part.drop(1)) -> PathPart.Raw
-          } else if (part.startsWith("<") && part.contains(">")) {
+          } else if part.startsWith("<") && part.contains(">") then {
             // It's a regex matcher
             val splitted = part.split(">", 2)
             val regex    = splitted(0).drop(1)

@@ -18,7 +18,7 @@ import com.typesafe.config.ConfigValue
 import com.typesafe.netty.HandlerPublisher
 import com.typesafe.netty.http.HttpStreamsServerHandler
 import io.netty.bootstrap.Bootstrap
-import io.netty.channel._
+import io.netty.channel.*
 import io.netty.channel.epoll.EpollChannelOption
 import io.netty.channel.epoll.EpollEventLoopGroup
 import io.netty.channel.epoll.EpollServerSocketChannel
@@ -26,22 +26,22 @@ import io.netty.channel.group.DefaultChannelGroup
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioServerSocketChannel
 import io.netty.channel.unix.UnixChannelOption
-import io.netty.handler.codec.http._
+import io.netty.handler.codec.http.*
 import io.netty.handler.logging.LogLevel
 import io.netty.handler.logging.LoggingHandler
 import io.netty.handler.ssl.SslHandler
 import io.netty.handler.timeout.IdleStateHandler
-import play.api._
+import play.api.*
 import play.api.http.HttpProtocol
 import play.api.internal.libs.concurrent.CoordinatedShutdownSupport
 import play.api.routing.Router
-import play.core._
+import play.core.*
 import play.core.server.Server.ServerStoppedReason
-import play.core.server.netty._
+import play.core.server.netty.*
 import play.core.server.common.ServerResultUtils
 import play.core.server.common.ForwardedHeaderHandler
 
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
@@ -58,9 +58,9 @@ case object Native extends NettyTransport
 class NettyServer(
     config: ServerConfig,
     val application: Application,
-    stopHook: () => Future[_],
+    stopHook: () => Future[?],
     val actorSystem: ActorSystem
-)(implicit val materializer: Materializer)
+)(using val materializer: Materializer)
     extends Server {
   initializeChannelOptionsStaticMembers()
   registerShutdownTasks()
@@ -84,7 +84,7 @@ class NettyServer(
     case _        => throw ServerStartException("Netty transport configuration value should be either jdk or native")
   }
 
-  import NettyServer._
+  import NettyServer.*
 
   override def mode: Mode = config.mode
 
@@ -115,8 +115,8 @@ class NettyServer(
     }
     config.entrySet().asScala.filterNot(_.getKey.startsWith("child.")).foreach { option =>
       val cleanKey = option.getKey.stripPrefix("\"").stripSuffix("\"")
-      if (ChannelOption.exists(cleanKey)) {
-        logger.debug(s"Setting Netty channel option ${cleanKey} to ${unwrap(option.getValue)}${if (bootstrapping) {
+      if ChannelOption.exists(cleanKey) then {
+        logger.debug(s"Setting Netty channel option ${cleanKey} to ${unwrap(option.getValue)}${if bootstrapping then {
             " at bootstrapping"
           } else {
             ""
@@ -141,7 +141,7 @@ class NettyServer(
   /**
    * Bind to the given address, returning the server channel, and a stream of incoming connection channels.
    */
-  private def bind(address: InetSocketAddress): (Channel, Source[Channel, _]) = {
+  private def bind(address: InetSocketAddress): (Channel, Source[Channel, ?]) = {
     val serverChannelEventLoop = eventLoop.next
 
     // Watches for channel events, and pushes them through a reactive streams publisher.
@@ -183,12 +183,12 @@ class NettyServer(
       pipeline.addLast("decoder", new HttpRequestDecoder(maxInitialLineLength, maxHeaderSize, maxChunkSize))
       pipeline.addLast("encoder", new HttpResponseEncoder())
       pipeline.addLast("decompressor", new HttpContentDecompressor())
-      if (logWire) {
+      if logWire then {
         pipeline.addLast("logging", new LoggingHandler(LogLevel.DEBUG))
       }
 
       val idleTimeout = httpIdleTimeout
-      if (idleTimeout != Duration.Inf) {
+      if idleTimeout != Duration.Inf then {
         logger.trace(s"using idle timeout of $idleTimeout on port $port")
         // only timeout if both reader and writer have been idle for the specified time
         pipeline.addLast("idle-handler", new IdleStateHandler(0, 0, idleTimeout.length, idleTimeout.unit))
@@ -234,12 +234,12 @@ class NettyServer(
     val (serverChannel, channelSource) = bind(address)
     channelSource.runWith(channelSink(port = port))
     val boundAddress = serverChannel.localAddress()
-    if (boundAddress == null) {
+    if boundAddress == null then {
       val e = new ServerListenException(protocolName, address)
       logger.error(e.getMessage)
       throw e
     }
-    if (mode != Mode.Test) {
+    if mode != Mode.Test then {
       logger.info(s"Listening for $protocolName on $boundAddress")
     }
     serverChannel
@@ -292,7 +292,7 @@ class NettyServer(
 
     // How to force a class to get initialized:
     // https://docs.oracle.com/javase/specs/jls/se8/html/jls-12.html#jls-12.4.1
-    Seq(classOf[ChannelOption[_]], classOf[UnixChannelOption[_]], classOf[EpollChannelOption[_]]).foreach(clazz => {
+    Seq(classOf[ChannelOption[?]], classOf[UnixChannelOption[?]], classOf[EpollChannelOption[?]]).foreach(clazz => {
       logger.debug(s"Class ${clazz.getName} will be initialized (if it hasn't been initialized already)")
       Class.forName(clazz.getName)
     })
@@ -341,7 +341,7 @@ trait NettyServerComponents extends ServerComponents {
     // Start the application first
     Play.start(application)
     new NettyServer(serverConfig, application, serverStopHook, application.actorSystem)(
-      application.materializer
+      using application.materializer
     )
   }
 

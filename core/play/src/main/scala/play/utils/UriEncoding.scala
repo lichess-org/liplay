@@ -50,9 +50,9 @@ object UriEncoding {
   def encodePathSegment(s: String, inputCharset: String): String = {
     val in  = s.getBytes(inputCharset)
     val out = new ByteArrayOutputStream()
-    for (b <- in) {
+    for b <- in do {
       val allowed = segmentChars.get(b & 0xff)
-      if (allowed) {
+      if allowed then {
         out.write(b)
       } else {
         out.write('%')
@@ -111,23 +111,23 @@ object UriEncoding {
       inPos += 1
       b
     }
-    while (inPos < in.length) {
+    while inPos < in.length do {
       val b = next()
-      if (b == '%') {
+      if b == '%' then {
         // Read high digit
-        if (inPos >= in.length) throw new InvalidUriEncodingException(s"Cannot decode $s: % at end of string")
+        if inPos >= in.length then throw new InvalidUriEncodingException(s"Cannot decode $s: % at end of string")
         val high = fromHex(next())
-        if (high == -1)
+        if high == -1 then
           throw new InvalidUriEncodingException(s"Cannot decode $s: expected hex digit at position $inPos.")
         // Read low digit
-        if (inPos >= in.length)
+        if inPos >= in.length then
           throw new InvalidUriEncodingException(s"Cannot decode $s: incomplete percent encoding at end of string")
         val low = fromHex(next())
-        if (low == -1)
+        if low == -1 then
           throw new InvalidUriEncodingException(s"Cannot decode $s: expected hex digit at position $inPos.")
         // Write decoded byte
         out.write((high << 4) + low)
-      } else if (segmentChars.get(b)) {
+      } else if segmentChars.get(b) then {
         // This character is allowed
         out.write(b)
       } else {
@@ -216,7 +216,7 @@ object UriEncoding {
    */
   private def upperHex(x: Int): Int = {
     // Assume 0 <= x < 16
-    if (x < 10) x + '0' else x - 10 + 'A'
+    if x < 10 then x + '0' else x - 10 + 'A'
   }
 
   /**
@@ -224,11 +224,11 @@ object UriEncoding {
    * If the character isn't a valid hex digit, return -1 instead.
    */
   private def fromHex(b: Int): Int = {
-    if (b >= '0' && b <= '9') {
+    if b >= '0' && b <= '9' then {
       b - '0'
-    } else if (b >= 'A' && b <= 'Z') {
+    } else if b >= 'A' && b <= 'Z' then {
       10 + b - 'A'
-    } else if (b >= 'a' && b <= 'z') {
+    } else if b >= 'a' && b <= 'z' then {
       10 + b - 'a'
     } else {
       -1
@@ -250,15 +250,15 @@ object UriEncoding {
     import scala.annotation.tailrec
     @tailrec
     def splitLoop(start: Int): Unit =
-      if (start < s.length) {
+      if start < s.length then {
         var end = s.indexOf(c, start)
-        if (end == -1) {
+        if end == -1 then {
           result += s.substring(start)
         } else {
           result += s.substring(start, end)
           splitLoop(end + 1)
         }
-      } else if (start == s.length) {
+      } else if start == s.length then {
         result += ""
       }
     splitLoop(0)

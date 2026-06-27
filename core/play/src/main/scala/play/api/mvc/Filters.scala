@@ -85,7 +85,7 @@ trait Filter extends EssentialFilter {
 object Filter {
   def apply(
       filter: (RequestHeader => Future[Result], RequestHeader) => Future[Result]
-  )(implicit m: Materializer): Filter = new Filter {
+  )(using m: Materializer): Filter = new Filter {
     implicit def mat                                                                 = m
     def apply(f: RequestHeader => Future[Result])(rh: RequestHeader): Future[Result] = filter(f, rh)
   }

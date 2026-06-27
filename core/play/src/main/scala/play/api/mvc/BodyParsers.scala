@@ -243,12 +243,12 @@ case class RawBuffer(
   import play.api.libs.Files.*
 
   @volatile private var inMemory: ByteString                 = initialData
-  @volatile private var backedByTemporaryFile: TemporaryFile = _
-  @volatile private var outStream: OutputStream              = _
+  @volatile private var backedByTemporaryFile: TemporaryFile = scala.compiletime.uninitialized
+  @volatile private var outStream: OutputStream              = scala.compiletime.uninitialized
 
   private[play] def push(chunk: ByteString): Unit = {
-    if (inMemory != null) {
-      if (chunk.length + inMemory.size > memoryThreshold) {
+    if inMemory != null then {
+      if chunk.length + inMemory.size > memoryThreshold then {
         backToTemporaryFile()
         outStream.write(chunk.toArray)
       } else {
@@ -259,7 +259,7 @@ case class RawBuffer(
     }
   }
 
-  private[play] def close(): Unit = if (outStream != null) outStream.close()
+  private[play] def close(): Unit = if outStream != null then outStream.close()
 
   private[play] def backToTemporaryFile(): Unit = {
     backedByTemporaryFile = temporaryFileCreator.create("requestBody", "asRaw")
@@ -272,7 +272,7 @@ case class RawBuffer(
    * Buffer size.
    */
   def size: Long = {
-    if (inMemory != null) inMemory.size else Files.size(backedByTemporaryFile)
+    if inMemory != null then inMemory.size else Files.size(backedByTemporaryFile)
   }
 
   /**
@@ -287,8 +287,8 @@ case class RawBuffer(
    * @return None if the content is greater than maxLength, otherwise, the data as bytes.
    */
   def asBytes(maxLength: Long = memoryThreshold): Option[ByteString] = {
-    if (size <= maxLength) {
-      Some(if (inMemory != null) inMemory else ByteString(PlayIO.readFile(backedByTemporaryFile.path)))
+    if size <= maxLength then {
+      Some(if inMemory != null then inMemory else ByteString(PlayIO.readFile(backedByTemporaryFile.path)))
     } else {
       None
     }
@@ -298,7 +298,7 @@ case class RawBuffer(
    * Returns the buffer content as File.
    */
   def asFile: File = {
-    if (inMemory != null) {
+    if inMemory != null then {
       backToTemporaryFile()
       close()
     }
@@ -327,7 +327,7 @@ trait BodyParserUtils {
    * A body parser that always returns an error.
    */
   def error[A](result: Future[Result]): BodyParser[A] =
-    BodyParser("error")(_ => Accumulator.done(result.map(Left.apply)(Execution.trampoline)))
+    BodyParser("error")(_ => Accumulator.done(result.map(Left.apply)(using Execution.trampoline)))
 
   /**
    * Allows to choose the right BodyParser parser to use by examining the request headers.
@@ -337,7 +337,7 @@ trait BodyParserUtils {
   /**
    * A body parser that flattens a future BodyParser.
    */
-  def flatten[A](underlying: Future[BodyParser[A]])(implicit ec: ExecutionContext, mat: Materializer): BodyParser[A] =
+  def flatten[A](underlying: Future[BodyParser[A]])(using ec: ExecutionContext, mat: Materializer): BodyParser[A] =
     BodyParser(request => Accumulator.flatten(underlying.map(_(request))))
 
   /**
@@ -349,10 +349,10 @@ trait BodyParserUtils {
       badResult: RequestHeader => Future[Result]
   ): BodyParser[A] = {
     BodyParser(s"conditional, wrapping=$parser") { request =>
-      if (predicate(request)) {
+      if predicate(request) then {
         parser(request)
       } else {
-        Accumulator.done(badResult(request).map(Left.apply)(Execution.trampoline))
+        Accumulator.done(badResult(request).map(Left.apply)(using Execution.trampoline))
       }
     }
   }
@@ -364,10 +364,10 @@ trait BodyParserUtils {
    * @param parser The BodyParser to wrap
    */
   def maxLength[A](maxLength: Long, parser: BodyParser[A])(
-      implicit mat: Materializer
+      using mat: Materializer
   ): BodyParser[Either[MaxSizeExceeded, A]] =
     BodyParser(s"maxLength=$maxLength, wrapping=$parser") { request =>
-      if (BodyParserUtils.contentLengthHeaderExceedsMaxLength(request, maxLength)) {
+      if BodyParserUtils.contentLengthHeaderExceedsMaxLength(request, maxLength) then {
         Accumulator.done(Future.successful(Right(Left(MaxSizeExceeded(maxLength)))))
       } else {
         val takeUpToFlow = Flow.fromGraph(new BodyParsers.TakeUpTo(maxLength))
@@ -422,7 +422,7 @@ object PlayBodyParsers {
       tfc: TemporaryFileCreator = SingletonTemporaryFileCreator,
       eh: HttpErrorHandler = new DefaultHttpErrorHandler(),
       conf: ParserConfiguration = ParserConfiguration()
-  )(implicit mat: Materializer): PlayBodyParsers = {
+  )(using mat: Materializer): PlayBodyParsers = {
     new DefaultPlayBodyParsers(conf, eh, mat, tfc)
   }
 }
@@ -554,7 +554,7 @@ trait PlayBodyParsers extends BodyParserUtils {
    */
   def text(maxLength: Long): BodyParser[String] = {
     BodyParser("text") { request =>
-      if (request.contentType.exists(_.equalsIgnoreCase("text/plain"))) {
+      if request.contentType.exists(_.equalsIgnoreCase("text/plain")) then {
         val bodyParser = tolerantBodyParser("text", maxLength, "Error decoding text body") { (request, bytes) =>
           val charset = request.charset.fold(US_ASCII)(Charset.forName)
           import java.nio.charset.CodingErrorAction
@@ -576,7 +576,7 @@ trait PlayBodyParsers extends BodyParserUtils {
       } else {
         Accumulator.done {
           val badResult = createBadResult("Expecting text/plain body", UNSUPPORTED_MEDIA_TYPE)
-          badResult(request).map(Left.apply)(Execution.trampoline)
+          badResult(request).map(Left.apply)(using Execution.trampoline)
         }
       }
     }
@@ -668,7 +668,7 @@ trait PlayBodyParsers extends BodyParserUtils {
    * @tparam A the type to read and validate from the body.
    * @param reader a Json reader for type A.
    */
-  def tolerantJson[A](implicit reader: Reads[A]): BodyParser[A] = jsonReads(tolerantJson)
+  def tolerantJson[A](using reader: Reads[A]): BodyParser[A] = jsonReads(tolerantJson)
 
   /**
    * Parse the body as Json if the Content-Type is text/json or application/json.
@@ -693,13 +693,13 @@ trait PlayBodyParsers extends BodyParserUtils {
    * @tparam A the type to read and validate from the body.
    * @param reader a Json reader for type A.
    */
-  def json[A](implicit reader: Reads[A]): BodyParser[A] = jsonReads(json)
+  def json[A](using reader: Reads[A]): BodyParser[A] = jsonReads(json)
 
   /**
    * Parse the body as Json given a BodyParser,
    * validating the result with the Json reader.
    */
-  private def jsonReads[A](parser: BodyParser[JsValue])(implicit reader: Reads[A]): BodyParser[A] =
+  private def jsonReads[A](parser: BodyParser[JsValue])(using reader: Reads[A]): BodyParser[A] =
     BodyParser("json reader") { request =>
       import Execution.Implicits.trampoline
       parser(request).mapFuture {
@@ -707,7 +707,7 @@ trait PlayBodyParsers extends BodyParserUtils {
           Future.successful(Left(simpleResult))
         case Right(jsValue) =>
           jsValue
-            .validate(reader)
+            .validate(using reader)
             .map { a => Future.successful(Right(a)) }
             .recoverTotal { jsError =>
               val msg = s"Json validation error ${JsError.toFlatForm(jsError)}"
@@ -746,10 +746,10 @@ trait PlayBodyParsers extends BodyParserUtils {
       parser(requestHeader).map { resultOrBody =>
         resultOrBody.flatMap { body =>
           form
-            .bindFromRequest()(Request[AnyContent](requestHeader, body), binding)
+            .bindFromRequest()(using Request[AnyContent](requestHeader, body), binding)
             .fold(formErrors => Left(onErrors(formErrors)), a => Right(a))
         }
-      }(Execution.trampoline)
+      }(using Execution.trampoline)
     }
 
   // -- XML parser
@@ -832,7 +832,7 @@ trait PlayBodyParsers extends BodyParserUtils {
   def file(to: File): BodyParser[File] = file(to, DefaultMaxDiskLength)
 
   private def requestEntityTooLarge(request: RequestHeader) =
-    createBadResult("Request Entity Too Large", REQUEST_ENTITY_TOO_LARGE)(request).map(Left(_))(Execution.trampoline)
+    createBadResult("Request Entity Too Large", REQUEST_ENTITY_TOO_LARGE)(request).map(Left(_))(using Execution.trampoline)
 
   /**
    * Store the body content into a temporary file.
@@ -840,12 +840,12 @@ trait PlayBodyParsers extends BodyParserUtils {
    * @param maxLength Max length (in bytes) allowed or returns EntityTooLarge HTTP response.
    */
   def temporaryFile(maxLength: Long): BodyParser[TemporaryFile] = BodyParser("temporaryFile") { request =>
-    if (BodyParserUtils.contentLengthHeaderExceedsMaxLength(request, maxLength)) {
+    if BodyParserUtils.contentLengthHeaderExceedsMaxLength(request, maxLength) then {
       // We check early here already to not even create a temporary file
       Accumulator.done(requestEntityTooLarge(request))
     } else {
       val tempFile = temporaryFileCreator.create("requestBody", "asTemporaryFile")
-      file(tempFile, maxLength)(request).map(_.fold(result => Left(result), _ => Right(tempFile)))(Execution.trampoline)
+      file(tempFile, maxLength)(request).map(_.fold(result => Left(result), _ => Right(tempFile)))(using Execution.trampoline)
     }
   }
 
@@ -907,7 +907,7 @@ trait PlayBodyParsers extends BodyParserUtils {
    * If the request has a body, parse the body content by checking the Content-Type header.
    */
   def default(maxLength: Option[Long]): BodyParser[AnyContent] = using { request =>
-    if (request.hasBody) {
+    if request.hasBody then {
       anyContent(maxLength)
     } else {
       ignore(AnyContentAsEmpty)
@@ -1044,7 +1044,7 @@ trait PlayBodyParsers extends BodyParserUtils {
       maxLength: Long,
       accumulator: Accumulator[ByteString, Either[Result, A]]
   ): Accumulator[ByteString, Either[Result, A]] = {
-    if (BodyParserUtils.contentLengthHeaderExceedsMaxLength(request, maxLength)) {
+    if BodyParserUtils.contentLengthHeaderExceedsMaxLength(request, maxLength) then {
       Accumulator.done(requestEntityTooLarge(request))
     } else {
       val takeUpToFlow = Flow.fromGraph(new BodyParsers.TakeUpTo(maxLength))
@@ -1052,7 +1052,7 @@ trait PlayBodyParsers extends BodyParserUtils {
         statusFuture.flatMap {
           case MaxSizeExceeded(_) => requestEntityTooLarge(request)
           case MaxSizeNotExceeded => resultFuture
-        }(Execution.trampoline)
+        }(using Execution.trampoline)
       })
     }
   }
@@ -1081,7 +1081,7 @@ trait PlayBodyParsers extends BodyParserUtils {
         }
       }
 
-      if (BodyParserUtils.contentLengthHeaderExceedsMaxLength(request, maxLength)) {
+      if BodyParserUtils.contentLengthHeaderExceedsMaxLength(request, maxLength) then {
         Accumulator.done(requestEntityTooLarge(request))
       } else {
         Accumulator.strict[ByteString, Either[Result, A]](
@@ -1124,7 +1124,7 @@ object BodyParsers {
         tfc: TemporaryFileCreator = SingletonTemporaryFileCreator,
         eh: HttpErrorHandler = new DefaultHttpErrorHandler(),
         config: ParserConfiguration = ParserConfiguration()
-    )(implicit mat: Materializer) = this(PlayBodyParsers(tfc, eh, config))
+    )(using mat: Materializer) = this(PlayBodyParsers(tfc, eh, config))
     override def apply(rh: RequestHeader) = parse.default(None)(rh)
   }
 
@@ -1165,7 +1165,7 @@ object BodyParsers {
             override def onPush(): Unit = {
               val chunk = grab(in)
               pushedBytes += chunk.size
-              if (pushedBytes > maxLength) {
+              if pushedBytes > maxLength then {
                 status.success(MaxSizeExceeded(maxLength))
                 // Make sure we fail the stream, this will ensure downstream body parsers don't try to parse it
                 failStage(new MaxLengthLimitAttained)

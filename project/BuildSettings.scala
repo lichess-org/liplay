@@ -20,7 +20,6 @@ object BuildSettings {
     organization := "com.typesafe.play",
     scalaVersion := "3.8.4",
     javacOptions ++= Seq("-encoding", "UTF-8", "--release", "21"),
-    (Compile / scalacOptions)       := Seq("-release:21"),
     (Compile / doc / scalacOptions) := Seq("-no-java-comments"),
     (Test / fork)                   := true,
     (Test / parallelExecution)      := false,

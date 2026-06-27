@@ -4,7 +4,7 @@
 
 package play.core.server
 
-import javax.net.ssl._
+import javax.net.ssl.*
 
 import akka.annotation.ApiMayChange
 

@@ -8,10 +8,10 @@ import akka.stream.Materializer
 import akka.stream.scaladsl.Sink
 import akka.util.ByteString
 import play.api.Logger
-import play.api.mvc._
-import play.api.http._
-import play.api.http.HeaderNames._
-import play.api.http.Status._
+import play.api.mvc.*
+import play.api.http.*
+import play.api.http.HeaderNames.*
+import play.api.http.Status.*
 import play.api.mvc.request.RequestAttrKey
 import play.core.utils.AsciiBitSet
 import play.core.utils.AsciiRange
@@ -33,26 +33,26 @@ private[play] final class ServerResultUtils(
    * Determine whether the connection should be closed, and what header, if any, should be added to the response.
    */
   def determineConnectionHeader(request: RequestHeader, result: Result): ConnectionHeader = {
-    if (request.version == HttpProtocol.HTTP_1_1) {
-      if (result.header.headers.get(CONNECTION).exists(_.equalsIgnoreCase(CLOSE))) {
+    if request.version == HttpProtocol.HTTP_1_1 then {
+      if result.header.headers.get(CONNECTION).exists(_.equalsIgnoreCase(CLOSE)) then {
         // Close connection, header already exists
         DefaultClose
-      } else if (
+      } else if
         (result.body.isInstanceOf[HttpEntity.Streamed] && result.body.contentLength.isEmpty)
         || request.headers.get(CONNECTION).exists(_.equalsIgnoreCase(CLOSE))
-      ) {
+      then {
         // We need to close the connection and set the header
         SendClose
       } else {
         DefaultKeepAlive
       }
     } else {
-      if (result.header.headers.get(CONNECTION).exists(_.equalsIgnoreCase(CLOSE))) {
+      if result.header.headers.get(CONNECTION).exists(_.equalsIgnoreCase(CLOSE)) then {
         DefaultClose
-      } else if (
+      } else if
         (result.body.isInstanceOf[HttpEntity.Streamed] && result.body.contentLength.isEmpty) ||
         request.headers.get(CONNECTION).forall(!_.equalsIgnoreCase(KEEP_ALIVE))
-      ) {
+      then {
         DefaultClose
       } else {
         SendKeepAlive
@@ -66,23 +66,23 @@ private[play] final class ServerResultUtils(
    * Returns the validated result, which may be an error result if validation failed.
    */
   def validateResult(request: RequestHeader, result: Result, httpErrorHandler: HttpErrorHandler)(
-      implicit mat: Materializer
+      using mat: Materializer
   ): Future[Result] = {
-    if (request.version == HttpProtocol.HTTP_1_0 && result.body.isInstanceOf[HttpEntity.Chunked]) {
+    if request.version == HttpProtocol.HTTP_1_0 && result.body.isInstanceOf[HttpEntity.Chunked] then {
       cancelEntity(result.body)
       val exception                   = new ServerResultException("HTTP 1.0 client does not support chunked response", result, null)
       val errorResult: Future[Result] = httpErrorHandler.onServerError(request, exception)
       import play.core.Execution.Implicits.trampoline
       errorResult.map { (originalErrorResult: Result) =>
         // Update the original error with a new status code and a "Connection: close" header
-        import originalErrorResult.{ header => h }
+        import originalErrorResult.{ header as h }
         val newHeader = h.copy(
           status = Status.HTTP_VERSION_NOT_SUPPORTED,
           headers = h.headers + (CONNECTION -> CLOSE)
         )
         originalErrorResult.copy(header = newHeader)
       }
-    } else if (!mayHaveEntity(result.header.status) && !result.body.isKnownEmpty) {
+    } else if !mayHaveEntity(result.header.status) && !result.body.isKnownEmpty then {
       cancelEntity(result.body)
       Future.successful(result.copy(body = HttpEntity.Strict(ByteString.empty, result.body.contentType)))
     } else {
@@ -91,7 +91,7 @@ private[play] final class ServerResultUtils(
   }
 
   /** Set of characters that are allowed in a header name. */
-  private[this] val allowedHeaderNameChars: AsciiBitSet = {
+  private val allowedHeaderNameChars: AsciiBitSet = {
     /*
      * From https://tools.ietf.org/html/rfc7230#section-3.2:
      *   field-name     = token
@@ -110,7 +110,7 @@ private[play] final class ServerResultUtils(
     validateString(allowedHeaderNameChars, "header name", headerName)
 
   /** Set of characters that are allowed in a header name. */
-  private[this] val allowedHeaderValueChars: AsciiBitSet = {
+  private val allowedHeaderValueChars: AsciiBitSet = {
     /*
      * From https://tools.ietf.org/html/rfc7230#section-3.2:
      *   field-value    = *( field-content / obs-fold )
@@ -130,9 +130,9 @@ private[play] final class ServerResultUtils(
 
   private def validateString(allowedSet: AsciiBitSet, setDescription: String, string: String): Unit = {
     @tailrec def loop(i: Int): Unit = {
-      if (i < string.length) {
+      if i < string.length then {
         val c = string.charAt(i)
-        if (!allowedSet.get(c))
+        if !allowedSet.get(c) then
           throw new InvalidHeaderCharacterException(
             s"Invalid $setDescription character: '$c' (${c.toInt}) in string $string at position $i",
             c
@@ -165,13 +165,13 @@ private[play] final class ServerResultUtils(
 
     def handleConversionError(conversionError: Throwable): Future[R] = {
       val isInvalidHeaderCharacter = conversionError.isInstanceOf[InvalidHeaderCharacterException]
-      val shouldLog                = if (isInvalidHeaderCharacter) logger.isInfoEnabled else logger.isErrorEnabled
+      val shouldLog                = if isInvalidHeaderCharacter then logger.isInfoEnabled else logger.isErrorEnabled
       def log(message: String, error: Throwable) =
-        if (isInvalidHeaderCharacter) logger.info(message, error) else logger.error(message, error)
+        if isInvalidHeaderCharacter then logger.info(message, error) else logger.error(message, error)
 
       try {
         // Log some information about the error
-        if (shouldLog) {
+        if shouldLog then {
           val prettyHeaders =
             result.header.headers.map { case (name, value) => s"<$name>: <$value>" }.mkString("[", ", ", "]")
           val msg =
@@ -180,7 +180,7 @@ private[play] final class ServerResultUtils(
         }
 
         // Call the HttpErrorHandler to generate an alternative error
-        val futureErrorResult = if (isInvalidHeaderCharacter) {
+        val futureErrorResult = if isInvalidHeaderCharacter then {
           errorHandler.onClientError(
             requestHeader,
             400,
@@ -234,7 +234,7 @@ private[play] final class ServerResultUtils(
    * the case, for example, the response from an Akka HTTP client may have an associated Source that must be consumed
    * (or cancelled) before the associated connection can be returned to the connection pool.
    */
-  def cancelEntity(entity: HttpEntity)(implicit mat: Materializer) = {
+  def cancelEntity(entity: HttpEntity)(using mat: Materializer) = {
     entity match {
       case HttpEntity.Chunked(chunks, _)   => chunks.runWith(Sink.cancelled)
       case HttpEntity.Streamed(data, _, _) => data.runWith(Sink.cancelled)
@@ -321,7 +321,7 @@ private[play] final class ServerResultUtils(
    * be folded together, which Play's API unfortunately  does.)
    */
   def splitSetCookieHeaders(headers: Map[String, String]): Iterable[(String, String)] = {
-    if (headers.contains(SET_COOKIE)) {
+    if headers.contains(SET_COOKIE) then {
       // Rewrite the headers with Set-Cookie split into separate headers
       headers.toSeq.flatMap {
         case (SET_COOKIE, value) =>

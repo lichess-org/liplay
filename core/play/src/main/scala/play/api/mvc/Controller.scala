@@ -108,7 +108,7 @@ trait RequestImplicits {
    * }
    * }}}
    */
-  implicit def request2session(implicit request: RequestHeader): Session = request.session
+  implicit def request2session(using request: RequestHeader): Session = request.session
 
   /**
    * Retrieve the flash scope implicitly from the request.
@@ -121,7 +121,7 @@ trait RequestImplicits {
    * }
    * }}}
    */
-  implicit def request2flash(implicit request: RequestHeader): Flash = request.flash
+  implicit def request2flash(using request: RequestHeader): Flash = request.flash
 }
 
 /**
@@ -167,10 +167,10 @@ abstract class AbstractController(protected val controllerComponents: Controller
  * A variation of [[BaseController]] that gets its components via method injection.
  */
 trait InjectedController extends BaseController {
-  private[this] var _components: ControllerComponents = _
+  private var _components: ControllerComponents = scala.compiletime.uninitialized
 
   protected override def controllerComponents: ControllerComponents = {
-    if (_components == null) fallbackControllerComponents else _components
+    if _components == null then fallbackControllerComponents else _components
   }
 
   /**

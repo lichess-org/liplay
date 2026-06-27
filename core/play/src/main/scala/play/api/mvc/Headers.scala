@@ -89,7 +89,7 @@ class Headers(protected var _headers: Seq[(String, String)]) {
    * Transform the Headers to a Map
    */
   lazy val toMap: Map[String, Seq[String]] = {
-    val builder = TreeMap.newBuilder[String, Seq[String]](CaseInsensitiveOrdered)
+    val builder = TreeMap.newBuilder[String, Seq[String]](using CaseInsensitiveOrdered)
 
     headers.groupBy(_._1.toLowerCase(Locale.ENGLISH)).foreach {
       case (_, headers) =>
@@ -105,7 +105,7 @@ class Headers(protected var _headers: Seq[(String, String)]) {
    */
   lazy val toSimpleMap: Map[String, String] =
     TreeMap
-      .newBuilder[String, String](CaseInsensitiveOrdered)
+      .newBuilder[String, String](using CaseInsensitiveOrdered)
       .++=(toMap.view.mapValues(_.headOption.getOrElse("")))
       .result()
 

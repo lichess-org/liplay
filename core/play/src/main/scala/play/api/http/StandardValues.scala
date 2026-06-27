@@ -16,42 +16,42 @@ trait ContentTypes {
   /**
    * Content-Type of text.
    */
-  def TEXT(implicit codec: Codec) = withCharset(MimeTypes.TEXT)
+  def TEXT(using codec: Codec) = withCharset(MimeTypes.TEXT)
 
   /**
    * Content-Type of html.
    */
-  def HTML(implicit codec: Codec) = withCharset(MimeTypes.HTML)
+  def HTML(using codec: Codec) = withCharset(MimeTypes.HTML)
 
   /**
    * Content-Type of xhtml.
    */
-  def XHTML(implicit codec: Codec) = withCharset(MimeTypes.XHTML)
+  def XHTML(using codec: Codec) = withCharset(MimeTypes.XHTML)
 
   /**
    * Content-Type of xml.
    */
-  def XML(implicit codec: Codec) = withCharset(MimeTypes.XML)
+  def XML(using codec: Codec) = withCharset(MimeTypes.XML)
 
   /**
    * Content-Type of css.
    */
-  def CSS(implicit codec: Codec) = withCharset(MimeTypes.CSS)
+  def CSS(using codec: Codec) = withCharset(MimeTypes.CSS)
 
   /**
    * Content-Type of javascript.
    */
-  def JAVASCRIPT(implicit codec: Codec) = withCharset(MimeTypes.JAVASCRIPT)
+  def JAVASCRIPT(using codec: Codec) = withCharset(MimeTypes.JAVASCRIPT)
 
   /**
    * Content-Type of server sent events.
    */
-  def EVENT_STREAM(implicit codec: Codec) = withCharset(MimeTypes.EVENT_STREAM)
+  def EVENT_STREAM(using codec: Codec) = withCharset(MimeTypes.EVENT_STREAM)
 
   /**
    * Content-Type of application cache.
    */
-  val CACHE_MANIFEST = withCharset(MimeTypes.CACHE_MANIFEST)(Codec.utf_8)
+  val CACHE_MANIFEST = withCharset(MimeTypes.CACHE_MANIFEST)(using Codec.utf_8)
 
   /**
    * Content-Type of json. This content type does not define a charset parameter.
@@ -71,7 +71,7 @@ trait ContentTypes {
   /**
    * @return the `codec` charset appended to `mimeType`
    */
-  def withCharset(mimeType: String)(implicit codec: Codec) = s"$mimeType; charset=${codec.charset}"
+  def withCharset(mimeType: String)(using codec: Codec) = s"$mimeType; charset=${codec.charset}"
 }
 
 /**

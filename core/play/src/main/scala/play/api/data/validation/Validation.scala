@@ -85,8 +85,8 @@ trait Constraints {
    */
   def emailAddress(errorMessage: String = "error.email"): Constraint[String] = Constraint[String]("constraint.email") {
     e =>
-      if (e == null) Invalid(ValidationError(errorMessage))
-      else if (e.trim.isEmpty) Invalid(ValidationError(errorMessage))
+      if e == null then Invalid(ValidationError(errorMessage))
+      else if e.trim.isEmpty then Invalid(ValidationError(errorMessage))
       else
         emailRegex
           .findFirstMatchIn(e)
@@ -104,8 +104,8 @@ trait Constraints {
    */
   def nonEmpty(errorMessage: String = "error.required"): Constraint[String] =
     Constraint[String]("constraint.required") { o =>
-      if (o == null) Invalid(ValidationError(errorMessage))
-      else if (o.trim.isEmpty) Invalid(ValidationError(errorMessage))
+      if o == null then Invalid(ValidationError(errorMessage))
+      else if o.trim.isEmpty then Invalid(ValidationError(errorMessage))
       else Valid
     }
 
@@ -125,7 +125,7 @@ trait Constraints {
       strict: Boolean = false,
       errorMessage: String = "error.min",
       strictErrorMessage: String = "error.min.strict"
-  )(implicit ordering: scala.math.Ordering[T]): Constraint[T] = Constraint[T]("constraint.min", minValue) { o =>
+  )(using ordering: scala.math.Ordering[T]): Constraint[T] = Constraint[T]("constraint.min", minValue) { o =>
     (ordering.compare(o, minValue).sign, strict) match {
       case (1, _) | (0, false) => Valid
       case (_, false)          => Invalid(ValidationError(errorMessage, minValue))
@@ -144,7 +144,7 @@ trait Constraints {
       strict: Boolean = false,
       errorMessage: String = "error.max",
       strictErrorMessage: String = "error.max.strict"
-  )(implicit ordering: scala.math.Ordering[T]): Constraint[T] = Constraint[T]("constraint.max", maxValue) { o =>
+  )(using ordering: scala.math.Ordering[T]): Constraint[T] = Constraint[T]("constraint.max", maxValue) { o =>
     (ordering.compare(o, maxValue).sign, strict) match {
       case (-1, _) | (0, false) => Valid
       case (_, false)           => Invalid(ValidationError(errorMessage, maxValue))
@@ -161,8 +161,8 @@ trait Constraints {
   def minLength(length: Int, errorMessage: String = "error.minLength"): Constraint[String] =
     Constraint[String]("constraint.minLength", length) { o =>
       require(length >= 0, "string minLength must not be negative")
-      if (o == null) Invalid(ValidationError(errorMessage, length))
-      else if (o.size >= length) Valid
+      if o == null then Invalid(ValidationError(errorMessage, length))
+      else if o.size >= length then Valid
       else Invalid(ValidationError(errorMessage, length))
     }
 
@@ -175,8 +175,8 @@ trait Constraints {
   def maxLength(length: Int, errorMessage: String = "error.maxLength"): Constraint[String] =
     Constraint[String]("constraint.maxLength", length) { o =>
       require(length >= 0, "string maxLength must not be negative")
-      if (o == null) Invalid(ValidationError(errorMessage, length))
-      else if (o.size <= length) Valid
+      if o == null then Invalid(ValidationError(errorMessage, length))
+      else if o.size <= length then Valid
       else Invalid(ValidationError(errorMessage, length))
     }
 
@@ -195,7 +195,7 @@ trait Constraints {
     require(name != null, "name must not be null")
     require(error != null, "error must not be null")
 
-    if (o == null) Invalid(ValidationError(error, regex))
+    if o == null then Invalid(ValidationError(error, regex))
     else regex.unapplySeq(o).map(_ => Valid).getOrElse(Invalid(ValidationError(error, regex)))
   }
 }
