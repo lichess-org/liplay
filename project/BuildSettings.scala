@@ -133,7 +133,7 @@ object BuildSettings {
   /** A project that is in the Play runtime. */
   def PlayCrossBuiltProject(name: String, dir: String): Project = {
     Project(name, file(dir))
-      .enablePlugins(PlayLibrary, AkkaSnapshotRepositories)
+      .enablePlugins(PlayLibrary)
       .settings(playRuntimeSettings: _*)
   }
 

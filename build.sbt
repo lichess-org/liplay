@@ -17,13 +17,6 @@ scalacOptions ++= Seq(
   "-release:21",
 )
 
-lazy val RoutesCompilerProject = PlayDevelopmentProject("Routes-Compiler", "dev-mode/routes-compiler")
-  .enablePlugins(SbtTwirl)
-  .settings(
-    libraryDependencies ++= routesCompilerDependencies(scalaVersion.value),
-    TwirlKeys.templateFormats := Map("twirl" -> "play.routes.compiler.ScalaFormat")
-  )
-
 lazy val StreamsProject = PlayCrossBuiltProject("Play-Streams", "core/play-streams")
   .settings(libraryDependencies ++= streamsDependencies)
 
@@ -78,27 +71,6 @@ lazy val PlayConfiguration = PlayCrossBuiltProject("Play-Configuration", "core/p
   )
   .dependsOn(PlayExceptionsProject)
 
-// These projects are aggregate by the root project and every
-// task (compile, test, publish, etc) executed for the root
-// project will also be executed for them:
-// https://www.scala-sbt.org/1.x/docs/Multi-Project.html#Aggregation
-//
-// Keep in mind that specific configurations (like skip in publish) will be respected.
-lazy val userProjects = Seq[ProjectReference](
-  PlayProject,
-  RoutesCompilerProject,
-  PlayNettyServerProject,
-  PlayServerProject,
-  PlayLogback,
-  PlayConfiguration,
-  PlayExceptionsProject,
-  StreamsProject
-)
-lazy val nonUserProjects = Seq[ProjectReference](
-  // SbtRoutesCompilerProject,
-  // SbtPluginProject,
-)
-
 lazy val PlayFramework = Project("Play-Framework", file("."))
   .enablePlugins(PlayRootProject)
   .settings(
@@ -111,4 +83,12 @@ lazy val PlayFramework = Project("Play-Framework", file("."))
     mimaReportBinaryIssues := (()),
     publish / skip         := true,
   )
-  .aggregate((userProjects ++ nonUserProjects): _*)
+  .aggregate(
+    PlayProject,
+    PlayNettyServerProject,
+    PlayServerProject,
+    PlayLogback,
+    PlayConfiguration,
+    PlayExceptionsProject,
+    StreamsProject
+  )
