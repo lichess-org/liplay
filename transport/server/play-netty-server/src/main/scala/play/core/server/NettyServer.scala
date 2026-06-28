@@ -20,10 +20,8 @@ import com.typesafe.netty.http.HttpStreamsServerHandler
 import io.netty.bootstrap.Bootstrap
 import io.netty.channel.*
 import io.netty.channel.epoll.EpollChannelOption
-import io.netty.channel.epoll.EpollEventLoopGroup
 import io.netty.channel.epoll.EpollServerSocketChannel
 import io.netty.channel.group.DefaultChannelGroup
-import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioServerSocketChannel
 import io.netty.channel.unix.UnixChannelOption
 import io.netty.handler.codec.http.*
@@ -44,7 +42,6 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext
 import scala.concurrent.Future
 import play.api.mvc.request.DefaultRequestFactory
-import io.netty.channel.epoll.EpollIoHandle
 import io.netty.channel.epoll.EpollIoHandler
 import io.netty.channel.nio.NioIoHandler
 import scala.annotation.nowarn
