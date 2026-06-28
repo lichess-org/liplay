@@ -11,7 +11,6 @@ import org.scalafmt.sbt.ScalafmtPlugin
 ThisBuild / scalacOptions ++= Seq(
   "-encoding",
   "utf-8",
-  "nowarn", // migration
   "-release:21",
   "-rewrite",
   // "-Wunused:all",
