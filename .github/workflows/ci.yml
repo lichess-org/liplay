@@ -6,6 +6,13 @@ on:
   push:
     branches: scala3
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
 
   test:
@@ -54,3 +61,33 @@ jobs:
       - name: compile
         run: sbt compile
 
+  scripted-tests:
+    runs-on: ubuntu-latest
+    env:
+      JAVA_OPTS: "-Xmx6G -XX:+UseG1GC"
+      SBT_OPTS: "-Dsbt.ci=true"
+    needs:
+      - "compile"
+    steps:
+
+      - name: Checkout current branch
+        uses: actions/checkout@v6
+
+      - name: Setup JVM
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: sbt
+
+      - name: Setup sbt
+        uses: sbt/setup-sbt@v1
+
+      - name: Scripted Test
+        run: |
+          sbt \
+            Play-Exceptions/publishLocal \
+            Sbt-Routes-Compiler/publishLocal \
+            Sbt-Plugin/publishLocal \
+            Sbt-Scripted-Tools/publishLocal \
+            "Sbt-Plugin/scripted play-sbt-plugin/show-versions"
