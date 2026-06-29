@@ -5,5 +5,5 @@ lazy val plugins = (project in file(".")).settings(
 
 enablePlugins(BuildInfoPlugin)
 
-addSbtPlugin("com.typesafe.play" % "sbt-twirl"    % "1.6.1")
-addSbtPlugin("org.scalameta"     % "sbt-scalafmt" % "2.6.1")
+addSbtPlugin("com.typesafe.play" % "sbt-twirl" % "1.6.1")
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.6.1")

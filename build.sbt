@@ -27,14 +27,16 @@ lazy val PlayExceptionsProject = Project("Play-Exceptions", file("core/play-exce
   .settings(playCommonSettings)
   .settings(
     autoScalaLibrary := false,
-    crossPaths       := false,
+    crossPaths := false
   )
 
 lazy val PlayProject = Project("Play", file("core/play"))
   .enablePlugins(SbtTwirl)
   .settings(playCommonSettings)
   .settings(
-    libraryDependencies ++= runtime(scalaVersion.value) ++ scalacheckDependencies ++ cookieEncodingDependencies :+
+    libraryDependencies ++= runtime(
+      scalaVersion.value
+    ) ++ scalacheckDependencies ++ cookieEncodingDependencies :+
       jimfs % Test,
     (sourceGenerators in Compile) += Def
       .task(
@@ -113,7 +115,7 @@ lazy val SbtScriptedToolsProject = PlaySbtPluginProject("Sbt-Scripted-Tools", "d
   .dependsOn(SbtPluginProject)
 
 lazy val PlayFramework = Project("Play-Framework", file("."))
-  .settings( publish / skip := true)
+  .settings(publish / skip := true)
   .aggregate(
     // runtime
     PlayProject,

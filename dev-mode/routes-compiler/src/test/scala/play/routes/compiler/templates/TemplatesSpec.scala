@@ -5,15 +5,13 @@
 package play.routes.compiler.templates
 
 import org.specs2.mutable.Specification
-import play.routes.compiler._
+import play.routes.compiler.*
 
-class TemplatesSpec extends Specification {
+class TemplatesSpec extends Specification:
 
-  def route(staticPath: String, params: Seq[Parameter] = Nil): Route = {
+  def route(staticPath: String, params: Seq[Parameter] = Nil): Route =
     Route(
       HttpVerb("GET"),
       PathPattern(Seq(StaticPart(staticPath))),
       HandlerCall(Option("pkg"), "ctrl", true, "method", Some(params))
     )
-  }
-}

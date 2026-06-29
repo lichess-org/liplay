@@ -9,29 +9,25 @@ import java.io.File
 import org.specs2.execute.Result
 import org.specs2.mutable.Specification
 
-class RoutesFileParserSpec extends Specification {
+class RoutesFileParserSpec extends Specification:
   "route file parser" should {
-    def parseRoute(line: String) = {
+    def parseRoute(line: String) =
       val rule = parseRule(line)
       rule must beAnInstanceOf[Route]
       rule.asInstanceOf[Route]
-    }
 
-    def parseRule(line: String): Rule = {
+    def parseRule(line: String): Rule =
       val result = RoutesFileParser.parseContent(line, new File("routes"))
       result must beRight[Any]
       val Right(rules) = result
       rules.length must_== 1
       rules.head
-    }
 
-    def parseError(line: String): Result = {
+    def parseError(line: String): Result =
       val result = RoutesFileParser.parseContent(line, new File("routes"))
-      result match {
+      result match
         case Left(errors) => ok
         case Right(rules) => ko("Routes compilation was successful, expected error")
-      }
-    }
 
     "parse the HTTP method" in {
       parseRoute("GET /s p.c.m").verb must_== HttpVerb("GET")
@@ -52,7 +48,9 @@ class RoutesFileParserSpec extends Specification {
     }
 
     "parse a path with multiple dynamic parts and it should not be encodeable" in {
-      parseRoute("GET /s/*e p.c.m(e)").path must_== PathPattern(Seq(StaticPart("s/"), DynamicPart("e", ".+", false)))
+      parseRoute("GET /s/*e p.c.m(e)").path must_== PathPattern(
+        Seq(StaticPart("s/"), DynamicPart("e", ".+", false))
+      )
     }
 
     "path with regex should not be encodeable" in {
@@ -174,7 +172,9 @@ class RoutesFileParserSpec extends Specification {
     }
 
     "parse a comment with a route" in {
-      parseRoute("# some comment\nGET /s p.c.m").comments must containTheSameElementsAs(Seq(Comment(" some comment")))
+      parseRoute("# some comment\nGET /s p.c.m").comments must containTheSameElementsAs(
+        Seq(Comment(" some comment"))
+      )
     }
 
     "parse a modifier tag with a route" in {
@@ -213,4 +213,3 @@ class RoutesFileParserSpec extends Specification {
     "throw an error for an invalid include path" in parseError("-> s someFile")
     "throw an error if no include file specified" in parseError("-> /s")
   }
-}

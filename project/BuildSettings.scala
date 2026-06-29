@@ -13,16 +13,16 @@ import scala.util.control.NonFatal
 object BuildSettings {
 
   val scala3 = "3.8.4"
-  val sbt2   = "2.0.0"
+  val sbt2 = "2.0.0"
 
   /** These settings are used by all projects. */
-  def playCommonSettings: Seq[Setting[_]] = Def.settings(
-    organization                    := "com.typesafe.play",
-    scalaVersion                    := scala3,
+  def playCommonSettings: Seq[Setting[?]] = Def.settings(
+    organization := "com.typesafe.play",
+    scalaVersion := scala3,
     (Compile / doc / scalacOptions) := Seq("-no-java-comments"),
-    (Test / fork)                   := true,
-    (Test / parallelExecution)      := false,
-    (Test / test / testListeners)   := Nil,
+    (Test / fork) := true,
+    (Test / parallelExecution) := false,
+    (Test / test / testListeners) := Nil,
     (Test / javaOptions) ++= Seq("-XX:MaxMetaspaceSize=384m", "-Xmx512m", "-Xms128m"),
     testOptions ++= Seq(
       Tests.Argument(TestFrameworks.Specs2, "showtimes"),
@@ -31,14 +31,14 @@ object BuildSettings {
     version := "2.8.18-lila_3.23"
   )
 
-  def playScriptedSettings: Seq[Setting[_]] = Seq(
+  def playScriptedSettings: Seq[Setting[?]] = Seq(
     // Don't automatically publish anything.
     // The test-sbt-plugins-* scripts publish before running the scripted tests.
     // When developing the sbt plugins:
     // * run a publishLocal in the root project to get everything
     // * run a publishLocal in the changes projects for fast feedback loops
     scriptedDependencies := (()), // drop Test/compile & publishLocal
-    scriptedBufferLog    := false,
+    scriptedBufferLog := false,
     // The scripted test projects reference the plugin via sys.props("project.version"), and
     // ScriptedTools.scalaVersionFromJavaProperties() reads scala.version/scala.crossversions.
     // interplay used to provide these; reproduce them from the build (single source of truth).
@@ -50,9 +50,9 @@ object BuildSettings {
       "-Xmx512m",
       "-XX:MaxMetaspaceSize=512m",
       "-XX:HeapDumpPath=/tmp/",
-      "-XX:+HeapDumpOnOutOfMemoryError",
+      "-XX:+HeapDumpOnOutOfMemoryError"
     ),
-    scripted := scripted.tag(Tags.Test).evaluated,
+    scripted := scripted.tag(Tags.Test).evaluated
   )
 
   /** A project that runs in the sbt runtime. */
@@ -60,7 +60,7 @@ object BuildSettings {
     Project(name, file(dir))
       .settings(
         playCommonSettings,
-        scalaVersion := scala3,
+        scalaVersion := scala3
       )
   }
 
@@ -71,9 +71,9 @@ object BuildSettings {
       .settings(
         playCommonSettings,
         playScriptedSettings,
-        scalaVersion                    := scala3,
+        scalaVersion := scala3,
         (pluginCrossBuild / sbtVersion) := sbt2,
-        (Test / fork)                   := false,
+        (Test / fork) := false
       )
   }
 
