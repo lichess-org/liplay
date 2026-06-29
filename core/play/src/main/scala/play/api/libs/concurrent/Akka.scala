@@ -8,13 +8,10 @@ import akka.Done
 import akka.actor.setup.ActorSystemSetup
 import akka.actor.setup.Setup
 import akka.actor.typed.Scheduler
-import akka.actor.Actor
-import akka.actor.ActorRef
 import akka.actor.ActorSystem
 import akka.actor.BootstrapSetup
 import akka.actor.ClassicActorSystemProvider
 import akka.actor.CoordinatedShutdown
-import akka.actor.Props
 import akka.stream.Materializer
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigValueFactory
@@ -23,42 +20,12 @@ import javax.inject.Provider
 import javax.inject.Singleton
 import org.slf4j.LoggerFactory
 import play.api.*
-import play.api.inject.*
+import play.api.inject.ApplicationLifecycle
 
 import scala.concurrent.*
 import scala.concurrent.duration.Duration
-import scala.reflect.ClassTag
 import scala.util.Try
 import scala.annotation.nowarn
-
-/**
- * Helper to access the application defined Akka Actor system.
- */
-object Akka:
-
-  /**
-   * Create a provider for an actor implemented by the given class, with the given name.
-   *
-   * This will instantiate the actor using Play's injector, allowing it to be dependency injected itself. The
-   * returned provider will provide the ActorRef for the actor, allowing it to be injected into other
-   * components.
-   *
-   * Typically, you will want to use this in combination with a named qualifier, so that multiple ActorRefs
-   * can be bound, and the scope should be set to singleton or eager singleton. *
-   *
-   * @param name
-   *   The name of the actor.
-   * @param props
-   *   A function to provide props for the actor. The props passed in will just describe how to create the
-   *   actor, this function can be used to provide additional configuration such as router and dispatcher
-   *   configuration.
-   * @tparam T
-   *   The class that implements the actor.
-   * @return
-   *   A provider for the actor.
-   */
-  def providerOf[T <: Actor: ClassTag](name: String, props: Props => Props = identity): Provider[ActorRef] =
-    new ActorRefProvider(name, props)
 
 /**
  * Components for configuring Akka.
@@ -107,21 +74,6 @@ class ActorSystemProvider @Inject() (environment: Environment, configuration: Co
 class ClassicActorSystemProviderProvider @Inject() (actorSystem: ActorSystem)
     extends Provider[ClassicActorSystemProvider]:
   lazy val get: ClassicActorSystemProvider = actorSystem
-
-/**
- * Provider for the default flow materializer
- */
-@Singleton
-class MaterializerProvider @Inject() (actorSystem: ActorSystem) extends Provider[Materializer]:
-  lazy val get: Materializer = Materializer.matFromSystem(using actorSystem)
-
-/**
- * Provider for the default execution context
- */
-@Singleton
-class ExecutionContextProvider @Inject() (actorSystem: ActorSystem)
-    extends Provider[ExecutionContextExecutor]:
-  def get: ExecutionContextExecutor = actorSystem.dispatcher
 
 /**
  * Provider for an [[akka.actor.typed.Scheduler Akka Typed Scheduler]].
@@ -206,17 +158,6 @@ object ActorSystemProvider:
 
     logger.debug(s"Starting application default Akka system: $name")
     ActorSystem(name, actorSystemSetup)
-
-/**
- * Provider for creating actor refs
- */
-class ActorRefProvider[T <: Actor: ClassTag](name: String, props: Props => Props) extends Provider[ActorRef]:
-  @Inject private var actorSystem: ActorSystem = scala.compiletime.uninitialized
-  @Inject private var injector: Injector = scala.compiletime.uninitialized
-
-  lazy val get: ActorRef =
-    val creation = Props(injector.instanceOf[T])
-    actorSystem.actorOf(props(creation), name)
 
 private object CoordinatedShutdownProvider:
   private val logger = LoggerFactory.getLogger(classOf[CoordinatedShutdownProvider])
