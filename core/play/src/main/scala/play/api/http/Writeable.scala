@@ -87,39 +87,6 @@ trait DefaultWriteables:
   /**
    * `Writeable` for `MultipartFormData`.
    *
-   * If the passed writeable contains a contentType with a boundary, this boundary will be used to separate
-   * the data/file parts of the multipart/form-data body. If you don't pass a contentType with the writeable,
-   * or it does not contain a boundary, a random one will be generated.
-   */
-  @deprecated("Use method that takes boundary and implicit codec", "2.9.0")
-  def writeableOf_MultipartFormData[A](
-      codec: Codec,
-      aWriteable: Writeable[FilePart[A]]
-  ): Writeable[MultipartFormData[A]] = writeableOf_MultipartFormData(codec, aWriteable.contentType)
-
-  /**
-   * `Writeable` for `MultipartFormData`.
-   *
-   * If you pass a contentType which contains a boundary, this boundary will be used to separate the data/file
-   * parts of the multipart/form-data body. If you don't pass a contentType, or it does not contain a
-   * boundary, a random one will be generated.
-   */
-  @deprecated("Use method that takes boundary and implicit codec", "2.9.0")
-  def writeableOf_MultipartFormData[A](
-      codec: Codec,
-      contentType: Option[String]
-  ): Writeable[MultipartFormData[A]] =
-    // If the passed contentType already provides a boundary, we (re)use it for the Content-Disposition header
-    val maybeBoundary = for
-      mt <- contentType.flatMap(MediaType.parse(_))
-      (_, value) <- mt.parameters.find(_._1.equalsIgnoreCase("boundary"))
-      boundary <- value
-    yield boundary
-    writeableOf_MultipartFormData(maybeBoundary)(using codec)
-
-  /**
-   * `Writeable` for `MultipartFormData`.
-   *
    * If you pass a boundary, it will be used to separate the data/file parts of the multipart/form-data body.
    * If you don't pass a boundary a random one will be generated.
    */

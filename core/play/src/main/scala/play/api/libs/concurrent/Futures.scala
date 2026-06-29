@@ -193,20 +193,6 @@ trait LowPriorityFuturesImplicits:
      * @return
      *   the future delayed by the specified duration.
      */
-    @deprecated("Use future.withDelay(duration) or futures.delayed(duration)(future)", "2.6.6")
-    def withDelay[A](duration: FiniteDuration)(future: Future[A])(using futures: Futures): Future[A] =
-      futures.delayed(duration)(future)
-
-    /**
-     * Creates a future which will be executed after the given delay.
-     *
-     * @param duration
-     *   the duration after which the future should be executed.
-     * @param futures
-     *   the implicit Futures.
-     * @return
-     *   the future delayed by the specified duration.
-     */
     def withDelay(duration: FiniteDuration)(using futures: Futures): Future[T] =
       futures.delayed(duration)(future)
 

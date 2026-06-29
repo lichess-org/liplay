@@ -50,23 +50,6 @@ object Multipart:
    *   The maximum amount of data to parse into memory.
    * @param errorHandler
    *   The error handler to call when an error occurs.
-   * @param partHandler
-   *   The accumulator to handle the parts.
-   * @deprecated
-   *   Since 2.9.0. Use the overloaded partParser method that takes the allowEmptyFiles flag.
-   */
-  @deprecated("Use the overloaded partParser method that takes the allowEmptyFiles flag", "2.9.0")
-  def partParser[A](maxMemoryBufferSize: Long, errorHandler: HttpErrorHandler)(
-      partHandler: Accumulator[Part[Source[ByteString, ?]], Either[Result, A]]
-  )(using mat: Materializer): BodyParser[A] =
-    partParser(maxMemoryBufferSize, false, errorHandler)(partHandler)
-
-  /**
-   * Parses the stream into a stream of [[play.api.mvc.MultipartFormData.Part]] to be handled by
-   * `partHandler`.
-   *
-   * @param maxMemoryBufferSize
-   *   The maximum amount of data to parse into memory.
    * @param allowEmptyFiles
    *   If file uploads are allowed to contain no data in the body
    * @param errorHandler
@@ -114,26 +97,6 @@ object Multipart:
         )
       }
   }
-
-  /**
-   * Parses the request body into a Multipart body.
-   *
-   * @param maxMemoryBufferSize
-   *   The maximum amount of data to parse into memory.
-   * @param filePartHandler
-   *   The accumulator to handle the file parts.
-   * @param errorHandler
-   *   The error handler to call when an error occurs.
-   * @deprecated
-   *   Since 2.9.0. Use the overloaded multipartParser method that takes the allowEmptyFiles flag.
-   */
-  @deprecated("Use the overloaded multipartParser method that takes the allowEmptyFiles flag", "2.9.0")
-  def multipartParser[A](
-      maxMemoryBufferSize: Long,
-      filePartHandler: FilePartHandler[A],
-      errorHandler: HttpErrorHandler
-  )(using mat: Materializer): BodyParser[MultipartFormData[A]] =
-    multipartParser(maxMemoryBufferSize, false, filePartHandler, errorHandler)
 
   /**
    * Parses the request body into a Multipart body.
@@ -346,10 +309,6 @@ object Multipart:
       maxHeaderSize: Int,
       allowEmptyFiles: Boolean
   ) extends GraphStage[FlowShape[ByteString, RawPart]]:
-
-    @deprecated("Use the main constructor", "2.9.0")
-    def this(boundary: String, maxMemoryBufferSize: Long, maxHeaderSize: Int) =
-      this(boundary, maxMemoryBufferSize, maxHeaderSize, false)
 
     require(boundary.nonEmpty, "'boundary' parameter of multipart Content-Type must be non-empty")
     require(

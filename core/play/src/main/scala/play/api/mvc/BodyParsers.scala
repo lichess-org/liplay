@@ -1018,28 +1018,6 @@ trait PlayBodyParsers extends BodyParserUtils:
    *   Handles file parts.
    * @param maxLength
    *   Max length (in bytes) allowed or returns EntityTooLarge HTTP response.
-   *
-   * @see
-   *   [[DefaultMaxDiskLength]]
-   * @see
-   *   [[Results.EntityTooLarge]]
-   *
-   * @deprecated
-   *   Since 2.9.0. Use the overloaded multipartFormData method that takes the allowEmptyFiles flag.
-   */
-  @deprecated("Use the overloaded multipartFormData method that takes the allowEmptyFiles flag", "2.9.0")
-  def multipartFormData[A](
-      filePartHandler: Multipart.FilePartHandler[A],
-      maxLength: Long
-  ): BodyParser[MultipartFormData[A]] = multipartFormData(filePartHandler, maxLength, false)
-
-  /**
-   * Parse the content as multipart/form-data
-   *
-   * @param filePartHandler
-   *   Handles file parts.
-   * @param maxLength
-   *   Max length (in bytes) allowed or returns EntityTooLarge HTTP response.
    * @param allowEmptyFiles
    *   If empty file uploads are allowed (no matter if filename or file is empty)
    *

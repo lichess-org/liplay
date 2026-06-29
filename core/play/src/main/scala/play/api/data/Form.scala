@@ -442,10 +442,6 @@ object Form:
     Form(mapping._2.withPrefix(mapping._1), Map.empty, Nil, None)
 
 private[data] object FormUtils:
-  @deprecated("Use fromJson with maxDepth parameter", "2.8.16")
-  def fromJson(js: JsValue, maxChars: Long): Map[String, String] =
-    doFromJson(FromJsonRoot(js), Map.empty, 0, maxChars, Form.FromJsonMaxDepth)
-
   def fromJson(js: JsValue, maxChars: Long, maxDepth: Int): Map[String, String] =
     doFromJson(FromJsonRoot(js), Map.empty, 0, maxChars, maxDepth)
 
