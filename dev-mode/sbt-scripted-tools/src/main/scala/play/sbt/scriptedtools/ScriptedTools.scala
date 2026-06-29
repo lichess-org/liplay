@@ -17,26 +17,13 @@ import scala.collection.mutable.ListBuffer
 
 import sbt._
 import sbt.Keys._
-import sbt.ProjectExtra.{ inConfig, given }
+import sbt.ProjectExtra.inConfig
+import sbt.ProjectExtra.given
 
 import play.sbt.routes.RoutesCompiler.autoImport._
 
 object ScriptedTools extends AutoPlugin {
   override def trigger = allRequirements
-
-  override def projectSettings: Seq[Def.Setting[_]] = Def.settings(
-    resolvers ++= Resolver.sonatypeOssRepos("releases"), // sync BuildSettings.scala
-    // This is copy/pasted from AkkaSnapshotRepositories since scripted tests also need
-    // the snapshot resolvers in `cron` builds.
-    // If this is a scheduled GitHub Action
-    // https://docs.github.com/en/actions/learn-github-actions/environment-variables
-    resolvers ++= sys.env
-      .get("GITHUB_EVENT_NAME")
-      .filter(_.equalsIgnoreCase("schedule"))
-      .map(_ => Resolver.sonatypeOssRepos("snapshots")) // contains akka(-http) snapshots
-      .toSeq
-      .flatten
-  )
 
   def scalaVersionFromJavaProperties() =
     sys
@@ -96,7 +83,7 @@ object ScriptedTools extends AutoPlugin {
       // sbt 2.0's `url(...)` returns a URI; callUrlImpl wants a java.net.URL.
       val loc = if (ssl) url(s"https://localhost:9443$path").toURL else url(s"http://localhost:9000$path").toURL
 
-      val (requestStatus, contents) = callUrlImpl(loc, headers: _*)
+      val (requestStatus, contents) = callUrlImpl(loc, headers *)
 
       if (status == requestStatus) messages += s"Resource at $path returned $status as expected"
       else throw new RuntimeException(s"Resource at $path returned $requestStatus instead of $status")
@@ -125,7 +112,7 @@ object ScriptedTools extends AutoPlugin {
   }
 
   def callUrl(path: String, headers: (String, String)*): (Int, String) = {
-    callUrlImpl(url(s"http://localhost:9000$path").toURL, headers: _*)
+    callUrlImpl(url(s"http://localhost:9000$path").toURL, headers *)
   }
 
   private def callUrlImpl(url: URL, headers: (String, String)*): (Int, String) = {
