@@ -81,14 +81,50 @@ lazy val PlayConfiguration = Project("Play-Configuration", file("core/play-confi
   )
   .dependsOn(PlayExceptionsProject)
 
+// ----- Development-mode tooling (sbt-2 plugin + routes compiler) -----
+
+lazy val SbtRoutesCompilerProject = PlaySbtProject("Sbt-Routes-Compiler", "dev-mode/routes-compiler")
+  .enablePlugins(SbtTwirl)
+  .settings(
+    libraryDependencies ++= routesCompilerDependencies(scalaVersion.value),
+    TwirlKeys.templateFormats := Map("twirl" -> "play.routes.compiler.ScalaFormat")
+  )
+
+lazy val SbtPluginProject = PlaySbtPluginProject("Sbt-Plugin", "dev-mode/sbt-plugin")
+  .enablePlugins(SbtPlugin)
+  .settings(
+    libraryDependencies ++= sbtDependencies((pluginCrossBuild / sbtVersion).value, scalaVersion.value),
+    (Compile / sourceGenerators) += Def.task {
+      PlayVersion(
+        version.value,
+        (SbtRoutesCompilerProject / scalaVersion).value,
+        sbtVersion.value,
+        Dependencies.akkaVersion,
+        Dependencies.akkaHttpVersion,
+        (Compile / sourceManaged).value
+      )
+    }.taskValue
+  )
+  .dependsOn(SbtRoutesCompilerProject, PlayExceptionsProject)
+
+// Provides the ScriptedTools auto plugin used by the sbt-plugin scripted tests.
+lazy val SbtScriptedToolsProject = PlaySbtPluginProject("Sbt-Scripted-Tools", "dev-mode/sbt-scripted-tools")
+  .enablePlugins(SbtPlugin)
+  .dependsOn(SbtPluginProject)
+
 lazy val PlayFramework = Project("Play-Framework", file("."))
-  .settings(publish / skip := true)
+  .settings( publish / skip := true)
   .aggregate(
+    // runtime
     PlayProject,
     PlayNettyServerProject,
     PlayServerProject,
     PlayLogback,
     PlayConfiguration,
     PlayExceptionsProject,
-    StreamsProject
+    StreamsProject,
+    // dev-mode tooling
+    SbtRoutesCompilerProject,
+    SbtPluginProject,
+    SbtScriptedToolsProject
   )

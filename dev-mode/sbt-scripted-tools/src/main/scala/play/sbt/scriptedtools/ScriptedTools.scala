@@ -1,0 +1,198 @@
+/*
+ * Copyright (C) from 2022 The Play Framework Contributors <https://github.com/playframework>, 2011-2021 Lightbend Inc. <https://www.lightbend.com>
+ */
+
+package play.sbt.scriptedtools
+
+import java.security.cert.X509Certificate
+import java.util.concurrent.TimeUnit
+
+import javax.net.ssl.HttpsURLConnection
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
+
+import scala.annotation.tailrec
+import scala.collection.mutable.ListBuffer
+
+import sbt._
+import sbt.Keys._
+import sbt.ProjectExtra.inConfig
+import sbt.ProjectExtra.given
+
+import play.sbt.routes.RoutesCompiler.autoImport._
+
+object ScriptedTools extends AutoPlugin {
+  override def trigger = allRequirements
+
+  def scalaVersionFromJavaProperties() =
+    sys
+      .props("scala.crossversions")
+      .split(" ")
+      .toSeq
+      .filter(v => SemanticSelector(sys.props("scala.version")).matches(VersionNumber(v))) match {
+      case Nil =>
+        sys.error("Unable to detect scalaVersion! Did you pass scala.crossversions and scala.version Java properties?")
+      case Seq(version) => version
+      case multiple =>
+        sys.error(
+          s"Multiple crossScalaVersions matched query '${sys.props("scala.version")}': ${multiple.mkString(", ")}"
+        )
+    }
+
+  def callIndex(): Unit                   = callUrl("/")
+  def applyEvolutions(path: String): Unit = callUrl(path)
+
+  private val trustAllManager: TrustManager = new X509TrustManager() {
+    def getAcceptedIssuers: Array[X509Certificate]                                = null
+    def checkClientTrusted(certs: Array[X509Certificate], authType: String): Unit = ()
+    def checkServerTrusted(certs: Array[X509Certificate], authType: String): Unit = ()
+  }
+
+  def setupSsl() = {
+    val sc = SSLContext.getInstance("SSL")
+    sc.init(null, Array(trustAllManager), null)
+    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory)
+  }
+
+  def verifyResourceContains(
+      path: String,
+      status: Int,
+      assertions: Seq[String],
+      headers: (String, String)*
+  ): Unit = {
+    verifyResourceContainsImpl(false, path, status, assertions, headers, 0)
+  }
+
+  def verifyResourceContainsSsl(path: String, status: Int): Unit = {
+    verifyResourceContainsImpl(true, path, status, Nil, Nil, 0)
+  }
+
+  @tailrec def verifyResourceContainsImpl(
+      ssl: Boolean,
+      path: String,
+      status: Int,
+      assertions: Seq[String],
+      headers: Seq[(String, String)],
+      attempts: Int
+  ): Unit = {
+    println(s"Attempt $attempts at $path")
+    val messages = ListBuffer.empty[String]
+    try {
+      if (ssl) setupSsl()
+      // sbt 2.0's `url(...)` returns a URI; callUrlImpl wants a java.net.URL.
+      val loc = if (ssl) url(s"https://localhost:9443$path").toURL else url(s"http://localhost:9000$path").toURL
+
+      val (requestStatus, contents) = callUrlImpl(loc, headers *)
+
+      if (status == requestStatus) messages += s"Resource at $path returned $status as expected"
+      else throw new RuntimeException(s"Resource at $path returned $requestStatus instead of $status")
+
+      assertions.foreach { assertion =>
+        if (contents.contains(assertion)) messages += s"Resource at $path contained $assertion"
+        else throw new RuntimeException(s"Resource at $path didn't contain '$assertion':\n$contents")
+      }
+
+      messages.foreach(println)
+    } catch {
+      case e: Exception =>
+        println(s"Got exception: $e. Cause was ${e.getCause}")
+        // Using 30 max attempts so that we can give more chances to
+        // the file watcher service. This is relevant when using the
+        // default JDK watch service which does uses polling.
+        if (attempts < 30) {
+          TimeUnit.MILLISECONDS.sleep(500L)
+          verifyResourceContainsImpl(ssl, path, status, assertions, headers, attempts + 1)
+        } else {
+          messages.foreach(println)
+          println(s"After $attempts attempts:")
+          throw e
+        }
+    }
+  }
+
+  def callUrl(path: String, headers: (String, String)*): (Int, String) = {
+    callUrlImpl(url(s"http://localhost:9000$path").toURL, headers *)
+  }
+
+  private def callUrlImpl(url: URL, headers: (String, String)*): (Int, String) = {
+    val conn = url.openConnection().asInstanceOf[java.net.HttpURLConnection]
+    conn.setConnectTimeout(10000)
+    conn.setReadTimeout(10000)
+    headers.foreach { case (k, v) => conn.setRequestProperty(k, v) }
+    try {
+      val status = conn.getResponseCode
+      val in     = if (conn.getResponseCode < 400) conn.getInputStream else conn.getErrorStream
+      val contents =
+        if (in == null) ""
+        else {
+          try IO.readStream(in)
+          finally in.close()
+        }
+      (status, contents)
+    } finally conn.disconnect()
+  }
+
+  val dumpRoutesSourceOnCompilationFailure = {
+    val settings = Seq(
+      // sbt 2.0 caches `compile` (output CompileAnalysis has no JsonFormat); this override only
+      // adds a failure-dump side effect, so opt out of caching.
+      compile := Def.uncached {
+        compile.result.value match {
+          case Result.Value(v) => v
+          case Result.Inc(inc) =>
+            // If there was a compilation error, dump generated routes files so we can read them
+            ((Compile / routes / target).value ** AllPassFilter).filter(_.isFile).get().foreach { file =>
+              println(s"Dumping $file:")
+              IO.readLines(file).zipWithIndex.foreach {
+                case (line, index) => println(f"${index + 1}%4d: $line")
+              }
+              println()
+            }
+            throw inc
+        }
+      }
+    )
+    Seq(Compile, Test).flatMap(inConfig(_)(settings))
+  }
+
+  def checkLines(source: String, target: String): Unit = {
+    val sourceLines = IO.readLines(new File(source))
+    val targetLines = IO.readLines(new File(target))
+
+    println("Source:")
+    println("-------")
+    println(sourceLines.mkString("\n"))
+    println("Target:")
+    println("-------")
+    println(targetLines.mkString("\n"))
+
+    sourceLines.foreach { sl =>
+      if (!targetLines.contains(sl)) {
+        throw new RuntimeException(s"File $target didn't contain line:\n$sl")
+      }
+    }
+  }
+
+  def checkLinesPartially(source: String, target: String): Unit =
+    checkLinesPartially(source, target, true)
+
+  def checkLinesPartially(source: String, target: String, shouldContain: Boolean): Unit = {
+    val sourceLines = IO.readLines(new File(source))
+    val targetLines = IO.readLines(new File(target))
+
+    println("Source:")
+    println("-------")
+    println(sourceLines.mkString("\n"))
+    println("Target:")
+    println("-------")
+    println(targetLines.mkString("\n"))
+
+    sourceLines.foreach { sl =>
+      val contains = targetLines.exists(_.contains(sl))
+      if ((contains && !shouldContain) || (!contains && shouldContain)) {
+        throw new RuntimeException(s"File $target did${if (shouldContain) " not" else ""} partially contain line:\n$sl")
+      }
+    }
+  }
+}

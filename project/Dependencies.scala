@@ -11,6 +11,8 @@ object Dependencies {
   val akkaVersion: String = sys.props.getOrElse("akka.version", "2.6.21")
   val akkaHttpVersion     = sys.props.getOrElse("akka.http.version", "10.2.10")
 
+  val sbt2TwirlVersion = "2.1.0-M9"
+
   val logback = "ch.qos.logback" % "logback-classic" % "1.5.35"
 
   val specs2Version = "4.20.0"
@@ -83,5 +85,32 @@ object Dependencies {
     guava   % Test,
     logback % Test
   )
+
+  // ----- Development-mode tooling (routes compiler + sbt-2 plugin) -----
+
+  def routesCompilerDependencies(scalaVersion: String) = {
+    specs2CoreDeps.map(_ % Test) ++ Seq(specsMatcherExtra % Test) ++ scalaParserCombinators(
+      scalaVersion
+    ) ++ (logback % Test :: Nil)
+  }
+
+  private def sbtPluginDep(moduleId: ModuleID, sbtVersion: String, scalaVersion: String) = {
+    Defaults.sbtPluginExtra(
+      moduleId,
+      CrossVersion.binarySbtVersion(sbtVersion),
+      CrossVersion.binaryScalaVersion(scalaVersion)
+    )
+  }
+
+  def sbtDependencies(sbtVersion: String, scalaVersion: String) = {
+    def sbtDep(moduleId: ModuleID) = sbtPluginDep(moduleId, sbtVersion, scalaVersion)
+
+    Seq(
+      typesafeConfig,
+      slf4jSimple,
+      sbtDep("org.playframework.twirl" % "sbt-twirl" % sbt2TwirlVersion),
+      logback % Test
+    ) ++ specs2CoreDeps.map(_ % Test)
+  }
 
 }

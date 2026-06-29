@@ -1,0 +1,257 @@
+/*
+ * Copyright (C) from 2022 The Play Framework Contributors <https://github.com/playframework>, 2011-2021 Lightbend Inc. <https://www.lightbend.com>
+ */
+
+package play.sbt.routes
+
+import play.api.PlayException
+import play.core.PlayVersion
+import play.routes.compiler.RoutesGenerator
+import play.routes.compiler.RoutesCompilationError
+import play.routes.compiler.RoutesCompiler.GeneratedSource
+import play.routes.compiler.RoutesCompiler.RoutesCompilerTask
+
+import sbt._
+import sbt.Keys._
+import sbt.io.IO
+import sbt.io.syntax._
+import sbt.librarymanagement.Configurations.{ Compile, Test }
+import sbt.util.Logger
+import sbt.ProjectExtra.{ inConfig, given }
+import sbt.std.TaskExtra._
+import sbt.internal.util.FeedbackProvidedException
+
+import xsbti.Position
+
+import java.io.File
+import java.util.Optional
+import scala.collection.mutable
+import scala.jdk.OptionConverters._
+
+object RoutesKeys {
+  val routesCompilerTasks = TaskKey[Seq[RoutesCompilerTask]]("playRoutesTasks", "The routes files to compile")
+  val routes              = TaskKey[Seq[File]]("playRoutes", "Compile the routes files")
+  val routesImport        = SettingKey[Seq[String]]("playRoutesImports", "Imports for the router")
+  val routesGenerator     = SettingKey[RoutesGenerator]("playRoutesGenerator", "The routes generator")
+  val generateForwardRouter = SettingKey[Boolean](
+    "playGenerateForwardRouter",
+    "Whether the forward router should be generated. Setting to false may reduce compile times if it's not needed."
+  )
+  val generateReverseRouter = SettingKey[Boolean](
+    "playGenerateReverseRouter",
+    "Whether the reverse router should be generated. Setting to false may reduce compile times if it's not needed."
+  )
+  val namespaceReverseRouter = SettingKey[Boolean](
+    "playNamespaceReverseRouter",
+    "Whether the reverse router should be namespaced. Useful if you have many routers that use the same actions."
+  )
+
+  /**
+   * This class is used to avoid infinite recursions when configuring aggregateReverseRoutes,
+   * since it makes the ProjectReference a thunk.
+   */
+  class LazyProjectReference(ref: => ProjectReference) {
+    def project: ProjectReference = ref
+  }
+
+  object LazyProjectReference {
+    import scala.language.implicitConversions
+    implicit def fromProjectReference(ref: => ProjectReference): LazyProjectReference = new LazyProjectReference(ref)
+    implicit def fromProject(project: => Project): LazyProjectReference =
+      new LazyProjectReference(LocalProject(project.id))
+  }
+
+  val aggregateReverseRoutes = SettingKey[Seq[LazyProjectReference]](
+    "playAggregateReverseRoutes",
+    "A list of projects that reverse routes should be aggregated from."
+  )
+
+  val InjectedRoutesGenerator = play.routes.compiler.InjectedRoutesGenerator
+}
+
+object RoutesCompiler extends AutoPlugin {
+  private val slash = new sbt.SlashSyntax {}
+  import slash._
+  import RoutesKeys._
+
+  override def trigger = noTrigger
+
+  val autoImport = RoutesKeys
+
+  override def projectSettings =
+    defaultSettings ++
+      inConfig(Compile)(routesSettings) ++
+      inConfig(Test)(routesSettings)
+
+  def routesSettings = Seq(
+    routes / sources := Nil,
+    routesCompilerTasks := Def.uncached(Def.taskDyn {
+      val generateReverseRouterValue  = generateReverseRouter.value
+      val generateForwardRouterValue  = generateForwardRouter.value
+      val namespaceReverseRouterValue = namespaceReverseRouter.value
+      val sourcesInRoutes             = (routes / sources).value
+      val routesImportValue           = routesImport.value
+
+      // Aggregate all the routes file tasks that we want to compile the reverse routers for.
+      val aggregated: Def.Initialize[Task[Seq[Seq[RoutesCompilerTask]]]] =
+        aggregateReverseRoutes.value
+          .map { agg =>
+            (agg.project / configuration.value / routesCompilerTasks)
+          }
+          .join
+
+      Def.task {
+        val aggTasks = aggregated.value
+        // Aggregated tasks need to have forwards router compilation disabled and reverse router compilation enabled.
+        val reverseRouterTasks = aggTasks.flatten.map { task =>
+          task.copy(forwardsRouter = false, reverseRouter = true)
+        }
+
+        // Find the routes compile tasks for this project
+        val thisProjectTasks = sourcesInRoutes.map { file =>
+          RoutesCompilerTask(
+            file,
+            routesImportValue,
+            forwardsRouter = generateForwardRouterValue,
+            reverseRouter = generateReverseRouterValue,
+            namespaceReverseRouter = namespaceReverseRouterValue
+          )
+        }
+
+        thisProjectTasks ++ reverseRouterTasks
+      }
+    }.value),
+    Scope.Global / watchSources ++= Def.uncached((routes / sources).value),
+    routes / target := crossTarget.value / "routes" / Defaults.nameForSrc(configuration.value.name),
+    routes := Def.uncached(compileRoutesFiles.value),
+    sourceGenerators += Def.task(routes.value).taskValue,
+    managedSourceDirectories += (routes / target).value
+  )
+
+  def defaultSettings = Seq(
+    routesImport := Nil,
+    aggregateReverseRoutes := Nil,
+    // Generate reverse router defaults to true if this project is not aggregated by any of the projects it depends on
+    // aggregateReverseRoutes projects.  Otherwise, it will be false, since another project will be generating the
+    // reverse router for it.
+    generateReverseRouter := Def.settingDyn {
+      val projectRef   = thisProjectRef.value
+      val dependencies = buildDependencies.value.classpathTransitiveRefs(projectRef)
+
+      // Go through each dependency of this project
+      dependencies
+        .map { dep =>
+          // Get the aggregated reverse routes projects for the dependency, if defined
+          Def.optional(dep / aggregateReverseRoutes)(_.map(_.map(_.project)).getOrElse(Nil))
+        }
+        .join
+        .apply { (aggregated: Seq[Seq[ProjectReference]]) =>
+          val localProject = LocalProject(projectRef.project)
+          // Return false if this project is aggregated by one of our dependencies
+          !aggregated.flatten.contains(localProject)
+        }
+    }.value,
+    namespaceReverseRouter := false,
+    routesGenerator := InjectedRoutesGenerator,
+    sourcePositionMappers += Def.uncached(routesPositionMapper)
+  )
+
+  private val routesPositionMapper: Position => Option[Position] = position => {
+    position.sourceFile.toScala.collect {
+      case GeneratedSource(generatedSource) => new MappedPos(position, generatedSource)
+    }
+  }
+
+  private final class MappedPos(generatedPosition: Position, generatedSource: GeneratedSource) extends Position {
+    private val source = generatedSource.source.get
+
+    lazy val line        = generatedPosition.line.toScala.flatMap(l => generatedSource.mapLine(l).map(Int.box(_))).toJava
+    lazy val lineContent = line.toScala.flatMap(l => IO.read(source).split('\n').lift(l - 1)).getOrElse("")
+    val offset           = Optional.empty[Integer]
+    val pointer          = Optional.empty[Integer]
+    val pointerSpace     = Optional.empty[String]
+    val sourcePath       = Optional.ofNullable(source.getCanonicalPath)
+    val sourceFile       = Optional.ofNullable(source)
+
+    override lazy val toString = {
+      val sb = new mutable.StringBuilder()
+
+      if (sourcePath.isPresent) sb.append(sourcePath.get)
+      if (line.isPresent) sb.append(":").append(line.get)
+      if (lineContent.nonEmpty) sb.append("\n").append(lineContent)
+
+      sb.toString()
+    }
+  }
+
+  private val compileRoutesFiles = Def.task[Seq[File]] {
+    val log = state.value.log
+    compileRoutes(
+      routesCompilerTasks.value,
+      routesGenerator.value,
+      (routes / target).value,
+      streams.value.cacheDirectory,
+      log
+    )
+  }
+
+  def compileRoutes(
+      tasks: Seq[RoutesCompilerTask],
+      generator: RoutesGenerator,
+      generatedDir: File,
+      cacheDirectory: File,
+      log: Logger
+  ): Seq[File] = {
+    val errs     = Seq.newBuilder[RoutesCompilationError]
+    val products = Seq.newBuilder[File]
+
+    tasks.foreach { task =>
+      play.routes.compiler.RoutesCompiler.compile(task, generator, generatedDir) match {
+        case Right(inputs) => products ++= inputs
+        case Left(details) => errs ++= details
+      }
+    }
+
+    val errors = errs.result()
+    if (errors.nonEmpty) {
+      val exceptions = errors.map {
+        case RoutesCompilationError(source, message, line, column) =>
+          reportCompilationError(log, RoutesCompilationException(source, message, line, column.map(_ - 1)))
+      }
+
+      throw exceptions.head
+    }
+
+    products.result()
+  }
+
+  private def reportCompilationError(log: Logger, error: PlayException.ExceptionSource) = {
+    // log the source file and line number with the error message
+    log.error(
+      Option(error.sourceName).getOrElse("") + Option(error.line).map(":" + _).getOrElse("") + ": " + error.getMessage
+    )
+    Option(error.interestingLines(0)).map(_.focus).flatMap(_.headOption).map { line =>
+      // log the line
+      log.error(line)
+      Option(error.position).map { pos =>
+        // print a carat under the offending character
+        val spaces = (line: Seq[Char]).take(pos).map {
+          case '\t' => '\t'
+          case x    => ' '
+        }
+        log.error(spaces.mkString + "^")
+      }
+    }
+    error
+  }
+}
+
+
+case class RoutesCompilationException(source: File, message: String, atLine: Option[Int], column: Option[Int])
+    extends PlayException.ExceptionSource("Compilation error", message)
+    with FeedbackProvidedException {
+  def line       = atLine.map(_.asInstanceOf[java.lang.Integer]).orNull
+  def position   = column.map(_.asInstanceOf[java.lang.Integer]).orNull
+  def input      = IO.read(source)
+  def sourceName = source.getAbsolutePath
+}

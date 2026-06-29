@@ -12,9 +12,5 @@ buildInfoKeys := Seq[BuildInfoKey](
   "sbtTwirlVersion" -> sbtTwirl,
 )
 
-logLevel := Level.Warn
-
-scalacOptions ++= Seq("-deprecation", "-language:_")
-
 addSbtPlugin("com.typesafe.play" % "sbt-twirl"    % sbtTwirl)
 addSbtPlugin("org.scalameta"     % "sbt-scalafmt" % scalafmt)
