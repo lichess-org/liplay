@@ -45,7 +45,9 @@ object RoutesFileParser:
         validate(routesFile, parsed.collect { case r: Route => r }) match
           case Nil => Right(parsed)
           case errors => Left(errors)
-      case parser.NoSuccess(message, in) =>
+      case parser.Error(message, in) =>
+        Left(Seq(RoutesCompilationError(routesFile, message, Some(in.pos.line), Some(in.pos.column))))
+      case parser.Failure(message, in) =>
         Left(Seq(RoutesCompilationError(routesFile, message, Some(in.pos.line), Some(in.pos.column))))
 
   /**

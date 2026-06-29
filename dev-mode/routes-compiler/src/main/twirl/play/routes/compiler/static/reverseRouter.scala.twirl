@@ -10,11 +10,11 @@ import play.core.routing.{dynamicString}
 @for(i <- imports) {
 import @if(!i.startsWith("_root_.")){_root_.}@i}
 
-@markLines(routes: _*)
+@markLines(routes*)
 package routes @ob
 
 @for((controller, routes) <- groupRoutesByController(routes)) {
-  @markLines(routes: _*)
+  @markLines(routes*)
   object @(controller.replace(".", "_")) @ob
 
   @for(((method, _), routes) <- groupRoutesByMethod(routes)) {@routes match {
@@ -26,7 +26,7 @@ package routes @ob
     @cb
   }
   case _ => {
-    @markLines(routes: _*)
+    @markLines(routes*)
     def @(method)@(reverseSignature(routes)): Call = @ob
     @defining(reverseParameters(routes)) { params =>
       (@reverseMatchParameters(params, true)) match @ob
