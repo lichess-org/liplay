@@ -71,18 +71,13 @@ case class HandlerCall(
     parameters: Option[Seq[Parameter]]
 ) extends Positional:
   private val dynamic = if instantiate then "@" else ""
-  lazy val routeParams: Seq[Parameter] = parameters.toIndexedSeq.flatten.filterNot(_.isJavaRequest)
-  lazy val passJavaRequest: Boolean = parameters.getOrElse(Nil).exists(_.isJavaRequest)
+  lazy val routeParams: Seq[Parameter] = parameters.toIndexedSeq.flatten
   override def toString =
     dynamic + packageName.map(_ + ".").getOrElse("") + controller + dynamic + "." + method + parameters
       .map { params =>
         "(" + params.mkString(", ") + ")"
       }
       .getOrElse("")
-
-object Parameter:
-  final val requestClass = "Request"
-  final val requestClassFQ = "play.mvc.Http." + requestClass
 
 /**
  * A parameter for a controller method.
@@ -98,15 +93,6 @@ object Parameter:
  */
 case class Parameter(name: String, typeName: String, fixed: Option[String], default: Option[String])
     extends Positional:
-  import Parameter.*
-
-  def isJavaRequest = typeName == requestClass || typeName == requestClassFQ
-  def typeNameReal =
-    if isJavaRequest then requestClassFQ
-    else typeName
-  def nameClean =
-    if isJavaRequest then "req"
-    else name
   override def toString =
     name + ":" + typeName + fixed.map(" = " + _).getOrElse("") + default.map(" ?= " + _).getOrElse("")
 

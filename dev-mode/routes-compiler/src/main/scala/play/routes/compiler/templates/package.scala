@@ -79,7 +79,7 @@ package object templates:
     route.call.parameters
       .filterNot(_.isEmpty)
       .map { params =>
-        val ps = params.filterNot(_.isJavaRequest).map { p =>
+        val ps = params.map { p =>
           val paramName: String = paramNameOnQueryString(p.name)
           p.fixed
             .map { v =>
@@ -106,7 +106,7 @@ package object templates:
     route.call.parameters
       .filterNot(_.isEmpty)
       .map { params =>
-        params.filterNot(_.isJavaRequest).map(x => safeKeyword(x.name)).mkString(", ")
+        params.map(x => safeKeyword(x.name)).mkString(", ")
       }
       .filterNot(_.isEmpty)
       .map("(" + _ + ") =>")
@@ -120,7 +120,6 @@ package object templates:
       .filterNot(_.isEmpty)
       .map { params =>
         params
-          .filterNot(_.isJavaRequest)
           .map(x => "(" + safeKeyword(x.name) + ": " + x.typeName + ")")
           .mkString(":: ")
       }
@@ -132,7 +131,7 @@ package object templates:
    * Extract the local names out from the route
    */
   def localNames(route: Route): String =
-    if route.call.parameters.map(_.filterNot(_.isJavaRequest).size).getOrElse(0) < 22 then tupleNames(route)
+    if route.call.parameters.map(_.size).getOrElse(0) < 22 then tupleNames(route)
     else listNames(route)
 
   /**
@@ -374,7 +373,7 @@ package object templates:
     routes.groupBy(_.call.packageName)
   def groupRoutesByController(routes: Seq[Route]): Map[String, Seq[Route]] = routes.groupBy(_.call.controller)
   def groupRoutesByMethod(routes: Seq[Route]): Map[(String, Seq[String]), Seq[Route]] =
-    routes.groupBy(r => (r.call.method, r.call.parameters.getOrElse(Nil).map(_.typeNameReal)))
+    routes.groupBy(r => (r.call.method, r.call.parameters.getOrElse(Nil).map(_.typeName)))
 
   val ob = "{"
   val cb = "}"

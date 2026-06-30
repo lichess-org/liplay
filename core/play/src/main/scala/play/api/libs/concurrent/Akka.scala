@@ -9,7 +9,6 @@ import akka.actor.setup.ActorSystemSetup
 import akka.actor.setup.Setup
 import akka.actor.typed.Scheduler
 import akka.actor.Actor
-import akka.actor.ActorContext
 import akka.actor.ActorRef
 import akka.actor.ActorSystem
 import akka.actor.BootstrapSetup
@@ -207,32 +206,6 @@ object ActorSystemProvider:
 
     logger.debug(s"Starting application default Akka system: $name")
     ActorSystem(name, actorSystemSetup)
-
-/**
- * Support for creating injected child actors.
- */
-trait InjectedActorSupport:
-
-  /**
-   * Create an injected child actor.
-   *
-   * @param create
-   *   A function to create the actor.
-   * @param name
-   *   The name of the actor.
-   * @param props
-   *   A function to provide props for the actor. The props passed in will just describe how to create the
-   *   actor, this function can be used to provide additional configuration such as router and dispatcher
-   *   configuration.
-   * @param context
-   *   The context to create the actor from.
-   * @return
-   *   An ActorRef for the created actor.
-   */
-  def injectedChild(create: => Actor, name: String, props: Props => Props = identity)(using
-      context: ActorContext
-  ): ActorRef =
-    context.actorOf(props(Props(create)), name)
 
 /**
  * Provider for creating actor refs

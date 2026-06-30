@@ -66,29 +66,12 @@ object RoutesFileParser:
           Some(route.call.pos.column)
         )
 
-      route.call.parameters.flatMap(_.find(_.isJavaRequest)).map { p =>
-        if p.fixed.isDefined || p.default.isDefined then
-          errors += RoutesCompilationError(
-            file,
-            "It is not allowed to specify a fixed or default value for parameter: '" + p.name + "'",
-            Some(p.pos.line),
-            Some(p.pos.column)
-          )
-      }
-
       route.path.parts.collect { case part @ DynamicPart(name, regex, _) =>
         route.call.parameters
           .getOrElse(Nil)
           .find(_.name == name)
           .map { p =>
-            if p.isJavaRequest then
-              errors += RoutesCompilationError(
-                file,
-                "It is not allowed to specify a value extracted from the path for parameter: '" + name + "'",
-                Some(p.pos.line),
-                Some(p.pos.column)
-              )
-            else if p.fixed.isDefined || p.default.isDefined then
+            if p.fixed.isDefined || p.default.isDefined then
               errors += RoutesCompilationError(
                 file,
                 "It is not allowed to specify a fixed or default value for parameter: '" + name + "' extracted from the path",
