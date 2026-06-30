@@ -26,9 +26,9 @@ import scala.util.Try
 /**
  * High-level API to access Play global features.
  */
-object Play:
+private[play] object PlayXML:
 
-  private[play] lazy val xercesSaxParserFactory =
+  private lazy val xercesSaxParserFactory =
     val saxParserFactory = SAXParserFactory.newInstance()
     saxParserFactory.setFeature(
       Constants.SAX_FEATURE_PREFIX + Constants.EXTERNAL_GENERAL_ENTITIES_FEATURE,
@@ -48,9 +48,4 @@ object Play:
   /*
    * A parser to be used that is configured to ensure that no schemas are loaded.
    */
-  private[play] def XML = scala.xml.XML.withSAXParser(xercesSaxParserFactory.newSAXParser())
-
-  /**
-   * A convenient function for getting an implicit materializer from the current application
-   */
-  implicit def materializer(using app: Application): Materializer = app.materializer
+  lazy val loader = scala.xml.XML.withSAXParser(xercesSaxParserFactory.newSAXParser())

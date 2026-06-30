@@ -19,7 +19,7 @@ import java.io.File
  * @param mode
  *   The mode of the application.
  */
-case class Environment(rootPath: File, classLoader: ClassLoader, mode: Mode):
+final class Environment(val rootPath: File, val classLoader: ClassLoader, val mode: Mode):
 
   /**
    * Retrieves a file relative to the application root path.
@@ -97,14 +97,3 @@ case class Environment(rootPath: File, classLoader: ClassLoader, mode: Mode):
   def resourceAsStream(name: String): Option[InputStream] =
     val n = name.stripPrefix("/")
     Option(classLoader.getResourceAsStream(n))
-
-object Environment:
-
-  /**
-   * A simple environment.
-   *
-   * Uses the same classloader that the environment classloader is defined in, and the current working
-   * directory as the path.
-   */
-  def simple(path: File = new File("."), mode: Mode = Mode.Test) =
-    Environment(path, Environment.getClass.getClassLoader, mode)

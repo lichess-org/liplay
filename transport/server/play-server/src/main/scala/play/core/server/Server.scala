@@ -113,17 +113,3 @@ object Server:
       case _ => config.getBytes(if config.hasPath(deprecatedPath) then deprecatedPath else path)
 
   case object ServerStoppedReason extends CoordinatedShutdown.Reason
-
-/**
- * Components to create a Server instance.
- */
-trait ServerComponents:
-  def server: Server
-
-  lazy val serverConfig: ServerConfig = ServerConfig()
-
-  lazy val environment: Environment = Environment.simple(mode = serverConfig.mode)
-  lazy val configuration: Configuration = Configuration(ConfigFactory.load())
-  lazy val applicationLifecycle: ApplicationLifecycle = new DefaultApplicationLifecycle
-
-  def serverStopHook: () => Future[Unit] = () => Future.successful(())

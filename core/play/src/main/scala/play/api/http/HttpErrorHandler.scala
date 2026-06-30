@@ -152,18 +152,6 @@ class DefaultHttpErrorHandler(
   ) =
     this(environment, configuration, Some(router.get))
 
-  // Hyperlink string to wrap around Play error messages.
-  private var playEditor: Option[String] = config.playEditor
-
-  /**
-   * Sets the play editor to the given string after initialization. Used for tests, or cases where the
-   * existing configuration isn't sufficient.
-   *
-   * @param editor
-   *   the play editor string.
-   */
-  def setPlayEditor(editor: String): Unit = playEditor = Option(editor)
-
   /**
    * Invoked when a client error occurs, that is, an error in the 4xx series.
    *
@@ -448,15 +436,4 @@ class JsonHttpErrorHandler(environment: Environment) extends HttpErrorHandler:
  * generally not suitable for a production environment.
  */
 object DefaultHttpErrorHandler
-    extends DefaultHttpErrorHandler(HttpErrorConfig(showDevErrors = true, playEditor = None), None):
-  private lazy val setEditor: Unit =
-    val conf = Configuration.load(Environment.simple())
-    conf.getOptional[String]("play.editor").foreach(setPlayEditor)
-
-  override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] =
-    setEditor
-    super.onClientError(request, statusCode, message)
-
-  override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] =
-    setEditor
-    super.onServerError(request, exception)
+    extends DefaultHttpErrorHandler(HttpErrorConfig(showDevErrors = true, playEditor = None), None)

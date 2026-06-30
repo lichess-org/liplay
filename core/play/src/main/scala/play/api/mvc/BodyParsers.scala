@@ -777,7 +777,7 @@ trait PlayBodyParsers extends BodyParserUtils:
           }
         )
         .foreach { charset => inputSource.setEncoding(charset) }
-      Play.XML.load(inputSource)
+      PlayXML.loader.load(inputSource)
     }
 
   /**
