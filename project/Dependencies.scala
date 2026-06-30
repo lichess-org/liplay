@@ -4,6 +4,7 @@
 
 import sbt._
 import Keys._
+import snapshot4s.BuildInfo.snapshot4sVersion
 
 object Dependencies {
   val akkaVersion: String = sys.props.getOrElse("akka.version", "2.6.21")
@@ -87,9 +88,11 @@ object Dependencies {
 
   // ----- Development-mode tooling (routes compiler + sbt-2 plugin) -----
 
+  val snapshot4sMunit = "com.siriusxm" %% "snapshot4s-munit" % snapshot4sVersion
+
   val routesCompilerDependencies =
     Seq(scalaParserCombinators, logback % Test) ++
-      specs2CoreDeps.map(_ % Test) ++ Seq(specsMatcherExtra % Test)
+      specs2CoreDeps.map(_ % Test) ++ Seq(specsMatcherExtra % Test, snapshot4sMunit % Test)
 
   private def sbtPluginDep(moduleId: ModuleID, sbtVersion: String, scalaVersion: String) = {
     Defaults.sbtPluginExtra(

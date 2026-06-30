@@ -2,3 +2,4 @@
 
 addSbtPlugin("com.typesafe.play" % "sbt-twirl" % "1.6.1")
 addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.6.1")
+addSbtPlugin("com.siriusxm" % "sbt-snapshot4s" % "0.2.10")

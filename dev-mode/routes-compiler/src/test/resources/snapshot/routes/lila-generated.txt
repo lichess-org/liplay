@@ -1,0 +1,4177 @@
+// ===== lila//Routes.scala =====
+// @GENERATOR:play-routes-compiler
+
+package router
+package lila
+
+import play.core.routing._
+
+import play.api.mvc._
+
+
+final class Routes(
+  override val errorHandler: play.api.http.HttpErrorHandler, 
+  // @LINE:1
+  Appeal_18: controllers.appeal.Appeal,
+  // @LINE:11
+  Clas_11: controllers.clas.Clas,
+  // @LINE:51
+  Report_9: controllers.report.Report,
+  // @LINE:64
+  Team_19: controllers.team.Team,
+  // @LINE:95
+  Lobby_8: controllers.Lobby,
+  // @LINE:97
+  Tv_15: controllers.Tv,
+  // @LINE:99
+  Account_4: controllers.Account,
+  // @LINE:100
+  Timeline_17: controllers.Timeline,
+  // @LINE:103
+  Search_7: controllers.Search,
+  // @LINE:104
+  Game_0: controllers.Game,
+  // @LINE:110
+  Main_5: controllers.Main,
+  // @LINE:120
+  Relation_3: controllers.Relation,
+  // @LINE:130
+  Insight_13: controllers.Insight,
+  // @LINE:134
+  UserTournament_1: controllers.UserTournament,
+  // @LINE:135
+  Simul_6: controllers.Simul,
+  // @LINE:136
+  User_10: controllers.User,
+  // @LINE:145
+  Ublog_2: controllers.Ublog,
+  // @LINE:159
+  Fide_16: controllers.Fide,
+  // @LINE:169
+  Dasher_12: controllers.Dasher,
+  // @LINE:199
+  Feed_14: controllers.Feed,
+) extends GeneratedRouter {
+
+  final val prefix: String = "/"
+  def withPrefix(addPrefix: String): Routes = ???
+
+
+
+  // @LINE:95
+  private val controllers_Lobby_home0_route = Route("GET",
+    PathPattern(List())
+  )
+
+  // @LINE:98
+  private val controllers_Lobby_homeLang1_route = Route("GET",
+    PathPattern(List(DynamicPart("lang", """\w\w""",false)))
+  )
+
+  // @LINE:107
+  private val controllers_Tv_indexLang2_route = Route("GET",
+    PathPattern(List(DynamicPart("lang", """\w\w\w?""",false), StaticPart("/tv")))
+  )
+
+  // @LINE:179
+  private val controllers_Ublog_communityLang3_route = Route("GET",
+    PathPattern(List(DynamicPart("lang", """\w\w\w?""",false), StaticPart("/blog/community")))
+  )
+
+
+  // @LINE:186
+  private val controllers_Ublog_discuss1000_route = Route("GET",
+    PathPattern(List(StaticPart("ublog/"), DynamicPart("id", """\w{8}""",false), StaticPart("/discuss")))
+  )
+
+  // @LINE:187
+  private val controllers_Ublog_redirect1001_route = Route("GET",
+    PathPattern(List(StaticPart("ublog/"), DynamicPart("id", """\w{8}""",false), StaticPart("/redirect")))
+  )
+
+  // @LINE:188
+  private val controllers_Ublog_edit1002_route = Route("GET",
+    PathPattern(List(StaticPart("ublog/"), DynamicPart("id", """\w{8}""",false), StaticPart("/edit")))
+  )
+
+  // @LINE:189
+  private val controllers_Ublog_update1003_route = Route("POST",
+    PathPattern(List(StaticPart("ublog/"), DynamicPart("id", """\w{8}""",false), StaticPart("/edit")))
+  )
+
+  // @LINE:190
+  private val controllers_Ublog_delete1004_route = Route("POST",
+    PathPattern(List(StaticPart("ublog/"), DynamicPart("id", """\w{8}""",false), StaticPart("/del")))
+  )
+
+  // @LINE:191
+  private val controllers_Ublog_like1005_route = Route("POST",
+    PathPattern(List(StaticPart("ublog/"), DynamicPart("id", """\w{8}""",false), StaticPart("/like")))
+  )
+
+  // @LINE:192
+  private val controllers_Ublog_modBlog1006_route = Route("POST",
+    PathPattern(List(StaticPart("ublog/"), DynamicPart("blogId", """[^/]+""",true), StaticPart("/tier")))
+  )
+
+  // @LINE:193
+  private val controllers_Ublog_modPost1007_route = Route("POST",
+    PathPattern(List(StaticPart("ublog/"), DynamicPart("id", """\w{8}""",false), StaticPart("/adjust")))
+  )
+
+  // @LINE:194
+  private val controllers_Ublog_modPull1008_route = Route("POST",
+    PathPattern(List(StaticPart("ublog/"), DynamicPart("id", """\w{8}""",false), StaticPart("/pull")))
+  )
+
+  // @LINE:195
+  private val controllers_Ublog_modAssess1009_route = Route("POST",
+    PathPattern(List(StaticPart("ublog/"), DynamicPart("id", """\w{8}""",false), StaticPart("/assess")))
+  )
+
+  // @LINE:196
+  private val controllers_Ublog_modSetCarouselSize1010_route = Route("POST",
+    PathPattern(List(StaticPart("ublog/carousel/size")))
+  )
+
+  // @LINE:197
+  private val controllers_Ublog_modShowCarousel1011_route = Route("GET",
+    PathPattern(List(StaticPart("ublog/carousel")))
+  )
+
+
+  // @LINE:159
+  private val controllers_Fide_index2000_route = Route("GET",
+    PathPattern(List(StaticPart("fide")))
+  )
+
+  // @LINE:160
+  private val controllers_Fide_federations2001_route = Route("GET",
+    PathPattern(List(StaticPart("fide/federation")))
+  )
+
+  // @LINE:161
+  private val controllers_Fide_federation2002_route = Route("GET",
+    PathPattern(List(StaticPart("fide/federation/"), DynamicPart("name", """[^/]+""",true)))
+  )
+
+  // @LINE:162
+  private val controllers_Fide_show2003_route = Route("GET",
+    PathPattern(List(StaticPart("fide/"), DynamicPart("fideId", """[^/]+""",true), StaticPart("/"), DynamicPart("name", """[^/]+""",true)))
+  )
+
+  // @LINE:163
+  private val controllers_Fide_follow2004_route = Route("POST",
+    PathPattern(List(StaticPart("fide/"), DynamicPart("fideId", """[^/]+""",true), StaticPart("/follow")))
+  )
+
+  // @LINE:168
+  private val controllers_Fide_playerUpdate2005_route = Route("POST",
+    PathPattern(List(StaticPart("fide/player/"), DynamicPart("id", """[^/]+""",true)))
+  )
+
+
+  // @LINE:125
+  private val controllers_Relation_unfollowBc3000_route = Route("POST",
+    PathPattern(List(StaticPart("rel/unfollow/"), DynamicPart("user", """[^/]+""",true)))
+  )
+
+  // @LINE:126
+  private val controllers_Relation_followBc3001_route = Route("POST",
+    PathPattern(List(StaticPart("rel/follow/"), DynamicPart("user", """[^/]+""",true)))
+  )
+
+  // @LINE:128
+  private val controllers_Relation_blocks3002_route = Route("GET",
+    PathPattern(List(StaticPart("rel/blocks")))
+  )
+
+  // @LINE:129
+  private val controllers_Relation_bcAction3003_route = Route("POST",
+    PathPattern(List(StaticPart("rel/"), DynamicPart("action", """[^/]+""",true), StaticPart("/"), DynamicPart("user", """[^/]+""",true)))
+  )
+
+
+  // @LINE:130
+  private val controllers_Insight_refresh4000_route = Route("POST",
+    PathPattern(List(StaticPart("insights/refresh/"), DynamicPart("username", """[^/]+""",true)))
+  )
+
+  // @LINE:131
+  private val controllers_Insight_json4001_route = Route("POST",
+    PathPattern(List(StaticPart("insights/data/"), DynamicPart("username", """[^/]+""",true)))
+  )
+
+  // @LINE:132
+  private val controllers_Insight_index4002_route = Route("GET",
+    PathPattern(List(StaticPart("insights/"), DynamicPart("username", """[^/]+""",true)))
+  )
+
+  // @LINE:133
+  private val controllers_Insight_path4003_route = Route("GET",
+    PathPattern(List(StaticPart("insights/"), DynamicPart("username", """[^/]+""",true), StaticPart("/"), DynamicPart("metric", """[^/]+""",true), StaticPart("/"), DynamicPart("dimension", """[^/]+""",true)))
+  )
+
+
+  // @LINE:169
+  private val controllers_Dasher_get5000_route = Route("GET",
+    PathPattern(List(StaticPart("dasher")))
+  )
+
+
+  // @LINE:127
+  private val controllers_Relation_following6000_route = Route("GET",
+    PathPattern(List(StaticPart("@/"), DynamicPart("username", """[^/]+""",true), StaticPart("/following")))
+  )
+
+  // @LINE:134
+  private val controllers_UserTournament_path6001_route = Route("GET",
+    PathPattern(List(StaticPart("@/"), DynamicPart("username", """[^/]+""",true), StaticPart("/tournaments/"), DynamicPart("path", """[^/]+""",true)))
+  )
+
+  // @LINE:135
+  private val controllers_Simul_byUser6002_route = Route("GET",
+    PathPattern(List(StaticPart("@/"), DynamicPart("username", """[^/]+""",true), StaticPart("/simuls/hosted")))
+  )
+
+  // @LINE:137
+  private val controllers_User_writeNote6003_route = Route("POST",
+    PathPattern(List(StaticPart("@/"), DynamicPart("username", """[^/]+""",true), StaticPart("/note")))
+  )
+
+  // @LINE:140
+  private val controllers_User_showMini6004_route = Route("GET",
+    PathPattern(List(StaticPart("@/"), DynamicPart("username", """[^/]+""",true), StaticPart("/mini")))
+  )
+
+  // @LINE:141
+  private val controllers_User_tv6005_route = Route("GET",
+    PathPattern(List(StaticPart("@/"), DynamicPart("username", """[^/]+""",true), StaticPart("/tv")))
+  )
+
+  // @LINE:142
+  private val controllers_User_perfStat6006_route = Route("GET",
+    PathPattern(List(StaticPart("@/"), DynamicPart("username", """[^/]+""",true), StaticPart("/perf/"), DynamicPart("perfKey", """[^/]+""",true)))
+  )
+
+  // @LINE:143
+  private val controllers_User_gamesAll6007_route = Route("GET",
+    PathPattern(List(StaticPart("@/"), DynamicPart("username", """[^/]+""",true), StaticPart("/all")))
+  )
+
+  // @LINE:144
+  private val controllers_User_download6008_route = Route("GET",
+    PathPattern(List(StaticPart("@/"), DynamicPart("username", """[^/]+""",true), StaticPart("/download")))
+  )
+
+  // @LINE:145
+  private val controllers_Ublog_index6009_route = Route("GET",
+    PathPattern(List(StaticPart("@/"), DynamicPart("username", """[^/]+""",true), StaticPart("/blog")))
+  )
+
+  // @LINE:146
+  private val controllers_Ublog_userAtom6010_route = Route("GET",
+    PathPattern(List(StaticPart("@/"), DynamicPart("username", """[^/]+""",true), StaticPart("/blog.atom")))
+  )
+
+  // @LINE:147
+  private val controllers_User_games6011_route = Route("GET",
+    PathPattern(List(StaticPart("@/"), DynamicPart("username", """[^/]+""",true), StaticPart("/"), DynamicPart("filterName", """[^/]+""",true)))
+  )
+
+  // @LINE:148
+  private val controllers_User_show6012_route = Route("GET",
+    PathPattern(List(StaticPart("@/"), DynamicPart("username", """[^/]+""",true)))
+  )
+
+  // @LINE:182
+  private val controllers_Ublog_post6013_route = Route("GET",
+    PathPattern(List(StaticPart("@/"), DynamicPart("username", """[^/]+""",true), StaticPart("/blog/"), DynamicPart("slug", """[^/]+""",true), StaticPart("/"), DynamicPart("id", """[^/]+""",true)))
+  )
+
+  // @LINE:183
+  private val controllers_Ublog_drafts6014_route = Route("GET",
+    PathPattern(List(StaticPart("@/"), DynamicPart("username", """[^/]+""",true), StaticPart("/blog/drafts")))
+  )
+
+  // @LINE:184
+  private val controllers_Ublog_form6015_route = Route("GET",
+    PathPattern(List(StaticPart("@/"), DynamicPart("username", """[^/]+""",true), StaticPart("/blog/new")))
+  )
+
+  // @LINE:185
+  private val controllers_Ublog_create6016_route = Route("POST",
+    PathPattern(List(StaticPart("@/"), DynamicPart("username", """[^/]+""",true), StaticPart("/blog/new")))
+  )
+
+
+  // @LINE:170
+  private val controllers_Ublog_topics7000_route = Route("GET",
+    PathPattern(List(StaticPart("blog/topic")))
+  )
+
+  // @LINE:171
+  private val controllers_Ublog_topic7001_route = Route("GET",
+    PathPattern(List(StaticPart("blog/topic/"), DynamicPart("topic", """[^/]+""",true)))
+  )
+
+  // @LINE:172
+  private val controllers_Ublog_thisMonth7002_route = Route("GET",
+    PathPattern(List(StaticPart("blog/monthly")))
+  )
+
+  // @LINE:173
+  private val controllers_Ublog_byMonth7003_route = Route("GET",
+    PathPattern(List(StaticPart("blog/monthly/"), DynamicPart("year", """[^/]+""",true), StaticPart("/"), DynamicPart("month", """[^/]+""",true)))
+  )
+
+  // @LINE:175
+  private val controllers_Ublog_friends7004_route = Route("GET",
+    PathPattern(List(StaticPart("blog/friends")))
+  )
+
+  // @LINE:176
+  private val controllers_Ublog_liked7005_route = Route("GET",
+    PathPattern(List(StaticPart("blog/liked")))
+  )
+
+  // @LINE:177
+  private val controllers_Ublog_search7006_route = Route("GET",
+    PathPattern(List(StaticPart("blog/search")))
+  )
+
+  // @LINE:178
+  private val controllers_Ublog_communityAll7007_route = Route("GET",
+    PathPattern(List(StaticPart("blog/community")))
+  )
+
+  // @LINE:180
+  private val controllers_Ublog_communityAtom7008_route = Route("GET",
+    PathPattern(List(StaticPart("blog/community.atom")))
+  )
+
+  // @LINE:181
+  private val controllers_Ublog_historicalBlogPost7009_route = Route("GET",
+    PathPattern(List(StaticPart("blog/"), DynamicPart("id", """[^/]+""",true), StaticPart("/"), DynamicPart("slug", """[^/]+""",true)))
+  )
+
+
+  // @LINE:149
+  private val controllers_User_myself8000_route = Route("GET",
+    PathPattern(List(StaticPart("player/myself")))
+  )
+
+  // @LINE:150
+  private val controllers_User_opponents8001_route = Route("GET",
+    PathPattern(List(StaticPart("player/opponents")))
+  )
+
+  // @LINE:151
+  private val controllers_User_search8002_route = Route("GET",
+    PathPattern(List(StaticPart("player/search/"), DynamicPart("term", """[^/]+""",true)))
+  )
+
+  // @LINE:152
+  private val controllers_User_list8003_route = Route("GET",
+    PathPattern(List(StaticPart("player")))
+  )
+
+  // @LINE:153
+  private val controllers_User_topBcRedirect8004_route = Route("GET",
+    PathPattern(List(StaticPart("player/top/"), DynamicPart("nb", """[^/]+""",true), StaticPart("/"), DynamicPart("perfKey", """[^/]+""",true)))
+  )
+
+  // @LINE:154
+  private val controllers_User_top8005_route = Route("GET",
+    PathPattern(List(StaticPart("player/top/"), DynamicPart("perfKey", """[^/]+""",true)))
+  )
+
+  // @LINE:156
+  private val controllers_User_online8006_route = Route("GET",
+    PathPattern(List(StaticPart("player/online")))
+  )
+
+
+  // @LINE:138
+  private val controllers_User_deleteNote9000_route = Route("POST",
+    PathPattern(List(StaticPart("note/delete/"), DynamicPart("id", """[^/]+""",true)))
+  )
+
+  // @LINE:139
+  private val controllers_User_setDoxNote9001_route = Route("POST",
+    PathPattern(List(StaticPart("note/setDox/"), DynamicPart("id", """[^/]+""",true), StaticPart("/"), DynamicPart("v", """[^/]+""",true)))
+  )
+
+
+  // @LINE:11
+  private val controllers_clas_Clas_index10000_route = Route("GET",
+    PathPattern(List(StaticPart("class")))
+  )
+
+  // @LINE:12
+  private val controllers_clas_Clas_form10001_route = Route("GET",
+    PathPattern(List(StaticPart("class/new")))
+  )
+
+  // @LINE:13
+  private val controllers_clas_Clas_becomeTeacher10002_route = Route("POST",
+    PathPattern(List(StaticPart("class/become-teacher")))
+  )
+
+  // @LINE:14
+  private val controllers_clas_Clas_create10003_route = Route("POST",
+    PathPattern(List(StaticPart("class/new")))
+  )
+
+  // @LINE:15
+  private val controllers_clas_Clas_invitation10004_route = Route("GET",
+    PathPattern(List(StaticPart("class/invitation/"), DynamicPart("id", """[^/]+""",true)))
+  )
+
+  // @LINE:16
+  private val controllers_clas_Clas_invitationAccept10005_route = Route("POST",
+    PathPattern(List(StaticPart("class/invitation/"), DynamicPart("id", """[^/]+""",true)))
+  )
+
+  // @LINE:17
+  private val controllers_clas_Clas_teacher10006_route = Route("GET",
+    PathPattern(List(StaticPart("class/teacher/"), DynamicPart("username", """[^/]+""",true)))
+  )
+
+  // @LINE:18
+  private val controllers_clas_Clas_show10007_route = Route("GET",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false)))
+  )
+
+  // @LINE:19
+  private val controllers_clas_Clas_edit10008_route = Route("GET",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/edit")))
+  )
+
+  // @LINE:20
+  private val controllers_clas_Clas_update10009_route = Route("POST",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/edit")))
+  )
+
+  // @LINE:21
+  private val controllers_clas_Clas_wall10010_route = Route("GET",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/news")))
+  )
+
+  // @LINE:22
+  private val controllers_clas_Clas_wallEdit10011_route = Route("GET",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/news/edit")))
+  )
+
+  // @LINE:23
+  private val controllers_clas_Clas_wallUpdate10012_route = Route("POST",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/news/edit")))
+  )
+
+  // @LINE:24
+  private val controllers_clas_Clas_notifyStudents10013_route = Route("GET",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/notify")))
+  )
+
+  // @LINE:25
+  private val controllers_clas_Clas_notifyPost10014_route = Route("POST",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/notifyPost")))
+  )
+
+  // @LINE:26
+  private val controllers_clas_Clas_students10015_route = Route("GET",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/students")))
+  )
+
+  // @LINE:27
+  private val controllers_clas_Clas_archive10016_route = Route("POST",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/archive")))
+  )
+
+  // @LINE:28
+  private val controllers_clas_Clas_learn10017_route = Route("GET",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/progress/learn")))
+  )
+
+  // @LINE:29
+  private val controllers_clas_Clas_progress10018_route = Route("GET",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/progress/"), DynamicPart("pk", """[^/]+""",true), StaticPart("/"), DynamicPart("days", """[^/]+""",true)))
+  )
+
+  // @LINE:30
+  private val controllers_clas_Clas_studentForm10019_route = Route("GET",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/student/add")))
+  )
+
+  // @LINE:31
+  private val controllers_clas_Clas_studentCreate10020_route = Route("POST",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/student/new")))
+  )
+
+  // @LINE:32
+  private val controllers_clas_Clas_studentManyForm10021_route = Route("GET",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/student/many")))
+  )
+
+  // @LINE:33
+  private val controllers_clas_Clas_studentManyCreate10022_route = Route("POST",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/student/many")))
+  )
+
+  // @LINE:34
+  private val controllers_clas_Clas_studentInvite10023_route = Route("POST",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/student/invite")))
+  )
+
+  // @LINE:35
+  private val controllers_clas_Clas_studentShow10024_route = Route("GET",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/student/"), DynamicPart("username", """[^/]+""",true)))
+  )
+
+  // @LINE:36
+  private val controllers_clas_Clas_studentArchive10025_route = Route("POST",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/student/"), DynamicPart("username", """[^/]+""",true), StaticPart("/archive")))
+  )
+
+  // @LINE:37
+  private val controllers_clas_Clas_studentResetPassword10026_route = Route("POST",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/student/"), DynamicPart("username", """[^/]+""",true), StaticPart("/reset-password")))
+  )
+
+  // @LINE:38
+  private val controllers_clas_Clas_studentEdit10027_route = Route("GET",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/student/"), DynamicPart("username", """[^/]+""",true), StaticPart("/edit")))
+  )
+
+  // @LINE:39
+  private val controllers_clas_Clas_studentUpdate10028_route = Route("POST",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/student/"), DynamicPart("username", """[^/]+""",true), StaticPart("/edit")))
+  )
+
+  // @LINE:40
+  private val controllers_clas_Clas_studentRelease10029_route = Route("GET",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/student/"), DynamicPart("username", """[^/]+""",true), StaticPart("/release")))
+  )
+
+  // @LINE:41
+  private val controllers_clas_Clas_studentReleasePost10030_route = Route("POST",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/student/"), DynamicPart("username", """[^/]+""",true), StaticPart("/release")))
+  )
+
+  // @LINE:42
+  private val controllers_clas_Clas_studentClose10031_route = Route("GET",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/student/"), DynamicPart("username", """[^/]+""",true), StaticPart("/close")))
+  )
+
+  // @LINE:43
+  private val controllers_clas_Clas_studentClosePost10032_route = Route("POST",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/student/"), DynamicPart("username", """[^/]+""",true), StaticPart("/close")))
+  )
+
+  // @LINE:44
+  private val controllers_clas_Clas_invitationRevoke10033_route = Route("POST",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/invitation/revoke")))
+  )
+
+  // @LINE:45
+  private val controllers_clas_Clas_studentMove10034_route = Route("GET",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/student/"), DynamicPart("username", """[^/]+""",true), StaticPart("/move")))
+  )
+
+  // @LINE:46
+  private val controllers_clas_Clas_studentMovePost10035_route = Route("POST",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/student/"), DynamicPart("username", """[^/]+""",true), StaticPart("/move/"), DynamicPart("to", """\w{8}""",false)))
+  )
+
+  // @LINE:47
+  private val controllers_clas_Clas_loginCreate10036_route = Route("POST",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/login")))
+  )
+
+  // @LINE:48
+  private val controllers_clas_Clas_bulkActions10037_route = Route("GET",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/bulk-actions")))
+  )
+
+  // @LINE:49
+  private val controllers_clas_Clas_bulkActionsPost10038_route = Route("POST",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/bulk-actions")))
+  )
+
+  // @LINE:50
+  private val controllers_clas_Clas_makeStudentOauthTokens10039_route = Route("POST",
+    PathPattern(List(StaticPart("class/"), DynamicPart("id", """\w{8}""",false), StaticPart("/oauth-tokens")))
+  )
+
+
+  // @LINE:106
+  private val controllers_Game_bookmark11000_route = Route("POST",
+    PathPattern(List(StaticPart("bookmark/"), DynamicPart("gameId", """\w{8}""",false)))
+  )
+
+
+  // @LINE:103
+  private val controllers_Search_index12000_route = Route("GET",
+    PathPattern(List(StaticPart("games/search")))
+  )
+
+  // @LINE:104
+  private val controllers_Game_exportByIds12001_route = Route("POST",
+    PathPattern(List(StaticPart("games/export/_ids")))
+  )
+
+  // @LINE:105
+  private val controllers_Game_exportByUser12002_route = Route("GET",
+    PathPattern(List(StaticPart("games/export/"), DynamicPart("username", """[^/]+""",true)))
+  )
+
+  // @LINE:115
+  private val controllers_Tv_games12003_route = Route("GET",
+    PathPattern(List(StaticPart("games")))
+  )
+
+  // @LINE:116
+  private val controllers_Tv_gamesChannel12004_route = Route("GET",
+    PathPattern(List(StaticPart("games/"), DynamicPart("chanKey", """[^/]+""",true)))
+  )
+
+  // @LINE:117
+  private val controllers_Tv_gameChannelReplacement12005_route = Route("GET",
+    PathPattern(List(StaticPart("games/"), DynamicPart("chanKey", """[^/]+""",true), StaticPart("/replacement/"), DynamicPart("gameId", """\w{8}""",false)))
+  )
+
+
+  // @LINE:97
+  private val controllers_Tv_index13000_route = Route("GET",
+    PathPattern(List(StaticPart("tv")))
+  )
+
+  // @LINE:108
+  private val controllers_Tv_frameDefault13001_route = Route("GET",
+    PathPattern(List(StaticPart("tv/frame")))
+  )
+
+  // @LINE:109
+  private val controllers_Tv_feedDefault13002_route = Route("GET",
+    PathPattern(List(StaticPart("tv/feed")))
+  )
+
+  // @LINE:110
+  private val controllers_Main_movedPermanently13003_route = Route("GET",
+    PathPattern(List(StaticPart("tv/channels")))
+  )
+
+  // @LINE:111
+  private val controllers_Tv_onChannel13004_route = Route("GET",
+    PathPattern(List(StaticPart("tv/"), DynamicPart("chanKey", """[^/]+""",true)))
+  )
+
+  // @LINE:112
+  private val controllers_Tv_frame13005_route = Route("GET",
+    PathPattern(List(StaticPart("tv/"), DynamicPart("chanKey", """[^/]+""",true), StaticPart("/frame")))
+  )
+
+  // @LINE:113
+  private val controllers_Tv_feed13006_route = Route("GET",
+    PathPattern(List(StaticPart("tv/"), DynamicPart("chanKey", """[^/]+""",true), StaticPart("/feed")))
+  )
+
+  // @LINE:114
+  private val controllers_Tv_sides13007_route = Route("GET",
+    PathPattern(List(StaticPart("tv/"), DynamicPart("gameId", """\w{8}""",false), StaticPart("/"), DynamicPart("color", """[^/]+""",true), StaticPart("/sides")))
+  )
+
+
+  // @LINE:1
+  private val controllers_appeal_Appeal_home14000_route = Route("GET",
+    PathPattern(List(StaticPart("appeal")))
+  )
+
+  // @LINE:2
+  private val controllers_appeal_Appeal_post14001_route = Route("POST",
+    PathPattern(List(StaticPart("appeal")))
+  )
+
+  // @LINE:3
+  private val controllers_appeal_Appeal_landing14002_route = Route("GET",
+    PathPattern(List(StaticPart("appeal/landing")))
+  )
+
+  // @LINE:4
+  private val controllers_appeal_Appeal_closedByTeacher14003_route = Route("GET",
+    PathPattern(List(StaticPart("appeal/closed-by-teacher")))
+  )
+
+  // @LINE:5
+  private val controllers_appeal_Appeal_queue14004_route = Route("GET",
+    PathPattern(List(StaticPart("appeal/queue")))
+  )
+
+  // @LINE:6
+  private val controllers_appeal_Appeal_show14005_route = Route("GET",
+    PathPattern(List(StaticPart("appeal/"), DynamicPart("username", """[^/]+""",true)))
+  )
+
+  // @LINE:7
+  private val controllers_appeal_Appeal_reply14006_route = Route("POST",
+    PathPattern(List(StaticPart("appeal/"), DynamicPart("username", """[^/]+""",true)))
+  )
+
+  // @LINE:8
+  private val controllers_appeal_Appeal_mute14007_route = Route("POST",
+    PathPattern(List(StaticPart("appeal/"), DynamicPart("username", """[^/]+""",true), StaticPart("/mute")))
+  )
+
+  // @LINE:9
+  private val controllers_appeal_Appeal_snooze14008_route = Route("POST",
+    PathPattern(List(StaticPart("appeal/"), DynamicPart("username", """[^/]+""",true), StaticPart("/snooze/"), DynamicPart("dur", """[^/]+""",true)))
+  )
+
+  // @LINE:10
+  private val controllers_appeal_Appeal_sendToZulip14009_route = Route("POST",
+    PathPattern(List(StaticPart("appeal/"), DynamicPart("username", """[^/]+""",true), StaticPart("/send-to-zulip")))
+  )
+
+
+  // @LINE:167
+  private val controllers_Fide_playerPhoto15000_route = Route("POST",
+    PathPattern(List(StaticPart("upload/image/fide/player/"), DynamicPart("id", """[^/]+""",true)))
+  )
+
+  // @LINE:198
+  private val controllers_Ublog_image15001_route = Route("POST",
+    PathPattern(List(StaticPart("upload/image/ublog/"), DynamicPart("id", """\w{8}""",false)))
+  )
+
+
+  // @LINE:199
+  private val controllers_Feed_index16000_route = Route("GET",
+    PathPattern(List(StaticPart("feed")))
+  )
+
+  // @LINE:200
+  private val controllers_Feed_createForm16001_route = Route("GET",
+    PathPattern(List(StaticPart("feed/new")))
+  )
+
+
+  // @LINE:64
+  private val controllers_team_Team_home17000_route = Route("GET",
+    PathPattern(List(StaticPart("team")))
+  )
+
+  // @LINE:65
+  private val controllers_team_Team_form17001_route = Route("GET",
+    PathPattern(List(StaticPart("team/new")))
+  )
+
+  // @LINE:66
+  private val controllers_team_Team_create17002_route = Route("POST",
+    PathPattern(List(StaticPart("team/new")))
+  )
+
+  // @LINE:67
+  private val controllers_team_Team_mine17003_route = Route("GET",
+    PathPattern(List(StaticPart("team/me")))
+  )
+
+  // @LINE:68
+  private val controllers_team_Team_leader17004_route = Route("GET",
+    PathPattern(List(StaticPart("team/leader")))
+  )
+
+  // @LINE:69
+  private val controllers_team_Team_all17005_route = Route("GET",
+    PathPattern(List(StaticPart("team/all")))
+  )
+
+  // @LINE:70
+  private val controllers_team_Team_requests17006_route = Route("GET",
+    PathPattern(List(StaticPart("team/requests")))
+  )
+
+  // @LINE:71
+  private val controllers_team_Team_search17007_route = Route("GET",
+    PathPattern(List(StaticPart("team/search")))
+  )
+
+  // @LINE:72
+  private val controllers_team_Team_autocomplete17008_route = Route("GET",
+    PathPattern(List(StaticPart("team/autocomplete")))
+  )
+
+  // @LINE:73
+  private val controllers_team_Team_show17009_route = Route("GET",
+    PathPattern(List(StaticPart("team/"), DynamicPart("id", """[^/]+""",true)))
+  )
+
+  // @LINE:74
+  private val controllers_team_Team_join17010_route = Route("POST",
+    PathPattern(List(StaticPart("team/"), DynamicPart("id", """[^/]+""",true), StaticPart("/join")))
+  )
+
+  // @LINE:75
+  private val controllers_team_Team_quit17011_route = Route("POST",
+    PathPattern(List(StaticPart("team/"), DynamicPart("id", """[^/]+""",true), StaticPart("/quit")))
+  )
+
+  // @LINE:76
+  private val controllers_team_Team_requestForm17012_route = Route("GET",
+    PathPattern(List(StaticPart("team/"), DynamicPart("id", """[^/]+""",true), StaticPart("/request/new")))
+  )
+
+  // @LINE:77
+  private val controllers_team_Team_requestCreate17013_route = Route("POST",
+    PathPattern(List(StaticPart("team/"), DynamicPart("id", """[^/]+""",true), StaticPart("/request/new")))
+  )
+
+  // @LINE:78
+  private val controllers_team_Team_requestProcess17014_route = Route("POST",
+    PathPattern(List(StaticPart("team/-/request/process/"), DynamicPart("reqId", """[^/]+""",true)))
+  )
+
+  // @LINE:79
+  private val controllers_team_Team_declinedRequests17015_route = Route("GET",
+    PathPattern(List(StaticPart("team/"), DynamicPart("id", """[^/]+""",true), StaticPart("/declined-requests")))
+  )
+
+  // @LINE:80
+  private val controllers_team_Team_edit17016_route = Route("GET",
+    PathPattern(List(StaticPart("team/"), DynamicPart("id", """[^/]+""",true), StaticPart("/edit")))
+  )
+
+  // @LINE:81
+  private val controllers_team_Team_update17017_route = Route("POST",
+    PathPattern(List(StaticPart("team/"), DynamicPart("id", """[^/]+""",true), StaticPart("/edit")))
+  )
+
+  // @LINE:82
+  private val controllers_team_Team_kickForm17018_route = Route("GET",
+    PathPattern(List(StaticPart("team/"), DynamicPart("id", """[^/]+""",true), StaticPart("/kick")))
+  )
+
+  // @LINE:83
+  private val controllers_team_Team_kick17019_route = Route("POST",
+    PathPattern(List(StaticPart("team/"), DynamicPart("id", """[^/]+""",true), StaticPart("/kick")))
+  )
+
+  // @LINE:84
+  private val controllers_team_Team_blocklist17020_route = Route("POST",
+    PathPattern(List(StaticPart("team/"), DynamicPart("id", """[^/]+""",true), StaticPart("/blocklist")))
+  )
+
+  // @LINE:85
+  private val controllers_team_Team_leaders17021_route = Route("GET",
+    PathPattern(List(StaticPart("team/"), DynamicPart("id", """[^/]+""",true), StaticPart("/leaders")))
+  )
+
+  // @LINE:86
+  private val controllers_team_Team_permissions17022_route = Route("POST",
+    PathPattern(List(StaticPart("team/"), DynamicPart("id", """[^/]+""",true), StaticPart("/permissions")))
+  )
+
+  // @LINE:87
+  private val controllers_team_Team_addLeader17023_route = Route("POST",
+    PathPattern(List(StaticPart("team/"), DynamicPart("id", """[^/]+""",true), StaticPart("/leaders")))
+  )
+
+  // @LINE:88
+  private val controllers_team_Team_members17024_route = Route("GET",
+    PathPattern(List(StaticPart("team/"), DynamicPart("id", """[^/]+""",true), StaticPart("/members")))
+  )
+
+  // @LINE:89
+  private val controllers_team_Team_close17025_route = Route("POST",
+    PathPattern(List(StaticPart("team/"), DynamicPart("id", """[^/]+""",true), StaticPart("/close")))
+  )
+
+  // @LINE:90
+  private val controllers_team_Team_disable17026_route = Route("POST",
+    PathPattern(List(StaticPart("team/"), DynamicPart("id", """[^/]+""",true), StaticPart("/disable")))
+  )
+
+  // @LINE:91
+  private val controllers_team_Team_tournaments17027_route = Route("GET",
+    PathPattern(List(StaticPart("team/"), DynamicPart("id", """[^/]+""",true), StaticPart("/tournaments")))
+  )
+
+  // @LINE:92
+  private val controllers_team_Team_pmAll17028_route = Route("GET",
+    PathPattern(List(StaticPart("team/"), DynamicPart("id", """[^/]+""",true), StaticPart("/pm-all")))
+  )
+
+  // @LINE:93
+  private val controllers_team_Team_pmAllSubmit17029_route = Route("POST",
+    PathPattern(List(StaticPart("team/"), DynamicPart("id", """[^/]+""",true), StaticPart("/pm-all")))
+  )
+
+  // @LINE:94
+  private val controllers_team_Team_subscribe17030_route = Route("POST",
+    PathPattern(List(StaticPart("team/"), DynamicPart("id", """[^/]+""",true), StaticPart("/subscribe")))
+  )
+
+
+  // @LINE:96
+  private val controllers_Lobby_seeks18000_route = Route("GET",
+    PathPattern(List(StaticPart("lobby/seeks")))
+  )
+
+
+  // @LINE:100
+  private val controllers_Timeline_home19000_route = Route("GET",
+    PathPattern(List(StaticPart("timeline")))
+  )
+
+  // @LINE:102
+  private val controllers_Timeline_unsub19001_route = Route("POST",
+    PathPattern(List(StaticPart("timeline/unsub/"), DynamicPart("channel", """[^/]+""",true)))
+  )
+
+
+  // @LINE:51
+  private val controllers_report_Report_form20000_route = Route("GET",
+    PathPattern(List(StaticPart("report")))
+  )
+
+  // @LINE:52
+  private val controllers_report_Report_create20001_route = Route("POST",
+    PathPattern(List(StaticPart("report")))
+  )
+
+  // @LINE:53
+  private val controllers_report_Report_inboxForm20002_route = Route("GET",
+    PathPattern(List(StaticPart("report/inbox/"), DynamicPart("username", """[^/]+""",true)))
+  )
+
+  // @LINE:54
+  private val controllers_report_Report_inboxCreate20003_route = Route("POST",
+    PathPattern(List(StaticPart("report/inbox/"), DynamicPart("username", """[^/]+""",true)))
+  )
+
+  // @LINE:55
+  private val controllers_report_Report_flag20004_route = Route("POST",
+    PathPattern(List(StaticPart("report/flag")))
+  )
+
+  // @LINE:56
+  private val controllers_report_Report_thanks20005_route = Route("GET",
+    PathPattern(List(StaticPart("report/thanks")))
+  )
+
+  // @LINE:57
+  private val controllers_report_Report_list20006_route = Route("GET",
+    PathPattern(List(StaticPart("report/list")))
+  )
+
+  // @LINE:58
+  private val controllers_report_Report_listWithFilter20007_route = Route("GET",
+    PathPattern(List(StaticPart("report/list/"), DynamicPart("room", """[^/]+""",true)))
+  )
+
+  // @LINE:59
+  private val controllers_report_Report_inquiry20008_route = Route("POST",
+    PathPattern(List(StaticPart("report/"), DynamicPart("id", """[^/]+""",true), StaticPart("/inquiry")))
+  )
+
+  // @LINE:60
+  private val controllers_report_Report_process20009_route = Route("POST",
+    PathPattern(List(StaticPart("report/"), DynamicPart("id", """[^/]+""",true), StaticPart("/process")))
+  )
+
+  // @LINE:61
+  private val controllers_report_Report_xfiles20010_route = Route("POST",
+    PathPattern(List(StaticPart("report/"), DynamicPart("id", """[^/]+""",true), StaticPart("/xfiles")))
+  )
+
+  // @LINE:62
+  private val controllers_report_Report_snooze20011_route = Route("POST",
+    PathPattern(List(StaticPart("report/"), DynamicPart("id", """[^/]+""",true), StaticPart("/snooze/"), DynamicPart("dur", """[^/]+""",true)))
+  )
+
+  // @LINE:63
+  private val controllers_report_Report_currentCheatInquiry20012_route = Route("GET",
+    PathPattern(List(StaticPart("report/"), DynamicPart("user", """[^/]+""",true), StaticPart("/cheat-inquiry")))
+  )
+
+
+  // @LINE:99
+  private val controllers_Account_info21000_route = Route("GET",
+    PathPattern(List(StaticPart("account/info")))
+  )
+
+
+  // @LINE:101
+  private val controllers_Timeline_api22000_route = Route("GET",
+    PathPattern(List(StaticPart("api/timeline")))
+  )
+
+  // @LINE:118
+  private val controllers_Tv_channels22001_route = Route("GET",
+    PathPattern(List(StaticPart("api/tv/channels")))
+  )
+
+  // @LINE:119
+  private val controllers_Tv_apiGamesChannel22002_route = Route("GET",
+    PathPattern(List(StaticPart("api/tv/"), DynamicPart("chanKey", """[^/]+""",true)))
+  )
+
+  // @LINE:120
+  private val controllers_Relation_apiFollowing22003_route = Route("GET",
+    PathPattern(List(StaticPart("api/rel/following")))
+  )
+
+  // @LINE:121
+  private val controllers_Relation_follow22004_route = Route("POST",
+    PathPattern(List(StaticPart("api/rel/follow/"), DynamicPart("user", """[^/]+""",true)))
+  )
+
+  // @LINE:122
+  private val controllers_Relation_unfollow22005_route = Route("POST",
+    PathPattern(List(StaticPart("api/rel/unfollow/"), DynamicPart("user", """[^/]+""",true)))
+  )
+
+  // @LINE:123
+  private val controllers_Relation_block22006_route = Route("POST",
+    PathPattern(List(StaticPart("api/rel/block/"), DynamicPart("userId", """[^/]+""",true)))
+  )
+
+  // @LINE:124
+  private val controllers_Relation_unblock22007_route = Route("POST",
+    PathPattern(List(StaticPart("api/rel/unblock/"), DynamicPart("userId", """[^/]+""",true)))
+  )
+
+  // @LINE:136
+  private val controllers_User_mod22008_route = Route("GET",
+    PathPattern(List(StaticPart("api/stream/"), DynamicPart("username", """[^/]+""",true), StaticPart("/mod")))
+  )
+
+  // @LINE:155
+  private val controllers_User_topNbApi22009_route = Route("GET",
+    PathPattern(List(StaticPart("api/player/top/"), DynamicPart("nb", """[^/]+""",true), StaticPart("/"), DynamicPart("perfKey", """[^/]+""",true)))
+  )
+
+  // @LINE:157
+  private val controllers_User_autocomplete22010_route = Route("GET",
+    PathPattern(List(StaticPart("api/player/autocomplete")))
+  )
+
+  // @LINE:158
+  private val controllers_User_apiList22011_route = Route("GET",
+    PathPattern(List(StaticPart("api/player")))
+  )
+
+  // @LINE:164
+  private val controllers_Fide_apiShow22012_route = Route("GET",
+    PathPattern(List(StaticPart("api/fide/player/"), DynamicPart("id", """[^/]+""",true)))
+  )
+
+  // @LINE:165
+  private val controllers_Fide_apiRatings22013_route = Route("GET",
+    PathPattern(List(StaticPart("api/fide/player/"), DynamicPart("id", """[^/]+""",true), StaticPart("/ratings")))
+  )
+
+  // @LINE:166
+  private val controllers_Fide_apiSearch22014_route = Route("GET",
+    PathPattern(List(StaticPart("api/fide/player")))
+  )
+
+  // @LINE:174
+  private val controllers_Ublog_apiCarousel22015_route = Route("GET",
+    PathPattern(List(StaticPart("api/blog/carousel")))
+  )
+
+
+  val pathRouters: Map[String, PartialFunction[RequestHeader, Handler]] = Map(
+    
+      "" -> {
+        
+          // @LINE:95
+          case controllers_Lobby_home0_route(_) =>
+            named("Lobby.home") {
+              call { 
+                  Lobby_8.home
+              }
+            }
+        
+          // @LINE:98
+          case controllers_Lobby_homeLang1_route(params) =>
+            named("Lobby.homeLang") {
+              call(params.fromPath[Language]("lang", None)) { (lang) =>
+                  Lobby_8.homeLang(lang)
+              }
+            }
+        
+          // @LINE:107
+          case controllers_Tv_indexLang2_route(params) =>
+            named("Tv.indexLang") {
+              call(params.fromPath[Language]("lang", None)) { (lang) =>
+                  Tv_15.indexLang(lang)
+              }
+            }
+        
+          // @LINE:179
+          case controllers_Ublog_communityLang3_route(params) =>
+            named("Ublog.communityLang") {
+              call(params.fromPath[Language]("lang", None), params.fromQuery[Option[BlogQualityFilter]]("filter", Some(None)), params.fromQuery[Int]("page", Some(1))) { (lang, filter, page) =>
+                  Ublog_2.communityLang(lang, filter, page)
+              }
+            }
+        
+      },
+    
+      "ublog" -> {
+        
+          // @LINE:186
+          case controllers_Ublog_discuss1000_route(params) =>
+            named("Ublog.discuss") {
+              call(params.fromPath[UblogPostId]("id", None)) { (id) =>
+                  Ublog_2.discuss(id)
+              }
+            }
+        
+          // @LINE:187
+          case controllers_Ublog_redirect1001_route(params) =>
+            named("Ublog.redirect") {
+              call(params.fromPath[UblogPostId]("id", None)) { (id) =>
+                  Ublog_2.redirect(id)
+              }
+            }
+        
+          // @LINE:188
+          case controllers_Ublog_edit1002_route(params) =>
+            named("Ublog.edit") {
+              call(params.fromPath[UblogPostId]("id", None)) { (id) =>
+                  Ublog_2.edit(id)
+              }
+            }
+        
+          // @LINE:189
+          case controllers_Ublog_update1003_route(params) =>
+            named("Ublog.update") {
+              call(params.fromPath[UblogPostId]("id", None)) { (id) =>
+                  Ublog_2.update(id)
+              }
+            }
+        
+          // @LINE:190
+          case controllers_Ublog_delete1004_route(params) =>
+            named("Ublog.delete") {
+              call(params.fromPath[UblogPostId]("id", None)) { (id) =>
+                  Ublog_2.delete(id)
+              }
+            }
+        
+          // @LINE:191
+          case controllers_Ublog_like1005_route(params) =>
+            named("Ublog.like") {
+              call(params.fromPath[UblogPostId]("id", None), params.fromQuery[Boolean]("v", None)) { (id, v) =>
+                  Ublog_2.like(id, v)
+              }
+            }
+        
+          // @LINE:192
+          case controllers_Ublog_modBlog1006_route(params) =>
+            named("Ublog.modBlog") {
+              call(params.fromPath[String]("blogId", None)) { (blogId) =>
+                  Ublog_2.modBlog(blogId)
+              }
+            }
+        
+          // @LINE:193
+          case controllers_Ublog_modPost1007_route(params) =>
+            named("Ublog.modPost") {
+              call(params.fromPath[UblogPostId]("id", None)) { (id) =>
+                  Ublog_2.modPost(id)
+              }
+            }
+        
+          // @LINE:194
+          case controllers_Ublog_modPull1008_route(params) =>
+            named("Ublog.modPull") {
+              call(params.fromPath[UblogPostId]("id", None)) { (id) =>
+                  Ublog_2.modPull(id)
+              }
+            }
+        
+          // @LINE:195
+          case controllers_Ublog_modAssess1009_route(params) =>
+            named("Ublog.modAssess") {
+              call(params.fromPath[UblogPostId]("id", None)) { (id) =>
+                  Ublog_2.modAssess(id)
+              }
+            }
+        
+          // @LINE:196
+          case controllers_Ublog_modSetCarouselSize1010_route(_) =>
+            named("Ublog.modSetCarouselSize") {
+              call { 
+                  Ublog_2.modSetCarouselSize
+              }
+            }
+        
+          // @LINE:197
+          case controllers_Ublog_modShowCarousel1011_route(_) =>
+            named("Ublog.modShowCarousel") {
+              call { 
+                  Ublog_2.modShowCarousel
+              }
+            }
+        
+      },
+    
+      "fide" -> {
+        
+          // @LINE:159
+          case controllers_Fide_index2000_route(params) =>
+            named("Fide.index") {
+              call(params.fromQuery[Int]("page", Some(1)), params.fromQuery[Option[String]]("q", Some(None))) { (page, q) =>
+                  Fide_16.index(page, q)
+              }
+            }
+        
+          // @LINE:160
+          case controllers_Fide_federations2001_route(params) =>
+            named("Fide.federations") {
+              call(params.fromQuery[Int]("page", Some(1))) { (page) =>
+                  Fide_16.federations(page)
+              }
+            }
+        
+          // @LINE:161
+          case controllers_Fide_federation2002_route(params) =>
+            named("Fide.federation") {
+              call(params.fromPath[String]("name", None), params.fromQuery[Int]("page", Some(1))) { (name, page) =>
+                  Fide_16.federation(name, page)
+              }
+            }
+        
+          // @LINE:162
+          case controllers_Fide_show2003_route(params) =>
+            named("Fide.show") {
+              call(params.fromPath[chess.FideId]("fideId", None), params.fromPath[String]("name", None), params.fromQuery[Int]("page", Some(1))) { (fideId, name, page) =>
+                  Fide_16.show(fideId, name, page)
+              }
+            }
+        
+          // @LINE:163
+          case controllers_Fide_follow2004_route(params) =>
+            named("Fide.follow") {
+              call(params.fromPath[chess.FideId]("fideId", None), params.fromQuery[Boolean]("follow", None)) { (fideId, follow) =>
+                  Fide_16.follow(fideId, follow)
+              }
+            }
+        
+          // @LINE:168
+          case controllers_Fide_playerUpdate2005_route(params) =>
+            named("Fide.playerUpdate") {
+              call(params.fromPath[chess.FideId]("id", None)) { (id) =>
+                  Fide_16.playerUpdate(id)
+              }
+            }
+        
+      },
+    
+      "rel" -> {
+        
+          // @LINE:125
+          case controllers_Relation_unfollowBc3000_route(params) =>
+            named("Relation.unfollowBc") {
+              call(params.fromPath[UserStr]("user", None)) { (user) =>
+                  Relation_3.unfollowBc(user)
+              }
+            }
+        
+          // @LINE:126
+          case controllers_Relation_followBc3001_route(params) =>
+            named("Relation.followBc") {
+              call(params.fromPath[UserStr]("user", None)) { (user) =>
+                  Relation_3.followBc(user)
+              }
+            }
+        
+          // @LINE:128
+          case controllers_Relation_blocks3002_route(params) =>
+            named("Relation.blocks") {
+              call(params.fromQuery[Int]("page", Some(1))) { (page) =>
+                  Relation_3.blocks(page)
+              }
+            }
+        
+          // @LINE:129
+          case controllers_Relation_bcAction3003_route(params) =>
+            named("Relation.bcAction") {
+              call(params.fromPath[String]("action", None), params.fromPath[UserStr]("user", None)) { (action, user) =>
+                  Relation_3.bcAction(action, user)
+              }
+            }
+        
+      },
+    
+      "insights" -> {
+        
+          // @LINE:130
+          case controllers_Insight_refresh4000_route(params) =>
+            named("Insight.refresh") {
+              call(params.fromPath[UserStr]("username", None)) { (username) =>
+                  Insight_13.refresh(username)
+              }
+            }
+        
+          // @LINE:131
+          case controllers_Insight_json4001_route(params) =>
+            named("Insight.json") {
+              call(params.fromPath[UserStr]("username", None)) { (username) =>
+                  Insight_13.json(username)
+              }
+            }
+        
+          // @LINE:132
+          case controllers_Insight_index4002_route(params) =>
+            named("Insight.index") {
+              call(params.fromPath[UserStr]("username", None)) { (username) =>
+                  Insight_13.index(username)
+              }
+            }
+        
+          // @LINE:133
+          case controllers_Insight_path4003_route(params) =>
+            named("Insight.path") {
+              call(params.fromPath[UserStr]("username", None), params.fromPath[String]("metric", None), params.fromPath[String]("dimension", None), Param[String]("filters", Right(""))) { (username, metric, dimension, filters) =>
+                  Insight_13.path(username, metric, dimension, filters)
+              }
+            }
+        
+      },
+    
+      "dasher" -> {
+        
+          // @LINE:169
+          case controllers_Dasher_get5000_route(_) =>
+            named("Dasher.get") {
+              call { 
+                  Dasher_12.get
+              }
+            }
+        
+      },
+    
+      "@" -> {
+        
+          // @LINE:127
+          case controllers_Relation_following6000_route(params) =>
+            named("Relation.following") {
+              call(params.fromPath[UserStr]("username", None), params.fromQuery[Int]("page", Some(1))) { (username, page) =>
+                  Relation_3.following(username, page)
+              }
+            }
+        
+          // @LINE:134
+          case controllers_UserTournament_path6001_route(params) =>
+            named("UserTournament.path") {
+              call(params.fromPath[UserStr]("username", None), params.fromPath[String]("path", None), params.fromQuery[Int]("page", Some(1))) { (username, path, page) =>
+                  UserTournament_1.path(username, path, page)
+              }
+            }
+        
+          // @LINE:135
+          case controllers_Simul_byUser6002_route(params) =>
+            named("Simul.byUser") {
+              call(params.fromPath[UserStr]("username", None), params.fromQuery[Int]("page", Some(1))) { (username, page) =>
+                  Simul_6.byUser(username, page)
+              }
+            }
+        
+          // @LINE:137
+          case controllers_User_writeNote6003_route(params) =>
+            named("User.writeNote") {
+              call(params.fromPath[UserStr]("username", None)) { (username) =>
+                  User_10.writeNote(username)
+              }
+            }
+        
+          // @LINE:140
+          case controllers_User_showMini6004_route(params) =>
+            named("User.showMini") {
+              call(params.fromPath[UserStr]("username", None)) { (username) =>
+                  User_10.showMini(username)
+              }
+            }
+        
+          // @LINE:141
+          case controllers_User_tv6005_route(params) =>
+            named("User.tv") {
+              call(params.fromPath[UserStr]("username", None)) { (username) =>
+                  User_10.tv(username)
+              }
+            }
+        
+          // @LINE:142
+          case controllers_User_perfStat6006_route(params) =>
+            named("User.perfStat") {
+              call(params.fromPath[UserStr]("username", None), params.fromPath[PerfKey]("perfKey", None)) { (username, perfKey) =>
+                  User_10.perfStat(username, perfKey)
+              }
+            }
+        
+          // @LINE:143
+          case controllers_User_gamesAll6007_route(params) =>
+            named("User.gamesAll") {
+              call(params.fromPath[UserStr]("username", None), params.fromQuery[Int]("page", Some(1))) { (username, page) =>
+                  User_10.gamesAll(username, page)
+              }
+            }
+        
+          // @LINE:144
+          case controllers_User_download6008_route(params) =>
+            named("User.download") {
+              call(params.fromPath[UserStr]("username", None)) { (username) =>
+                  User_10.download(username)
+              }
+            }
+        
+          // @LINE:145
+          case controllers_Ublog_index6009_route(params) =>
+            named("Ublog.index") {
+              call(params.fromPath[UserStr]("username", None), params.fromQuery[Int]("page", Some(1))) { (username, page) =>
+                  Ublog_2.index(username, page)
+              }
+            }
+        
+          // @LINE:146
+          case controllers_Ublog_userAtom6010_route(params) =>
+            named("Ublog.userAtom") {
+              call(params.fromPath[UserStr]("username", None)) { (username) =>
+                  Ublog_2.userAtom(username)
+              }
+            }
+        
+          // @LINE:147
+          case controllers_User_games6011_route(params) =>
+            named("User.games") {
+              call(params.fromPath[UserStr]("username", None), params.fromPath[String]("filterName", None), params.fromQuery[Int]("page", Some(1))) { (username, filterName, page) =>
+                  User_10.games(username, filterName, page)
+              }
+            }
+        
+          // @LINE:148
+          case controllers_User_show6012_route(params) =>
+            named("User.show") {
+              call(params.fromPath[UserStr]("username", None)) { (username) =>
+                  User_10.show(username)
+              }
+            }
+        
+          // @LINE:182
+          case controllers_Ublog_post6013_route(params) =>
+            named("Ublog.post") {
+              call(params.fromPath[UserStr]("username", None), params.fromPath[String]("slug", None), params.fromPath[UblogPostId]("id", None)) { (username, slug, id) =>
+                  Ublog_2.post(username, slug, id)
+              }
+            }
+        
+          // @LINE:183
+          case controllers_Ublog_drafts6014_route(params) =>
+            named("Ublog.drafts") {
+              call(params.fromPath[UserStr]("username", None), params.fromQuery[Int]("page", Some(1))) { (username, page) =>
+                  Ublog_2.drafts(username, page)
+              }
+            }
+        
+          // @LINE:184
+          case controllers_Ublog_form6015_route(params) =>
+            named("Ublog.form") {
+              call(params.fromPath[UserStr]("username", None)) { (username) =>
+                  Ublog_2.form(username)
+              }
+            }
+        
+          // @LINE:185
+          case controllers_Ublog_create6016_route(params) =>
+            named("Ublog.create") {
+              call(params.fromPath[UserStr]("username", None)) { (username) =>
+                  Ublog_2.create(username)
+              }
+            }
+        
+      },
+    
+      "blog" -> {
+        
+          // @LINE:170
+          case controllers_Ublog_topics7000_route(_) =>
+            named("Ublog.topics") {
+              call { 
+                  Ublog_2.topics
+              }
+            }
+        
+          // @LINE:171
+          case controllers_Ublog_topic7001_route(params) =>
+            named("Ublog.topic") {
+              call(params.fromPath[String]("topic", None), params.fromQuery[Option[BlogQualityFilter]]("filter", Some(None)), params.fromQuery[BlogsBy]("by", Some(BlogsBy.newest)), params.fromQuery[Int]("page", Some(1))) { (topic, filter, by, page) =>
+                  Ublog_2.topic(topic, filter, by, page)
+              }
+            }
+        
+          // @LINE:172
+          case controllers_Ublog_thisMonth7002_route(params) =>
+            named("Ublog.thisMonth") {
+              call(params.fromQuery[Option[BlogQualityFilter]]("filter", Some(None)), params.fromQuery[BlogsBy]("by", Some(BlogsBy.newest)), params.fromQuery[Int]("page", Some(1))) { (filter, by, page) =>
+                  Ublog_2.thisMonth(filter, by, page)
+              }
+            }
+        
+          // @LINE:173
+          case controllers_Ublog_byMonth7003_route(params) =>
+            named("Ublog.byMonth") {
+              call(params.fromPath[Int]("year", None), params.fromPath[Int]("month", None), params.fromQuery[Option[BlogQualityFilter]]("filter", Some(None)), params.fromQuery[BlogsBy]("by", Some(BlogsBy.newest)), params.fromQuery[Int]("page", Some(1))) { (year, month, filter, by, page) =>
+                  Ublog_2.byMonth(year, month, filter, by, page)
+              }
+            }
+        
+          // @LINE:175
+          case controllers_Ublog_friends7004_route(params) =>
+            named("Ublog.friends") {
+              call(params.fromQuery[Int]("page", Some(1))) { (page) =>
+                  Ublog_2.friends(page)
+              }
+            }
+        
+          // @LINE:176
+          case controllers_Ublog_liked7005_route(params) =>
+            named("Ublog.liked") {
+              call(params.fromQuery[Int]("page", Some(1))) { (page) =>
+                  Ublog_2.liked(page)
+              }
+            }
+        
+          // @LINE:177
+          case controllers_Ublog_search7006_route(params) =>
+            named("Ublog.search") {
+              call(params.fromQuery[String]("text", Some("")), params.fromQuery[BlogsBy]("by", Some(BlogsBy.score)), params.fromQuery[Int]("page", Some(1))) { (text, by, page) =>
+                  Ublog_2.search(text, by, page)
+              }
+            }
+        
+          // @LINE:178
+          case controllers_Ublog_communityAll7007_route(params) =>
+            named("Ublog.communityAll") {
+              call(params.fromQuery[Option[BlogQualityFilter]]("filter", Some(None)), params.fromQuery[Int]("page", Some(1))) { (filter, page) =>
+                  Ublog_2.communityAll(filter, page)
+              }
+            }
+        
+          // @LINE:180
+          case controllers_Ublog_communityAtom7008_route(params) =>
+            named("Ublog.communityAtom") {
+              call(params.fromQuery[Language]("lang", Some(Language("all")))) { (lang) =>
+                  Ublog_2.communityAtom(lang)
+              }
+            }
+        
+          // @LINE:181
+          case controllers_Ublog_historicalBlogPost7009_route(params) =>
+            named("Ublog.historicalBlogPost") {
+              call(params.fromPath[String]("id", None), params.fromPath[String]("slug", None)) { (id, slug) =>
+                  Ublog_2.historicalBlogPost(id, slug)
+              }
+            }
+        
+      },
+    
+      "player" -> {
+        
+          // @LINE:149
+          case controllers_User_myself8000_route(_) =>
+            named("User.myself") {
+              call { 
+                  User_10.myself
+              }
+            }
+        
+          // @LINE:150
+          case controllers_User_opponents8001_route(_) =>
+            named("User.opponents") {
+              call { 
+                  User_10.opponents
+              }
+            }
+        
+          // @LINE:151
+          case controllers_User_search8002_route(params) =>
+            named("User.search") {
+              call(params.fromPath[String]("term", None)) { (term) =>
+                  User_10.search(term)
+              }
+            }
+        
+          // @LINE:152
+          case controllers_User_list8003_route(_) =>
+            named("User.list") {
+              call { 
+                  User_10.list
+              }
+            }
+        
+          // @LINE:153
+          case controllers_User_topBcRedirect8004_route(params) =>
+            named("User.topBcRedirect") {
+              call(params.fromPath[Int]("nb", None), params.fromPath[PerfKey]("perfKey", None)) { (nb, perfKey) =>
+                  User_10.topBcRedirect(nb, perfKey)
+              }
+            }
+        
+          // @LINE:154
+          case controllers_User_top8005_route(params) =>
+            named("User.top") {
+              call(params.fromPath[PerfKey]("perfKey", None), params.fromQuery[Int]("page", Some(1))) { (perfKey, page) =>
+                  User_10.top(perfKey, page)
+              }
+            }
+        
+          // @LINE:156
+          case controllers_User_online8006_route(_) =>
+            named("User.online") {
+              call { 
+                  User_10.online
+              }
+            }
+        
+      },
+    
+      "note" -> {
+        
+          // @LINE:138
+          case controllers_User_deleteNote9000_route(params) =>
+            named("User.deleteNote") {
+              call(params.fromPath[String]("id", None)) { (id) =>
+                  User_10.deleteNote(id)
+              }
+            }
+        
+          // @LINE:139
+          case controllers_User_setDoxNote9001_route(params) =>
+            named("User.setDoxNote") {
+              call(params.fromPath[String]("id", None), params.fromPath[Boolean]("v", None)) { (id, v) =>
+                  User_10.setDoxNote(id, v)
+              }
+            }
+        
+      },
+    
+      "class" -> {
+        
+          // @LINE:11
+          case controllers_clas_Clas_index10000_route(_) =>
+            named("Clas.index") {
+              call { 
+                  Clas_11.index
+              }
+            }
+        
+          // @LINE:12
+          case controllers_clas_Clas_form10001_route(_) =>
+            named("Clas.form") {
+              call { 
+                  Clas_11.form
+              }
+            }
+        
+          // @LINE:13
+          case controllers_clas_Clas_becomeTeacher10002_route(_) =>
+            named("Clas.becomeTeacher") {
+              call { 
+                  Clas_11.becomeTeacher
+              }
+            }
+        
+          // @LINE:14
+          case controllers_clas_Clas_create10003_route(_) =>
+            named("Clas.create") {
+              call { 
+                  Clas_11.create
+              }
+            }
+        
+          // @LINE:15
+          case controllers_clas_Clas_invitation10004_route(params) =>
+            named("Clas.invitation") {
+              call(params.fromPath[ClasInviteId]("id", None)) { (id) =>
+                  Clas_11.invitation(id)
+              }
+            }
+        
+          // @LINE:16
+          case controllers_clas_Clas_invitationAccept10005_route(params) =>
+            named("Clas.invitationAccept") {
+              call(params.fromPath[ClasInviteId]("id", None)) { (id) =>
+                  Clas_11.invitationAccept(id)
+              }
+            }
+        
+          // @LINE:17
+          case controllers_clas_Clas_teacher10006_route(params) =>
+            named("Clas.teacher") {
+              call(params.fromPath[UserStr]("username", None)) { (username) =>
+                  Clas_11.teacher(username)
+              }
+            }
+        
+          // @LINE:18
+          case controllers_clas_Clas_show10007_route(params) =>
+            named("Clas.show") {
+              call(params.fromPath[ClasId]("id", None)) { (id) =>
+                  Clas_11.show(id)
+              }
+            }
+        
+          // @LINE:19
+          case controllers_clas_Clas_edit10008_route(params) =>
+            named("Clas.edit") {
+              call(params.fromPath[ClasId]("id", None)) { (id) =>
+                  Clas_11.edit(id)
+              }
+            }
+        
+          // @LINE:20
+          case controllers_clas_Clas_update10009_route(params) =>
+            named("Clas.update") {
+              call(params.fromPath[ClasId]("id", None)) { (id) =>
+                  Clas_11.update(id)
+              }
+            }
+        
+          // @LINE:21
+          case controllers_clas_Clas_wall10010_route(params) =>
+            named("Clas.wall") {
+              call(params.fromPath[ClasId]("id", None)) { (id) =>
+                  Clas_11.wall(id)
+              }
+            }
+        
+          // @LINE:22
+          case controllers_clas_Clas_wallEdit10011_route(params) =>
+            named("Clas.wallEdit") {
+              call(params.fromPath[ClasId]("id", None)) { (id) =>
+                  Clas_11.wallEdit(id)
+              }
+            }
+        
+          // @LINE:23
+          case controllers_clas_Clas_wallUpdate10012_route(params) =>
+            named("Clas.wallUpdate") {
+              call(params.fromPath[ClasId]("id", None)) { (id) =>
+                  Clas_11.wallUpdate(id)
+              }
+            }
+        
+          // @LINE:24
+          case controllers_clas_Clas_notifyStudents10013_route(params) =>
+            named("Clas.notifyStudents") {
+              call(params.fromPath[ClasId]("id", None)) { (id) =>
+                  Clas_11.notifyStudents(id)
+              }
+            }
+        
+          // @LINE:25
+          case controllers_clas_Clas_notifyPost10014_route(params) =>
+            named("Clas.notifyPost") {
+              call(params.fromPath[ClasId]("id", None)) { (id) =>
+                  Clas_11.notifyPost(id)
+              }
+            }
+        
+          // @LINE:26
+          case controllers_clas_Clas_students10015_route(params) =>
+            named("Clas.students") {
+              call(params.fromPath[ClasId]("id", None)) { (id) =>
+                  Clas_11.students(id)
+              }
+            }
+        
+          // @LINE:27
+          case controllers_clas_Clas_archive10016_route(params) =>
+            named("Clas.archive") {
+              call(params.fromPath[ClasId]("id", None), params.fromQuery[Boolean]("v", None)) { (id, v) =>
+                  Clas_11.archive(id, v)
+              }
+            }
+        
+          // @LINE:28
+          case controllers_clas_Clas_learn10017_route(params) =>
+            named("Clas.learn") {
+              call(params.fromPath[ClasId]("id", None)) { (id) =>
+                  Clas_11.learn(id)
+              }
+            }
+        
+          // @LINE:29
+          case controllers_clas_Clas_progress10018_route(params) =>
+            named("Clas.progress") {
+              call(params.fromPath[ClasId]("id", None), params.fromPath[PerfKey]("pk", None), params.fromPath[Days]("days", None)) { (id, pk, days) =>
+                  Clas_11.progress(id, pk, days)
+              }
+            }
+        
+          // @LINE:30
+          case controllers_clas_Clas_studentForm10019_route(params) =>
+            named("Clas.studentForm") {
+              call(params.fromPath[ClasId]("id", None)) { (id) =>
+                  Clas_11.studentForm(id)
+              }
+            }
+        
+          // @LINE:31
+          case controllers_clas_Clas_studentCreate10020_route(params) =>
+            named("Clas.studentCreate") {
+              call(params.fromPath[ClasId]("id", None)) { (id) =>
+                  Clas_11.studentCreate(id)
+              }
+            }
+        
+          // @LINE:32
+          case controllers_clas_Clas_studentManyForm10021_route(params) =>
+            named("Clas.studentManyForm") {
+              call(params.fromPath[ClasId]("id", None)) { (id) =>
+                  Clas_11.studentManyForm(id)
+              }
+            }
+        
+          // @LINE:33
+          case controllers_clas_Clas_studentManyCreate10022_route(params) =>
+            named("Clas.studentManyCreate") {
+              call(params.fromPath[ClasId]("id", None)) { (id) =>
+                  Clas_11.studentManyCreate(id)
+              }
+            }
+        
+          // @LINE:34
+          case controllers_clas_Clas_studentInvite10023_route(params) =>
+            named("Clas.studentInvite") {
+              call(params.fromPath[ClasId]("id", None)) { (id) =>
+                  Clas_11.studentInvite(id)
+              }
+            }
+        
+          // @LINE:35
+          case controllers_clas_Clas_studentShow10024_route(params) =>
+            named("Clas.studentShow") {
+              call(params.fromPath[ClasId]("id", None), params.fromPath[UserStr]("username", None)) { (id, username) =>
+                  Clas_11.studentShow(id, username)
+              }
+            }
+        
+          // @LINE:36
+          case controllers_clas_Clas_studentArchive10025_route(params) =>
+            named("Clas.studentArchive") {
+              call(params.fromPath[ClasId]("id", None), params.fromPath[UserStr]("username", None), params.fromQuery[Boolean]("v", None)) { (id, username, v) =>
+                  Clas_11.studentArchive(id, username, v)
+              }
+            }
+        
+          // @LINE:37
+          case controllers_clas_Clas_studentResetPassword10026_route(params) =>
+            named("Clas.studentResetPassword") {
+              call(params.fromPath[ClasId]("id", None), params.fromPath[UserStr]("username", None)) { (id, username) =>
+                  Clas_11.studentResetPassword(id, username)
+              }
+            }
+        
+          // @LINE:38
+          case controllers_clas_Clas_studentEdit10027_route(params) =>
+            named("Clas.studentEdit") {
+              call(params.fromPath[ClasId]("id", None), params.fromPath[UserStr]("username", None)) { (id, username) =>
+                  Clas_11.studentEdit(id, username)
+              }
+            }
+        
+          // @LINE:39
+          case controllers_clas_Clas_studentUpdate10028_route(params) =>
+            named("Clas.studentUpdate") {
+              call(params.fromPath[ClasId]("id", None), params.fromPath[UserStr]("username", None)) { (id, username) =>
+                  Clas_11.studentUpdate(id, username)
+              }
+            }
+        
+          // @LINE:40
+          case controllers_clas_Clas_studentRelease10029_route(params) =>
+            named("Clas.studentRelease") {
+              call(params.fromPath[ClasId]("id", None), params.fromPath[UserStr]("username", None)) { (id, username) =>
+                  Clas_11.studentRelease(id, username)
+              }
+            }
+        
+          // @LINE:41
+          case controllers_clas_Clas_studentReleasePost10030_route(params) =>
+            named("Clas.studentReleasePost") {
+              call(params.fromPath[ClasId]("id", None), params.fromPath[UserStr]("username", None)) { (id, username) =>
+                  Clas_11.studentReleasePost(id, username)
+              }
+            }
+        
+          // @LINE:42
+          case controllers_clas_Clas_studentClose10031_route(params) =>
+            named("Clas.studentClose") {
+              call(params.fromPath[ClasId]("id", None), params.fromPath[UserStr]("username", None)) { (id, username) =>
+                  Clas_11.studentClose(id, username)
+              }
+            }
+        
+          // @LINE:43
+          case controllers_clas_Clas_studentClosePost10032_route(params) =>
+            named("Clas.studentClosePost") {
+              call(params.fromPath[ClasId]("id", None), params.fromPath[UserStr]("username", None)) { (id, username) =>
+                  Clas_11.studentClosePost(id, username)
+              }
+            }
+        
+          // @LINE:44
+          case controllers_clas_Clas_invitationRevoke10033_route(params) =>
+            named("Clas.invitationRevoke") {
+              call(params.fromPath[ClasInviteId]("id", None)) { (id) =>
+                  Clas_11.invitationRevoke(id)
+              }
+            }
+        
+          // @LINE:45
+          case controllers_clas_Clas_studentMove10034_route(params) =>
+            named("Clas.studentMove") {
+              call(params.fromPath[ClasId]("id", None), params.fromPath[UserStr]("username", None)) { (id, username) =>
+                  Clas_11.studentMove(id, username)
+              }
+            }
+        
+          // @LINE:46
+          case controllers_clas_Clas_studentMovePost10035_route(params) =>
+            named("Clas.studentMovePost") {
+              call(params.fromPath[ClasId]("id", None), params.fromPath[UserStr]("username", None), params.fromPath[ClasId]("to", None)) { (id, username, to) =>
+                  Clas_11.studentMovePost(id, username, to)
+              }
+            }
+        
+          // @LINE:47
+          case controllers_clas_Clas_loginCreate10036_route(params) =>
+            named("Clas.loginCreate") {
+              call(params.fromPath[ClasId]("id", None)) { (id) =>
+                  Clas_11.loginCreate(id)
+              }
+            }
+        
+          // @LINE:48
+          case controllers_clas_Clas_bulkActions10037_route(params) =>
+            named("Clas.bulkActions") {
+              call(params.fromPath[ClasId]("id", None)) { (id) =>
+                  Clas_11.bulkActions(id)
+              }
+            }
+        
+          // @LINE:49
+          case controllers_clas_Clas_bulkActionsPost10038_route(params) =>
+            named("Clas.bulkActionsPost") {
+              call(params.fromPath[ClasId]("id", None)) { (id) =>
+                  Clas_11.bulkActionsPost(id)
+              }
+            }
+        
+          // @LINE:50
+          case controllers_clas_Clas_makeStudentOauthTokens10039_route(params) =>
+            named("Clas.makeStudentOauthTokens") {
+              call(params.fromPath[ClasId]("id", None)) { (id) =>
+                  Clas_11.makeStudentOauthTokens(id)
+              }
+            }
+        
+      },
+    
+      "bookmark" -> {
+        
+          // @LINE:106
+          case controllers_Game_bookmark11000_route(params) =>
+            named("Game.bookmark") {
+              call(params.fromPath[GameId]("gameId", None)) { (gameId) =>
+                  Game_0.bookmark(gameId)
+              }
+            }
+        
+      },
+    
+      "games" -> {
+        
+          // @LINE:103
+          case controllers_Search_index12000_route(params) =>
+            named("Search.index") {
+              call(params.fromQuery[Int]("page", Some(1))) { (page) =>
+                  Search_7.index(page)
+              }
+            }
+        
+          // @LINE:104
+          case controllers_Game_exportByIds12001_route(_) =>
+            named("Game.exportByIds") {
+              call { 
+                  Game_0.exportByIds
+              }
+            }
+        
+          // @LINE:105
+          case controllers_Game_exportByUser12002_route(params) =>
+            named("Game.exportByUser") {
+              call(params.fromPath[UserStr]("username", None)) { (username) =>
+                  Game_0.exportByUser(username)
+              }
+            }
+        
+          // @LINE:115
+          case controllers_Tv_games12003_route(_) =>
+            named("Tv.games") {
+              call { 
+                  Tv_15.games
+              }
+            }
+        
+          // @LINE:116
+          case controllers_Tv_gamesChannel12004_route(params) =>
+            named("Tv.gamesChannel") {
+              call(params.fromPath[String]("chanKey", None)) { (chanKey) =>
+                  Tv_15.gamesChannel(chanKey)
+              }
+            }
+        
+          // @LINE:117
+          case controllers_Tv_gameChannelReplacement12005_route(params) =>
+            named("Tv.gameChannelReplacement") {
+              call(params.fromPath[String]("chanKey", None), params.fromPath[GameId]("gameId", None), params.fromQuery[List[GameId]]("exclude", None)) { (chanKey, gameId, exclude) =>
+                  Tv_15.gameChannelReplacement(chanKey, gameId, exclude)
+              }
+            }
+        
+      },
+    
+      "tv" -> {
+        
+          // @LINE:97
+          case controllers_Tv_index13000_route(_) =>
+            named("Tv.index") {
+              call { 
+                  Tv_15.index
+              }
+            }
+        
+          // @LINE:108
+          case controllers_Tv_frameDefault13001_route(_) =>
+            named("Tv.frameDefault") {
+              call { 
+                  Tv_15.frameDefault
+              }
+            }
+        
+          // @LINE:109
+          case controllers_Tv_feedDefault13002_route(_) =>
+            named("Tv.feedDefault") {
+              call { 
+                  Tv_15.feedDefault
+              }
+            }
+        
+          // @LINE:110
+          case controllers_Main_movedPermanently13003_route(_) =>
+            named("Main.movedPermanently") {
+              call(Param[String]("to", Right("/api/tv/channels"))) { (to) =>
+                  Main_5.movedPermanently(to)
+              }
+            }
+        
+          // @LINE:111
+          case controllers_Tv_onChannel13004_route(params) =>
+            named("Tv.onChannel") {
+              call(params.fromPath[String]("chanKey", None)) { (chanKey) =>
+                  Tv_15.onChannel(chanKey)
+              }
+            }
+        
+          // @LINE:112
+          case controllers_Tv_frame13005_route(params) =>
+            named("Tv.frame") {
+              call(params.fromPath[String]("chanKey", None)) { (chanKey) =>
+                  Tv_15.frame(chanKey)
+              }
+            }
+        
+          // @LINE:113
+          case controllers_Tv_feed13006_route(params) =>
+            named("Tv.feed") {
+              call(params.fromPath[String]("chanKey", None)) { (chanKey) =>
+                  Tv_15.feed(chanKey)
+              }
+            }
+        
+          // @LINE:114
+          case controllers_Tv_sides13007_route(params) =>
+            named("Tv.sides") {
+              call(params.fromPath[GameId]("gameId", None), params.fromPath[Color]("color", None)) { (gameId, color) =>
+                  Tv_15.sides(gameId, color)
+              }
+            }
+        
+      },
+    
+      "appeal" -> {
+        
+          // @LINE:1
+          case controllers_appeal_Appeal_home14000_route(_) =>
+            named("Appeal.home") {
+              call { 
+                  Appeal_18.home
+              }
+            }
+        
+          // @LINE:2
+          case controllers_appeal_Appeal_post14001_route(_) =>
+            named("Appeal.post") {
+              call { 
+                  Appeal_18.post
+              }
+            }
+        
+          // @LINE:3
+          case controllers_appeal_Appeal_landing14002_route(_) =>
+            named("Appeal.landing") {
+              call { 
+                  Appeal_18.landing
+              }
+            }
+        
+          // @LINE:4
+          case controllers_appeal_Appeal_closedByTeacher14003_route(_) =>
+            named("Appeal.closedByTeacher") {
+              call { 
+                  Appeal_18.closedByTeacher
+              }
+            }
+        
+          // @LINE:5
+          case controllers_appeal_Appeal_queue14004_route(params) =>
+            named("Appeal.queue") {
+              call(params.fromQuery[Option[String]]("filter", Some(None))) { (filter) =>
+                  Appeal_18.queue(filter)
+              }
+            }
+        
+          // @LINE:6
+          case controllers_appeal_Appeal_show14005_route(params) =>
+            named("Appeal.show") {
+              call(params.fromPath[UserStr]("username", None)) { (username) =>
+                  Appeal_18.show(username)
+              }
+            }
+        
+          // @LINE:7
+          case controllers_appeal_Appeal_reply14006_route(params) =>
+            named("Appeal.reply") {
+              call(params.fromPath[UserStr]("username", None)) { (username) =>
+                  Appeal_18.reply(username)
+              }
+            }
+        
+          // @LINE:8
+          case controllers_appeal_Appeal_mute14007_route(params) =>
+            named("Appeal.mute") {
+              call(params.fromPath[UserStr]("username", None)) { (username) =>
+                  Appeal_18.mute(username)
+              }
+            }
+        
+          // @LINE:9
+          case controllers_appeal_Appeal_snooze14008_route(params) =>
+            named("Appeal.snooze") {
+              call(params.fromPath[UserStr]("username", None), params.fromPath[String]("dur", None)) { (username, dur) =>
+                  Appeal_18.snooze(username, dur)
+              }
+            }
+        
+          // @LINE:10
+          case controllers_appeal_Appeal_sendToZulip14009_route(params) =>
+            named("Appeal.sendToZulip") {
+              call(params.fromPath[UserStr]("username", None)) { (username) =>
+                  Appeal_18.sendToZulip(username)
+              }
+            }
+        
+      },
+    
+      "upload" -> {
+        
+          // @LINE:167
+          case controllers_Fide_playerPhoto15000_route(params) =>
+            named("Fide.playerPhoto") {
+              call(params.fromPath[chess.FideId]("id", None)) { (id) =>
+                  Fide_16.playerPhoto(id)
+              }
+            }
+        
+          // @LINE:198
+          case controllers_Ublog_image15001_route(params) =>
+            named("Ublog.image") {
+              call(params.fromPath[UblogPostId]("id", None)) { (id) =>
+                  Ublog_2.image(id)
+              }
+            }
+        
+      },
+    
+      "feed" -> {
+        
+          // @LINE:199
+          case controllers_Feed_index16000_route(params) =>
+            named("Feed.index") {
+              call(params.fromQuery[Int]("page", Some(1))) { (page) =>
+                  Feed_14.index(page)
+              }
+            }
+        
+          // @LINE:200
+          case controllers_Feed_createForm16001_route(_) =>
+            named("Feed.createForm") {
+              call { 
+                  Feed_14.createForm
+              }
+            }
+        
+      },
+    
+      "team" -> {
+        
+          // @LINE:64
+          case controllers_team_Team_home17000_route(params) =>
+            named("Team.home") {
+              call(params.fromQuery[Int]("page", Some(1))) { (page) =>
+                  Team_19.home(page)
+              }
+            }
+        
+          // @LINE:65
+          case controllers_team_Team_form17001_route(_) =>
+            named("Team.form") {
+              call { 
+                  Team_19.form
+              }
+            }
+        
+          // @LINE:66
+          case controllers_team_Team_create17002_route(_) =>
+            named("Team.create") {
+              call { 
+                  Team_19.create
+              }
+            }
+        
+          // @LINE:67
+          case controllers_team_Team_mine17003_route(_) =>
+            named("Team.mine") {
+              call { 
+                  Team_19.mine
+              }
+            }
+        
+          // @LINE:68
+          case controllers_team_Team_leader17004_route(_) =>
+            named("Team.leader") {
+              call { 
+                  Team_19.leader
+              }
+            }
+        
+          // @LINE:69
+          case controllers_team_Team_all17005_route(params) =>
+            named("Team.all") {
+              call(params.fromQuery[Int]("page", Some(1))) { (page) =>
+                  Team_19.all(page)
+              }
+            }
+        
+          // @LINE:70
+          case controllers_team_Team_requests17006_route(_) =>
+            named("Team.requests") {
+              call { 
+                  Team_19.requests
+              }
+            }
+        
+          // @LINE:71
+          case controllers_team_Team_search17007_route(params) =>
+            named("Team.search") {
+              call(params.fromQuery[String]("text", Some("")), params.fromQuery[Int]("page", Some(1))) { (text, page) =>
+                  Team_19.search(text, page)
+              }
+            }
+        
+          // @LINE:72
+          case controllers_team_Team_autocomplete17008_route(_) =>
+            named("Team.autocomplete") {
+              call { 
+                  Team_19.autocomplete
+              }
+            }
+        
+          // @LINE:73
+          case controllers_team_Team_show17009_route(params) =>
+            named("Team.show") {
+              call(params.fromPath[TeamId]("id", None), params.fromQuery[Int]("page", Some(1)), params.fromQuery[Boolean]("mod", Some(false))) { (id, page, mod) =>
+                  Team_19.show(id, page, mod)
+              }
+            }
+        
+          // @LINE:74
+          case controllers_team_Team_join17010_route(params) =>
+            named("Team.join") {
+              call(params.fromPath[TeamId]("id", None)) { (id) =>
+                  Team_19.join(id)
+              }
+            }
+        
+          // @LINE:75
+          case controllers_team_Team_quit17011_route(params) =>
+            named("Team.quit") {
+              call(params.fromPath[TeamId]("id", None)) { (id) =>
+                  Team_19.quit(id)
+              }
+            }
+        
+          // @LINE:76
+          case controllers_team_Team_requestForm17012_route(params) =>
+            named("Team.requestForm") {
+              call(params.fromPath[TeamId]("id", None)) { (id) =>
+                  Team_19.requestForm(id)
+              }
+            }
+        
+          // @LINE:77
+          case controllers_team_Team_requestCreate17013_route(params) =>
+            named("Team.requestCreate") {
+              call(params.fromPath[TeamId]("id", None)) { (id) =>
+                  Team_19.requestCreate(id)
+              }
+            }
+        
+          // @LINE:78
+          case controllers_team_Team_requestProcess17014_route(params) =>
+            named("Team.requestProcess") {
+              call(params.fromPath[String]("reqId", None)) { (reqId) =>
+                  Team_19.requestProcess(reqId)
+              }
+            }
+        
+          // @LINE:79
+          case controllers_team_Team_declinedRequests17015_route(params) =>
+            named("Team.declinedRequests") {
+              call(params.fromPath[TeamId]("id", None), params.fromQuery[Int]("page", Some(1))) { (id, page) =>
+                  Team_19.declinedRequests(id, page)
+              }
+            }
+        
+          // @LINE:80
+          case controllers_team_Team_edit17016_route(params) =>
+            named("Team.edit") {
+              call(params.fromPath[TeamId]("id", None)) { (id) =>
+                  Team_19.edit(id)
+              }
+            }
+        
+          // @LINE:81
+          case controllers_team_Team_update17017_route(params) =>
+            named("Team.update") {
+              call(params.fromPath[TeamId]("id", None)) { (id) =>
+                  Team_19.update(id)
+              }
+            }
+        
+          // @LINE:82
+          case controllers_team_Team_kickForm17018_route(params) =>
+            named("Team.kickForm") {
+              call(params.fromPath[TeamId]("id", None)) { (id) =>
+                  Team_19.kickForm(id)
+              }
+            }
+        
+          // @LINE:83
+          case controllers_team_Team_kick17019_route(params) =>
+            named("Team.kick") {
+              call(params.fromPath[TeamId]("id", None)) { (id) =>
+                  Team_19.kick(id)
+              }
+            }
+        
+          // @LINE:84
+          case controllers_team_Team_blocklist17020_route(params) =>
+            named("Team.blocklist") {
+              call(params.fromPath[TeamId]("id", None)) { (id) =>
+                  Team_19.blocklist(id)
+              }
+            }
+        
+          // @LINE:85
+          case controllers_team_Team_leaders17021_route(params) =>
+            named("Team.leaders") {
+              call(params.fromPath[TeamId]("id", None)) { (id) =>
+                  Team_19.leaders(id)
+              }
+            }
+        
+          // @LINE:86
+          case controllers_team_Team_permissions17022_route(params) =>
+            named("Team.permissions") {
+              call(params.fromPath[TeamId]("id", None)) { (id) =>
+                  Team_19.permissions(id)
+              }
+            }
+        
+          // @LINE:87
+          case controllers_team_Team_addLeader17023_route(params) =>
+            named("Team.addLeader") {
+              call(params.fromPath[TeamId]("id", None)) { (id) =>
+                  Team_19.addLeader(id)
+              }
+            }
+        
+          // @LINE:88
+          case controllers_team_Team_members17024_route(params) =>
+            named("Team.members") {
+              call(params.fromPath[TeamId]("id", None), params.fromQuery[Int]("page", Some(1))) { (id, page) =>
+                  Team_19.members(id, page)
+              }
+            }
+        
+          // @LINE:89
+          case controllers_team_Team_close17025_route(params) =>
+            named("Team.close") {
+              call(params.fromPath[TeamId]("id", None)) { (id) =>
+                  Team_19.close(id)
+              }
+            }
+        
+          // @LINE:90
+          case controllers_team_Team_disable17026_route(params) =>
+            named("Team.disable") {
+              call(params.fromPath[TeamId]("id", None)) { (id) =>
+                  Team_19.disable(id)
+              }
+            }
+        
+          // @LINE:91
+          case controllers_team_Team_tournaments17027_route(params) =>
+            named("Team.tournaments") {
+              call(params.fromPath[TeamId]("id", None)) { (id) =>
+                  Team_19.tournaments(id)
+              }
+            }
+        
+          // @LINE:92
+          case controllers_team_Team_pmAll17028_route(params) =>
+            named("Team.pmAll") {
+              call(params.fromPath[TeamId]("id", None)) { (id) =>
+                  Team_19.pmAll(id)
+              }
+            }
+        
+          // @LINE:93
+          case controllers_team_Team_pmAllSubmit17029_route(params) =>
+            named("Team.pmAllSubmit") {
+              call(params.fromPath[TeamId]("id", None)) { (id) =>
+                  Team_19.pmAllSubmit(id)
+              }
+            }
+        
+          // @LINE:94
+          case controllers_team_Team_subscribe17030_route(params) =>
+            named("Team.subscribe") {
+              call(params.fromPath[TeamId]("id", None)) { (id) =>
+                  Team_19.subscribe(id)
+              }
+            }
+        
+      },
+    
+      "lobby" -> {
+        
+          // @LINE:96
+          case controllers_Lobby_seeks18000_route(_) =>
+            named("Lobby.seeks") {
+              call { 
+                  Lobby_8.seeks
+              }
+            }
+        
+      },
+    
+      "timeline" -> {
+        
+          // @LINE:100
+          case controllers_Timeline_home19000_route(_) =>
+            named("Timeline.home") {
+              call { 
+                  Timeline_17.home
+              }
+            }
+        
+          // @LINE:102
+          case controllers_Timeline_unsub19001_route(params) =>
+            named("Timeline.unsub") {
+              call(params.fromPath[String]("channel", None)) { (channel) =>
+                  Timeline_17.unsub(channel)
+              }
+            }
+        
+      },
+    
+      "report" -> {
+        
+          // @LINE:51
+          case controllers_report_Report_form20000_route(_) =>
+            named("Report.form") {
+              call { 
+                  Report_9.form
+              }
+            }
+        
+          // @LINE:52
+          case controllers_report_Report_create20001_route(_) =>
+            named("Report.create") {
+              call { 
+                  Report_9.create
+              }
+            }
+        
+          // @LINE:53
+          case controllers_report_Report_inboxForm20002_route(params) =>
+            named("Report.inboxForm") {
+              call(params.fromPath[UserStr]("username", None)) { (username) =>
+                  Report_9.inboxForm(username)
+              }
+            }
+        
+          // @LINE:54
+          case controllers_report_Report_inboxCreate20003_route(params) =>
+            named("Report.inboxCreate") {
+              call(params.fromPath[UserStr]("username", None)) { (username) =>
+                  Report_9.inboxCreate(username)
+              }
+            }
+        
+          // @LINE:55
+          case controllers_report_Report_flag20004_route(_) =>
+            named("Report.flag") {
+              call { 
+                  Report_9.flag
+              }
+            }
+        
+          // @LINE:56
+          case controllers_report_Report_thanks20005_route(_) =>
+            named("Report.thanks") {
+              call { 
+                  Report_9.thanks
+              }
+            }
+        
+          // @LINE:57
+          case controllers_report_Report_list20006_route(_) =>
+            named("Report.list") {
+              call { 
+                  Report_9.list
+              }
+            }
+        
+          // @LINE:58
+          case controllers_report_Report_listWithFilter20007_route(params) =>
+            named("Report.listWithFilter") {
+              call(params.fromPath[String]("room", None)) { (room) =>
+                  Report_9.listWithFilter(room)
+              }
+            }
+        
+          // @LINE:59
+          case controllers_report_Report_inquiry20008_route(params) =>
+            named("Report.inquiry") {
+              call(params.fromPath[String]("id", None)) { (id) =>
+                  Report_9.inquiry(id)
+              }
+            }
+        
+          // @LINE:60
+          case controllers_report_Report_process20009_route(params) =>
+            named("Report.process") {
+              call(params.fromPath[ReportId]("id", None)) { (id) =>
+                  Report_9.process(id)
+              }
+            }
+        
+          // @LINE:61
+          case controllers_report_Report_xfiles20010_route(params) =>
+            named("Report.xfiles") {
+              call(params.fromPath[ReportId]("id", None)) { (id) =>
+                  Report_9.xfiles(id)
+              }
+            }
+        
+          // @LINE:62
+          case controllers_report_Report_snooze20011_route(params) =>
+            named("Report.snooze") {
+              call(params.fromPath[ReportId]("id", None), params.fromPath[String]("dur", None)) { (id, dur) =>
+                  Report_9.snooze(id, dur)
+              }
+            }
+        
+          // @LINE:63
+          case controllers_report_Report_currentCheatInquiry20012_route(params) =>
+            named("Report.currentCheatInquiry") {
+              call(params.fromPath[UserStr]("user", None)) { (user) =>
+                  Report_9.currentCheatInquiry(user)
+              }
+            }
+        
+      },
+    
+      "account" -> {
+        
+          // @LINE:99
+          case controllers_Account_info21000_route(_) =>
+            named("Account.info") {
+              call { 
+                  Account_4.info
+              }
+            }
+        
+      },
+    
+      "api" -> {
+        
+          // @LINE:101
+          case controllers_Timeline_api22000_route(_) =>
+            named("Timeline.api") {
+              call { 
+                  Timeline_17.api
+              }
+            }
+        
+          // @LINE:118
+          case controllers_Tv_channels22001_route(_) =>
+            named("Tv.channels") {
+              call { 
+                  Tv_15.channels
+              }
+            }
+        
+          // @LINE:119
+          case controllers_Tv_apiGamesChannel22002_route(params) =>
+            named("Tv.apiGamesChannel") {
+              call(params.fromPath[String]("chanKey", None)) { (chanKey) =>
+                  Tv_15.apiGamesChannel(chanKey)
+              }
+            }
+        
+          // @LINE:120
+          case controllers_Relation_apiFollowing22003_route(_) =>
+            named("Relation.apiFollowing") {
+              call { 
+                  Relation_3.apiFollowing
+              }
+            }
+        
+          // @LINE:121
+          case controllers_Relation_follow22004_route(params) =>
+            named("Relation.follow") {
+              call(params.fromPath[UserStr]("user", None)) { (user) =>
+                  Relation_3.follow(user)
+              }
+            }
+        
+          // @LINE:122
+          case controllers_Relation_unfollow22005_route(params) =>
+            named("Relation.unfollow") {
+              call(params.fromPath[UserStr]("user", None)) { (user) =>
+                  Relation_3.unfollow(user)
+              }
+            }
+        
+          // @LINE:123
+          case controllers_Relation_block22006_route(params) =>
+            named("Relation.block") {
+              call(params.fromPath[UserStr]("userId", None)) { (userId) =>
+                  Relation_3.block(userId)
+              }
+            }
+        
+          // @LINE:124
+          case controllers_Relation_unblock22007_route(params) =>
+            named("Relation.unblock") {
+              call(params.fromPath[UserStr]("userId", None)) { (userId) =>
+                  Relation_3.unblock(userId)
+              }
+            }
+        
+          // @LINE:136
+          case controllers_User_mod22008_route(params) =>
+            named("User.mod") {
+              call(params.fromPath[UserStr]("username", None)) { (username) =>
+                  User_10.mod(username)
+              }
+            }
+        
+          // @LINE:155
+          case controllers_User_topNbApi22009_route(params) =>
+            named("User.topNbApi") {
+              call(params.fromPath[Int]("nb", None), params.fromPath[PerfKey]("perfKey", None)) { (nb, perfKey) =>
+                  User_10.topNbApi(nb, perfKey)
+              }
+            }
+        
+          // @LINE:157
+          case controllers_User_autocomplete22010_route(_) =>
+            named("User.autocomplete") {
+              call { 
+                  User_10.autocomplete
+              }
+            }
+        
+          // @LINE:158
+          case controllers_User_apiList22011_route(_) =>
+            named("User.apiList") {
+              call { 
+                  User_10.apiList
+              }
+            }
+        
+          // @LINE:164
+          case controllers_Fide_apiShow22012_route(params) =>
+            named("Fide.apiShow") {
+              call(params.fromPath[chess.FideId]("id", None)) { (id) =>
+                  Fide_16.apiShow(id)
+              }
+            }
+        
+          // @LINE:165
+          case controllers_Fide_apiRatings22013_route(params) =>
+            named("Fide.apiRatings") {
+              call(params.fromPath[chess.FideId]("id", None)) { (id) =>
+                  Fide_16.apiRatings(id)
+              }
+            }
+        
+          // @LINE:166
+          case controllers_Fide_apiSearch22014_route(params) =>
+            named("Fide.apiSearch") {
+              call(params.fromQuery[String]("q", None)) { (q) =>
+                  Fide_16.apiSearch(q)
+              }
+            }
+        
+          // @LINE:174
+          case controllers_Ublog_apiCarousel22015_route(_) =>
+            named("Ublog.apiCarousel") {
+              call { 
+                  Ublog_2.apiCarousel
+              }
+            }
+        
+      },
+    
+  )
+
+  val routes: PartialFunction[RequestHeader, Handler] =
+    {
+      val emptyPathRouter = pathRouters get ""
+      Function unlift { (req: RequestHeader) =>
+        pathRouters.get(req.path.drop(1).takeWhile(_ != '/')).orElse(emptyPathRouter).flatMap(_ lift req)
+      }
+    }
+}
+
+// ===== clas/ReverseRoutes.scala =====
+// @GENERATOR:play-routes-compiler
+
+import play.api.mvc.{Call, PathBindable}
+import play.core.routing.{dynamicString}
+
+
+
+// @LINE:11
+package routes {
+
+
+  // @LINE:11
+  object Clas {
+
+  
+    // @LINE:46
+    def studentMovePost(id:ClasId, username:UserStr, to:ClasId): Call = {
+      
+      Call("POST", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/student/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/move/" + implicitly[PathBindable[ClasId]].unbind("to", to))
+    }
+  
+    // @LINE:33
+    def studentManyCreate(id:ClasId): Call = {
+      
+      Call("POST", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/student/many")
+    }
+  
+    // @LINE:35
+    def studentShow(id:ClasId, username:UserStr): Call = {
+      
+      Call("GET", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/student/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)))
+    }
+  
+    // @LINE:26
+    def students(id:ClasId): Call = {
+      
+      Call("GET", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/students")
+    }
+  
+    // @LINE:39
+    def studentUpdate(id:ClasId, username:UserStr): Call = {
+      
+      Call("POST", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/student/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/edit")
+    }
+  
+    // @LINE:41
+    def studentReleasePost(id:ClasId, username:UserStr): Call = {
+      
+      Call("POST", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/student/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/release")
+    }
+  
+    // @LINE:27
+    def archive(id:ClasId, v:Boolean): Call = {
+      
+      Call("POST", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/archive" + play.core.routing.queryString(List(Some(implicitly[play.api.mvc.QueryStringBindable[Boolean]].unbind("v", v)))))
+    }
+  
+    // @LINE:14
+    def create: Call = {
+      
+      Call("POST", "/" + "class/new")
+    }
+  
+    // @LINE:34
+    def studentInvite(id:ClasId): Call = {
+      
+      Call("POST", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/student/invite")
+    }
+  
+    // @LINE:23
+    def wallUpdate(id:ClasId): Call = {
+      
+      Call("POST", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/news/edit")
+    }
+  
+    // @LINE:32
+    def studentManyForm(id:ClasId): Call = {
+      
+      Call("GET", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/student/many")
+    }
+  
+    // @LINE:43
+    def studentClosePost(id:ClasId, username:UserStr): Call = {
+      
+      Call("POST", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/student/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/close")
+    }
+  
+    // @LINE:37
+    def studentResetPassword(id:ClasId, username:UserStr): Call = {
+      
+      Call("POST", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/student/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/reset-password")
+    }
+  
+    // @LINE:28
+    def learn(id:ClasId): Call = {
+      
+      Call("GET", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/progress/learn")
+    }
+  
+    // @LINE:45
+    def studentMove(id:ClasId, username:UserStr): Call = {
+      
+      Call("GET", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/student/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/move")
+    }
+  
+    // @LINE:25
+    def notifyPost(id:ClasId): Call = {
+      
+      Call("POST", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/notifyPost")
+    }
+  
+    // @LINE:13
+    def becomeTeacher: Call = {
+      
+      Call("POST", "/" + "class/become-teacher")
+    }
+  
+    // @LINE:44
+    def invitationRevoke(id:ClasInviteId): Call = {
+      
+      Call("POST", "/" + "class/" + implicitly[PathBindable[ClasInviteId]].unbind("id", id) + "/invitation/revoke")
+    }
+  
+    // @LINE:24
+    def notifyStudents(id:ClasId): Call = {
+      
+      Call("GET", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/notify")
+    }
+  
+    // @LINE:22
+    def wallEdit(id:ClasId): Call = {
+      
+      Call("GET", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/news/edit")
+    }
+  
+    // @LINE:20
+    def update(id:ClasId): Call = {
+      
+      Call("POST", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/edit")
+    }
+  
+    // @LINE:42
+    def studentClose(id:ClasId, username:UserStr): Call = {
+      
+      Call("GET", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/student/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/close")
+    }
+  
+    // @LINE:18
+    def show(id:ClasId): Call = {
+      
+      Call("GET", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id))
+    }
+  
+    // @LINE:17
+    def teacher(username:UserStr): Call = {
+      
+      Call("GET", "/" + "class/teacher/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)))
+    }
+  
+    // @LINE:40
+    def studentRelease(id:ClasId, username:UserStr): Call = {
+      
+      Call("GET", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/student/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/release")
+    }
+  
+    // @LINE:15
+    def invitation(id:ClasInviteId): Call = {
+      
+      Call("GET", "/" + "class/invitation/" + dynamicString(implicitly[PathBindable[ClasInviteId]].unbind("id", id)))
+    }
+  
+    // @LINE:49
+    def bulkActionsPost(id:ClasId): Call = {
+      
+      Call("POST", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/bulk-actions")
+    }
+  
+    // @LINE:11
+    def index: Call = {
+      
+      Call("GET", "/" + "class")
+    }
+  
+    // @LINE:19
+    def edit(id:ClasId): Call = {
+      
+      Call("GET", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/edit")
+    }
+  
+    // @LINE:36
+    def studentArchive(id:ClasId, username:UserStr, v:Boolean): Call = {
+      
+      Call("POST", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/student/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/archive" + play.core.routing.queryString(List(Some(implicitly[play.api.mvc.QueryStringBindable[Boolean]].unbind("v", v)))))
+    }
+  
+    // @LINE:29
+    def progress(id:ClasId, pk:PerfKey, days:Days): Call = {
+      
+      Call("GET", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/progress/" + dynamicString(implicitly[PathBindable[PerfKey]].unbind("pk", pk)) + "/" + dynamicString(implicitly[PathBindable[Days]].unbind("days", days)))
+    }
+  
+    // @LINE:16
+    def invitationAccept(id:ClasInviteId): Call = {
+      
+      Call("POST", "/" + "class/invitation/" + dynamicString(implicitly[PathBindable[ClasInviteId]].unbind("id", id)))
+    }
+  
+    // @LINE:38
+    def studentEdit(id:ClasId, username:UserStr): Call = {
+      
+      Call("GET", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/student/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/edit")
+    }
+  
+    // @LINE:21
+    def wall(id:ClasId): Call = {
+      
+      Call("GET", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/news")
+    }
+  
+    // @LINE:12
+    def form: Call = {
+      
+      Call("GET", "/" + "class/new")
+    }
+  
+    // @LINE:30
+    def studentForm(id:ClasId): Call = {
+      
+      Call("GET", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/student/add")
+    }
+  
+    // @LINE:48
+    def bulkActions(id:ClasId): Call = {
+      
+      Call("GET", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/bulk-actions")
+    }
+  
+    // @LINE:50
+    def makeStudentOauthTokens(id:ClasId): Call = {
+      
+      Call("POST", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/oauth-tokens")
+    }
+  
+    // @LINE:31
+    def studentCreate(id:ClasId): Call = {
+      
+      Call("POST", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/student/new")
+    }
+  
+    // @LINE:47
+    def loginCreate(id:ClasId): Call = {
+      
+      Call("POST", "/" + "class/" + implicitly[PathBindable[ClasId]].unbind("id", id) + "/login")
+    }
+  
+  }
+
+}
+
+// ===== team/ReverseRoutes.scala =====
+// @GENERATOR:play-routes-compiler
+
+import play.api.mvc.{Call, PathBindable}
+import play.core.routing.{dynamicString}
+
+
+
+// @LINE:64
+package routes {
+
+
+  // @LINE:64
+  object Team {
+
+  
+    // @LINE:71
+    def search(text:String = "", page:Int = 1): Call = {
+      
+      Call("GET", "/" + "team/search" + play.core.routing.queryString(List(if(text == "") None else Some(implicitly[play.api.mvc.QueryStringBindable[String]].unbind("text", text)), if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+    // @LINE:90
+    def disable(id:TeamId): Call = {
+      
+      Call("POST", "/" + "team/" + dynamicString(implicitly[PathBindable[TeamId]].unbind("id", id)) + "/disable")
+    }
+  
+    // @LINE:85
+    def leaders(id:TeamId): Call = {
+      
+      Call("GET", "/" + "team/" + dynamicString(implicitly[PathBindable[TeamId]].unbind("id", id)) + "/leaders")
+    }
+  
+    // @LINE:80
+    def edit(id:TeamId): Call = {
+      
+      Call("GET", "/" + "team/" + dynamicString(implicitly[PathBindable[TeamId]].unbind("id", id)) + "/edit")
+    }
+  
+    // @LINE:75
+    def quit(id:TeamId): Call = {
+      
+      Call("POST", "/" + "team/" + dynamicString(implicitly[PathBindable[TeamId]].unbind("id", id)) + "/quit")
+    }
+  
+    // @LINE:72
+    def autocomplete: Call = {
+      
+      Call("GET", "/" + "team/autocomplete")
+    }
+  
+    // @LINE:88
+    def members(id:TeamId, page:Int = 1): Call = {
+      
+      Call("GET", "/" + "team/" + dynamicString(implicitly[PathBindable[TeamId]].unbind("id", id)) + "/members" + play.core.routing.queryString(List(if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+    // @LINE:64
+    def home(page:Int = 1): Call = {
+      
+      Call("GET", "/" + "team" + play.core.routing.queryString(List(if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+    // @LINE:93
+    def pmAllSubmit(id:TeamId): Call = {
+      
+      Call("POST", "/" + "team/" + dynamicString(implicitly[PathBindable[TeamId]].unbind("id", id)) + "/pm-all")
+    }
+  
+    // @LINE:84
+    def blocklist(id:TeamId): Call = {
+      
+      Call("POST", "/" + "team/" + dynamicString(implicitly[PathBindable[TeamId]].unbind("id", id)) + "/blocklist")
+    }
+  
+    // @LINE:81
+    def update(id:TeamId): Call = {
+      
+      Call("POST", "/" + "team/" + dynamicString(implicitly[PathBindable[TeamId]].unbind("id", id)) + "/edit")
+    }
+  
+    // @LINE:83
+    def kick(id:TeamId): Call = {
+      
+      Call("POST", "/" + "team/" + dynamicString(implicitly[PathBindable[TeamId]].unbind("id", id)) + "/kick")
+    }
+  
+    // @LINE:78
+    def requestProcess(reqId:String): Call = {
+      
+      Call("POST", "/" + "team/-/request/process/" + dynamicString(reqId))
+    }
+  
+    // @LINE:92
+    def pmAll(id:TeamId): Call = {
+      
+      Call("GET", "/" + "team/" + dynamicString(implicitly[PathBindable[TeamId]].unbind("id", id)) + "/pm-all")
+    }
+  
+    // @LINE:79
+    def declinedRequests(id:TeamId, page:Int = 1): Call = {
+      
+      Call("GET", "/" + "team/" + dynamicString(implicitly[PathBindable[TeamId]].unbind("id", id)) + "/declined-requests" + play.core.routing.queryString(List(if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+    // @LINE:76
+    def requestForm(id:TeamId): Call = {
+      
+      Call("GET", "/" + "team/" + dynamicString(implicitly[PathBindable[TeamId]].unbind("id", id)) + "/request/new")
+    }
+  
+    // @LINE:73
+    def show(id:TeamId, page:Int = 1, mod:Boolean = false): Call = {
+      
+      Call("GET", "/" + "team/" + dynamicString(implicitly[PathBindable[TeamId]].unbind("id", id)) + play.core.routing.queryString(List(if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)), if(mod == false) None else Some(implicitly[play.api.mvc.QueryStringBindable[Boolean]].unbind("mod", mod)))))
+    }
+  
+    // @LINE:82
+    def kickForm(id:TeamId): Call = {
+      
+      Call("GET", "/" + "team/" + dynamicString(implicitly[PathBindable[TeamId]].unbind("id", id)) + "/kick")
+    }
+  
+    // @LINE:74
+    def join(id:TeamId): Call = {
+      
+      Call("POST", "/" + "team/" + dynamicString(implicitly[PathBindable[TeamId]].unbind("id", id)) + "/join")
+    }
+  
+    // @LINE:91
+    def tournaments(id:TeamId): Call = {
+      
+      Call("GET", "/" + "team/" + dynamicString(implicitly[PathBindable[TeamId]].unbind("id", id)) + "/tournaments")
+    }
+  
+    // @LINE:66
+    def create: Call = {
+      
+      Call("POST", "/" + "team/new")
+    }
+  
+    // @LINE:67
+    def mine: Call = {
+      
+      Call("GET", "/" + "team/me")
+    }
+  
+    // @LINE:68
+    def leader: Call = {
+      
+      Call("GET", "/" + "team/leader")
+    }
+  
+    // @LINE:77
+    def requestCreate(id:TeamId): Call = {
+      
+      Call("POST", "/" + "team/" + dynamicString(implicitly[PathBindable[TeamId]].unbind("id", id)) + "/request/new")
+    }
+  
+    // @LINE:70
+    def requests: Call = {
+      
+      Call("GET", "/" + "team/requests")
+    }
+  
+    // @LINE:87
+    def addLeader(id:TeamId): Call = {
+      
+      Call("POST", "/" + "team/" + dynamicString(implicitly[PathBindable[TeamId]].unbind("id", id)) + "/leaders")
+    }
+  
+    // @LINE:69
+    def all(page:Int = 1): Call = {
+      
+      Call("GET", "/" + "team/all" + play.core.routing.queryString(List(if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+    // @LINE:65
+    def form: Call = {
+      
+      Call("GET", "/" + "team/new")
+    }
+  
+    // @LINE:86
+    def permissions(id:TeamId): Call = {
+      
+      Call("POST", "/" + "team/" + dynamicString(implicitly[PathBindable[TeamId]].unbind("id", id)) + "/permissions")
+    }
+  
+    // @LINE:89
+    def close(id:TeamId): Call = {
+      
+      Call("POST", "/" + "team/" + dynamicString(implicitly[PathBindable[TeamId]].unbind("id", id)) + "/close")
+    }
+  
+    // @LINE:94
+    def subscribe(id:TeamId): Call = {
+      
+      Call("POST", "/" + "team/" + dynamicString(implicitly[PathBindable[TeamId]].unbind("id", id)) + "/subscribe")
+    }
+  
+  }
+
+}
+
+// ===== /ReverseRoutes.scala =====
+// @GENERATOR:play-routes-compiler
+
+import play.api.mvc.{Call, PathBindable}
+import play.core.routing.{dynamicString}
+
+
+
+// @LINE:95
+package routes {
+
+
+  // @LINE:199
+  object Feed {
+
+  
+    // @LINE:199
+    def index(page:Int = 1): Call = {
+      
+      Call("GET", "/" + "feed" + play.core.routing.queryString(List(if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+    // @LINE:200
+    def createForm: Call = {
+      
+      Call("GET", "/" + "feed/new")
+    }
+  
+  }
+
+  // @LINE:130
+  object Insight {
+
+  
+    // @LINE:132
+    def index(username:UserStr): Call = {
+      
+      Call("GET", "/" + "insights/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)))
+    }
+  
+    // @LINE:130
+    def refresh(username:UserStr): Call = {
+      
+      Call("POST", "/" + "insights/refresh/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)))
+    }
+  
+    // @LINE:133
+    def path(username:UserStr, metric:String, dimension:String): Call = {
+      implicit lazy val _rrc = new play.core.routing.ReverseRouteContext(Map(("filters", ""))); _rrc
+      Call("GET", "/" + "insights/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/" + dynamicString(metric) + "/" + dynamicString(dimension))
+    }
+  
+    // @LINE:131
+    def json(username:UserStr): Call = {
+      
+      Call("POST", "/" + "insights/data/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)))
+    }
+  
+  }
+
+  // @LINE:120
+  object Relation {
+
+  
+    // @LINE:120
+    def apiFollowing: Call = {
+      
+      Call("GET", "/" + "api/rel/following")
+    }
+  
+    // @LINE:124
+    def unblock(userId:UserStr): Call = {
+      
+      Call("POST", "/" + "api/rel/unblock/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("userId", userId)))
+    }
+  
+    // @LINE:127
+    def following(username:UserStr, page:Int = 1): Call = {
+      
+      Call("GET", "/" + "@/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/following" + play.core.routing.queryString(List(if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+    // @LINE:125
+    def unfollowBc(user:UserStr): Call = {
+      
+      Call("POST", "/" + "rel/unfollow/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("user", user)))
+    }
+  
+    // @LINE:123
+    def block(userId:UserStr): Call = {
+      
+      Call("POST", "/" + "api/rel/block/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("userId", userId)))
+    }
+  
+    // @LINE:121
+    def follow(user:UserStr): Call = {
+      
+      Call("POST", "/" + "api/rel/follow/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("user", user)))
+    }
+  
+    // @LINE:122
+    def unfollow(user:UserStr): Call = {
+      
+      Call("POST", "/" + "api/rel/unfollow/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("user", user)))
+    }
+  
+    // @LINE:129
+    def bcAction(action:String, user:UserStr): Call = {
+      
+      Call("POST", "/" + "rel/" + dynamicString(action) + "/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("user", user)))
+    }
+  
+    // @LINE:126
+    def followBc(user:UserStr): Call = {
+      
+      Call("POST", "/" + "rel/follow/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("user", user)))
+    }
+  
+    // @LINE:128
+    def blocks(page:Int = 1): Call = {
+      
+      Call("GET", "/" + "rel/blocks" + play.core.routing.queryString(List(if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+  }
+
+  // @LINE:169
+  object Dasher {
+
+  
+    // @LINE:169
+    def get: Call = {
+      
+      Call("GET", "/" + "dasher")
+    }
+  
+  }
+
+  // @LINE:95
+  object Lobby {
+
+  
+    // @LINE:95
+    def home: Call = {
+      
+      Call("GET", "/")
+    }
+  
+    // @LINE:98
+    def homeLang(lang:Language): Call = {
+      
+      Call("GET", "/" + implicitly[PathBindable[Language]].unbind("lang", lang))
+    }
+  
+    // @LINE:96
+    def seeks: Call = {
+      
+      Call("GET", "/" + "lobby/seeks")
+    }
+  
+  }
+
+  // @LINE:136
+  object User {
+
+  
+    // @LINE:149
+    def myself: Call = {
+      
+      Call("GET", "/" + "player/myself")
+    }
+  
+    // @LINE:143
+    def gamesAll(username:UserStr, page:Int = 1): Call = {
+      
+      Call("GET", "/" + "@/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/all" + play.core.routing.queryString(List(if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+    // @LINE:136
+    def mod(username:UserStr): Call = {
+      
+      Call("GET", "/" + "api/stream/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/mod")
+    }
+  
+    // @LINE:141
+    def tv(username:UserStr): Call = {
+      
+      Call("GET", "/" + "@/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/tv")
+    }
+  
+    // @LINE:138
+    def deleteNote(id:String): Call = {
+      
+      Call("POST", "/" + "note/delete/" + dynamicString(id))
+    }
+  
+    // @LINE:153
+    def topBcRedirect(nb:Int, perfKey:PerfKey): Call = {
+      
+      Call("GET", "/" + "player/top/" + dynamicString(implicitly[PathBindable[Int]].unbind("nb", nb)) + "/" + dynamicString(implicitly[PathBindable[PerfKey]].unbind("perfKey", perfKey)))
+    }
+  
+    // @LINE:158
+    def apiList: Call = {
+      
+      Call("GET", "/" + "api/player")
+    }
+  
+    // @LINE:151
+    def search(term:String): Call = {
+      
+      Call("GET", "/" + "player/search/" + dynamicString(term))
+    }
+  
+    // @LINE:144
+    def download(username:UserStr): Call = {
+      
+      Call("GET", "/" + "@/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/download")
+    }
+  
+    // @LINE:147
+    def games(username:UserStr, filterName:String, page:Int = 1): Call = {
+      
+      Call("GET", "/" + "@/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/" + dynamicString(filterName) + play.core.routing.queryString(List(if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+    // @LINE:137
+    def writeNote(username:UserStr): Call = {
+      
+      Call("POST", "/" + "@/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/note")
+    }
+  
+    // @LINE:155
+    def topNbApi(nb:Int, perfKey:PerfKey): Call = {
+      
+      Call("GET", "/" + "api/player/top/" + dynamicString(implicitly[PathBindable[Int]].unbind("nb", nb)) + "/" + dynamicString(implicitly[PathBindable[PerfKey]].unbind("perfKey", perfKey)))
+    }
+  
+    // @LINE:157
+    def autocomplete: Call = {
+      
+      Call("GET", "/" + "api/player/autocomplete")
+    }
+  
+    // @LINE:150
+    def opponents: Call = {
+      
+      Call("GET", "/" + "player/opponents")
+    }
+  
+    // @LINE:152
+    def list: Call = {
+      
+      Call("GET", "/" + "player")
+    }
+  
+    // @LINE:142
+    def perfStat(username:UserStr, perfKey:PerfKey): Call = {
+      
+      Call("GET", "/" + "@/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/perf/" + dynamicString(implicitly[PathBindable[PerfKey]].unbind("perfKey", perfKey)))
+    }
+  
+    // @LINE:140
+    def showMini(username:UserStr): Call = {
+      
+      Call("GET", "/" + "@/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/mini")
+    }
+  
+    // @LINE:156
+    def online: Call = {
+      
+      Call("GET", "/" + "player/online")
+    }
+  
+    // @LINE:148
+    def show(username:UserStr): Call = {
+      
+      Call("GET", "/" + "@/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)))
+    }
+  
+    // @LINE:139
+    def setDoxNote(id:String, v:Boolean): Call = {
+      
+      Call("POST", "/" + "note/setDox/" + dynamicString(id) + "/" + dynamicString(implicitly[PathBindable[Boolean]].unbind("v", v)))
+    }
+  
+    // @LINE:154
+    def top(perfKey:PerfKey, page:Int = 1): Call = {
+      
+      Call("GET", "/" + "player/top/" + dynamicString(implicitly[PathBindable[PerfKey]].unbind("perfKey", perfKey)) + play.core.routing.queryString(List(if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+  }
+
+  // @LINE:135
+  object Simul {
+
+  
+    // @LINE:135
+    def byUser(username:UserStr, page:Int = 1): Call = {
+      
+      Call("GET", "/" + "@/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/simuls/hosted" + play.core.routing.queryString(List(if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+  }
+
+  // @LINE:103
+  object Search {
+
+  
+    // @LINE:103
+    def index(page:Int = 1): Call = {
+      
+      Call("GET", "/" + "games/search" + play.core.routing.queryString(List(if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+  }
+
+  // @LINE:159
+  object Fide {
+
+  
+    // @LINE:164
+    def apiShow(id:chess.FideId): Call = {
+      
+      Call("GET", "/" + "api/fide/player/" + dynamicString(implicitly[PathBindable[chess.FideId]].unbind("id", id)))
+    }
+  
+    // @LINE:163
+    def follow(fideId:chess.FideId, follow:Boolean): Call = {
+      
+      Call("POST", "/" + "fide/" + dynamicString(implicitly[PathBindable[chess.FideId]].unbind("fideId", fideId)) + "/follow" + play.core.routing.queryString(List(Some(implicitly[play.api.mvc.QueryStringBindable[Boolean]].unbind("follow", follow)))))
+    }
+  
+    // @LINE:167
+    def playerPhoto(id:chess.FideId): Call = {
+      
+      Call("POST", "/" + "upload/image/fide/player/" + dynamicString(implicitly[PathBindable[chess.FideId]].unbind("id", id)))
+    }
+  
+    // @LINE:162
+    def show(fideId:chess.FideId, name:String, page:Int = 1): Call = {
+      
+      Call("GET", "/" + "fide/" + dynamicString(implicitly[PathBindable[chess.FideId]].unbind("fideId", fideId)) + "/" + dynamicString(name) + play.core.routing.queryString(List(if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+    // @LINE:166
+    def apiSearch(q:String): Call = {
+      
+      Call("GET", "/" + "api/fide/player" + play.core.routing.queryString(List(Some(implicitly[play.api.mvc.QueryStringBindable[String]].unbind("q", q)))))
+    }
+  
+    // @LINE:161
+    def federation(name:String, page:Int = 1): Call = {
+      
+      Call("GET", "/" + "fide/federation/" + dynamicString(name) + play.core.routing.queryString(List(if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+    // @LINE:159
+    def index(page:Int = 1, q:Option[String] = None): Call = {
+      
+      Call("GET", "/" + "fide" + play.core.routing.queryString(List(if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)), if(q == None) None else Some(implicitly[play.api.mvc.QueryStringBindable[Option[String]]].unbind("q", q)))))
+    }
+  
+    // @LINE:165
+    def apiRatings(id:chess.FideId): Call = {
+      
+      Call("GET", "/" + "api/fide/player/" + dynamicString(implicitly[PathBindable[chess.FideId]].unbind("id", id)) + "/ratings")
+    }
+  
+    // @LINE:168
+    def playerUpdate(id:chess.FideId): Call = {
+      
+      Call("POST", "/" + "fide/player/" + dynamicString(implicitly[PathBindable[chess.FideId]].unbind("id", id)))
+    }
+  
+    // @LINE:160
+    def federations(page:Int = 1): Call = {
+      
+      Call("GET", "/" + "fide/federation" + play.core.routing.queryString(List(if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+  }
+
+  // @LINE:99
+  object Account {
+
+  
+    // @LINE:99
+    def info: Call = {
+      
+      Call("GET", "/" + "account/info")
+    }
+  
+  }
+
+  // @LINE:134
+  object UserTournament {
+
+  
+    // @LINE:134
+    def path(username:UserStr, path:String, page:Int = 1): Call = {
+      
+      Call("GET", "/" + "@/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/tournaments/" + dynamicString(path) + play.core.routing.queryString(List(if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+  }
+
+  // @LINE:100
+  object Timeline {
+
+  
+    // @LINE:101
+    def api: Call = {
+      
+      Call("GET", "/" + "api/timeline")
+    }
+  
+    // @LINE:100
+    def home: Call = {
+      
+      Call("GET", "/" + "timeline")
+    }
+  
+    // @LINE:102
+    def unsub(channel:String): Call = {
+      
+      Call("POST", "/" + "timeline/unsub/" + dynamicString(channel))
+    }
+  
+  }
+
+  // @LINE:145
+  object Ublog {
+
+  
+    // @LINE:179
+    def communityLang(lang:Language, filter:Option[BlogQualityFilter] = None, page:Int = 1): Call = {
+      
+      Call("GET", "/" + implicitly[PathBindable[Language]].unbind("lang", lang) + "/blog/community" + play.core.routing.queryString(List(if(filter == None) None else Some(implicitly[play.api.mvc.QueryStringBindable[Option[BlogQualityFilter]]].unbind("filter", filter)), if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+    // @LINE:190
+    def delete(id:UblogPostId): Call = {
+      
+      Call("POST", "/" + "ublog/" + implicitly[PathBindable[UblogPostId]].unbind("id", id) + "/del")
+    }
+  
+    // @LINE:146
+    def userAtom(username:UserStr): Call = {
+      
+      Call("GET", "/" + "@/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/blog.atom")
+    }
+  
+    // @LINE:187
+    def redirect(id:UblogPostId): Call = {
+      
+      Call("GET", "/" + "ublog/" + implicitly[PathBindable[UblogPostId]].unbind("id", id) + "/redirect")
+    }
+  
+    // @LINE:195
+    def modAssess(id:UblogPostId): Call = {
+      
+      Call("POST", "/" + "ublog/" + implicitly[PathBindable[UblogPostId]].unbind("id", id) + "/assess")
+    }
+  
+    // @LINE:196
+    def modSetCarouselSize: Call = {
+      
+      Call("POST", "/" + "ublog/carousel/size")
+    }
+  
+    // @LINE:192
+    def modBlog(blogId:String): Call = {
+      
+      Call("POST", "/" + "ublog/" + dynamicString(blogId) + "/tier")
+    }
+  
+    // @LINE:170
+    def topics: Call = {
+      
+      Call("GET", "/" + "blog/topic")
+    }
+  
+    // @LINE:183
+    def drafts(username:UserStr, page:Int = 1): Call = {
+      
+      Call("GET", "/" + "@/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/blog/drafts" + play.core.routing.queryString(List(if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+    // @LINE:193
+    def modPost(id:UblogPostId): Call = {
+      
+      Call("POST", "/" + "ublog/" + implicitly[PathBindable[UblogPostId]].unbind("id", id) + "/adjust")
+    }
+  
+    // @LINE:184
+    def form(username:UserStr): Call = {
+      
+      Call("GET", "/" + "@/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/blog/new")
+    }
+  
+    // @LINE:174
+    def apiCarousel: Call = {
+      
+      Call("GET", "/" + "api/blog/carousel")
+    }
+  
+    // @LINE:198
+    def image(id:UblogPostId): Call = {
+      
+      Call("POST", "/" + "upload/image/ublog/" + implicitly[PathBindable[UblogPostId]].unbind("id", id))
+    }
+  
+    // @LINE:189
+    def update(id:UblogPostId): Call = {
+      
+      Call("POST", "/" + "ublog/" + implicitly[PathBindable[UblogPostId]].unbind("id", id) + "/edit")
+    }
+  
+    // @LINE:182
+    def post(username:UserStr, slug:String, id:UblogPostId): Call = {
+      
+      Call("GET", "/" + "@/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/blog/" + dynamicString(slug) + "/" + dynamicString(implicitly[PathBindable[UblogPostId]].unbind("id", id)))
+    }
+  
+    // @LINE:180
+    def communityAtom(lang:Language = Language("all")): Call = {
+      
+      Call("GET", "/" + "blog/community.atom" + play.core.routing.queryString(List(if(lang == Language("all")) None else Some(implicitly[play.api.mvc.QueryStringBindable[Language]].unbind("lang", lang)))))
+    }
+  
+    // @LINE:191
+    def like(id:UblogPostId, v:Boolean): Call = {
+      
+      Call("POST", "/" + "ublog/" + implicitly[PathBindable[UblogPostId]].unbind("id", id) + "/like" + play.core.routing.queryString(List(Some(implicitly[play.api.mvc.QueryStringBindable[Boolean]].unbind("v", v)))))
+    }
+  
+    // @LINE:173
+    def byMonth(year:Int, month:Int, filter:Option[BlogQualityFilter] = None, by:BlogsBy = BlogsBy.newest, page:Int = 1): Call = {
+      
+      Call("GET", "/" + "blog/monthly/" + dynamicString(implicitly[PathBindable[Int]].unbind("year", year)) + "/" + dynamicString(implicitly[PathBindable[Int]].unbind("month", month)) + play.core.routing.queryString(List(if(filter == None) None else Some(implicitly[play.api.mvc.QueryStringBindable[Option[BlogQualityFilter]]].unbind("filter", filter)), if(by == BlogsBy.newest) None else Some(implicitly[play.api.mvc.QueryStringBindable[BlogsBy]].unbind("by", by)), if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+    // @LINE:172
+    def thisMonth(filter:Option[BlogQualityFilter] = None, by:BlogsBy = BlogsBy.newest, page:Int = 1): Call = {
+      
+      Call("GET", "/" + "blog/monthly" + play.core.routing.queryString(List(if(filter == None) None else Some(implicitly[play.api.mvc.QueryStringBindable[Option[BlogQualityFilter]]].unbind("filter", filter)), if(by == BlogsBy.newest) None else Some(implicitly[play.api.mvc.QueryStringBindable[BlogsBy]].unbind("by", by)), if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+    // @LINE:176
+    def liked(page:Int = 1): Call = {
+      
+      Call("GET", "/" + "blog/liked" + play.core.routing.queryString(List(if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+    // @LINE:185
+    def create(username:UserStr): Call = {
+      
+      Call("POST", "/" + "@/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/blog/new")
+    }
+  
+    // @LINE:145
+    def index(username:UserStr, page:Int = 1): Call = {
+      
+      Call("GET", "/" + "@/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/blog" + play.core.routing.queryString(List(if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+    // @LINE:197
+    def modShowCarousel: Call = {
+      
+      Call("GET", "/" + "ublog/carousel")
+    }
+  
+    // @LINE:178
+    def communityAll(filter:Option[BlogQualityFilter] = None, page:Int = 1): Call = {
+      
+      Call("GET", "/" + "blog/community" + play.core.routing.queryString(List(if(filter == None) None else Some(implicitly[play.api.mvc.QueryStringBindable[Option[BlogQualityFilter]]].unbind("filter", filter)), if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+    // @LINE:171
+    def topic(topic:String, filter:Option[BlogQualityFilter] = None, by:BlogsBy = BlogsBy.newest, page:Int = 1): Call = {
+      
+      Call("GET", "/" + "blog/topic/" + dynamicString(topic) + play.core.routing.queryString(List(if(filter == None) None else Some(implicitly[play.api.mvc.QueryStringBindable[Option[BlogQualityFilter]]].unbind("filter", filter)), if(by == BlogsBy.newest) None else Some(implicitly[play.api.mvc.QueryStringBindable[BlogsBy]].unbind("by", by)), if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+    // @LINE:181
+    def historicalBlogPost(id:String, slug:String): Call = {
+      
+      Call("GET", "/" + "blog/" + dynamicString(id) + "/" + dynamicString(slug))
+    }
+  
+    // @LINE:186
+    def discuss(id:UblogPostId): Call = {
+      
+      Call("GET", "/" + "ublog/" + implicitly[PathBindable[UblogPostId]].unbind("id", id) + "/discuss")
+    }
+  
+    // @LINE:177
+    def search(text:String = "", by:BlogsBy = BlogsBy.score, page:Int = 1): Call = {
+      
+      Call("GET", "/" + "blog/search" + play.core.routing.queryString(List(if(text == "") None else Some(implicitly[play.api.mvc.QueryStringBindable[String]].unbind("text", text)), if(by == BlogsBy.score) None else Some(implicitly[play.api.mvc.QueryStringBindable[BlogsBy]].unbind("by", by)), if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+    // @LINE:194
+    def modPull(id:UblogPostId): Call = {
+      
+      Call("POST", "/" + "ublog/" + implicitly[PathBindable[UblogPostId]].unbind("id", id) + "/pull")
+    }
+  
+    // @LINE:175
+    def friends(page:Int = 1): Call = {
+      
+      Call("GET", "/" + "blog/friends" + play.core.routing.queryString(List(if(page == 1) None else Some(implicitly[play.api.mvc.QueryStringBindable[Int]].unbind("page", page)))))
+    }
+  
+    // @LINE:188
+    def edit(id:UblogPostId): Call = {
+      
+      Call("GET", "/" + "ublog/" + implicitly[PathBindable[UblogPostId]].unbind("id", id) + "/edit")
+    }
+  
+  }
+
+  // @LINE:104
+  object Game {
+
+  
+    // @LINE:104
+    def exportByIds: Call = {
+      
+      Call("POST", "/" + "games/export/_ids")
+    }
+  
+    // @LINE:105
+    def exportByUser(username:UserStr): Call = {
+      
+      Call("GET", "/" + "games/export/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)))
+    }
+  
+    // @LINE:106
+    def bookmark(gameId:GameId): Call = {
+      
+      Call("POST", "/" + "bookmark/" + implicitly[PathBindable[GameId]].unbind("gameId", gameId))
+    }
+  
+  }
+
+  // @LINE:110
+  object Main {
+
+  
+    // @LINE:110
+    def movedPermanently(): Call = {
+      implicit lazy val _rrc = new play.core.routing.ReverseRouteContext(Map(("to", "/api/tv/channels"))); _rrc
+      Call("GET", "/" + "tv/channels")
+    }
+  
+  }
+
+  // @LINE:97
+  object Tv {
+
+  
+    // @LINE:119
+    def apiGamesChannel(chanKey:String): Call = {
+      
+      Call("GET", "/" + "api/tv/" + dynamicString(chanKey))
+    }
+  
+    // @LINE:115
+    def games: Call = {
+      
+      Call("GET", "/" + "games")
+    }
+  
+    // @LINE:107
+    def indexLang(lang:Language): Call = {
+      
+      Call("GET", "/" + implicitly[PathBindable[Language]].unbind("lang", lang) + "/tv")
+    }
+  
+    // @LINE:118
+    def channels: Call = {
+      
+      Call("GET", "/" + "api/tv/channels")
+    }
+  
+    // @LINE:112
+    def frame(chanKey:String): Call = {
+      
+      Call("GET", "/" + "tv/" + dynamicString(chanKey) + "/frame")
+    }
+  
+    // @LINE:111
+    def onChannel(chanKey:String): Call = {
+      
+      Call("GET", "/" + "tv/" + dynamicString(chanKey))
+    }
+  
+    // @LINE:97
+    def index: Call = {
+      
+      Call("GET", "/" + "tv")
+    }
+  
+    // @LINE:109
+    def feedDefault: Call = {
+      
+      Call("GET", "/" + "tv/feed")
+    }
+  
+    // @LINE:108
+    def frameDefault: Call = {
+      
+      Call("GET", "/" + "tv/frame")
+    }
+  
+    // @LINE:113
+    def feed(chanKey:String): Call = {
+      
+      Call("GET", "/" + "tv/" + dynamicString(chanKey) + "/feed")
+    }
+  
+    // @LINE:114
+    def sides(gameId:GameId, color:Color): Call = {
+      
+      Call("GET", "/" + "tv/" + implicitly[PathBindable[GameId]].unbind("gameId", gameId) + "/" + dynamicString(implicitly[PathBindable[Color]].unbind("color", color)) + "/sides")
+    }
+  
+    // @LINE:117
+    def gameChannelReplacement(chanKey:String, gameId:GameId, exclude:List[GameId]): Call = {
+      
+      Call("GET", "/" + "games/" + dynamicString(chanKey) + "/replacement/" + implicitly[PathBindable[GameId]].unbind("gameId", gameId) + play.core.routing.queryString(List(Some(implicitly[play.api.mvc.QueryStringBindable[List[GameId]]].unbind("exclude", exclude)))))
+    }
+  
+    // @LINE:116
+    def gamesChannel(chanKey:String): Call = {
+      
+      Call("GET", "/" + "games/" + dynamicString(chanKey))
+    }
+  
+  }
+
+}
+
+// ===== appeal/ReverseRoutes.scala =====
+// @GENERATOR:play-routes-compiler
+
+import play.api.mvc.{Call, PathBindable}
+import play.core.routing.{dynamicString}
+
+
+
+// @LINE:1
+package routes {
+
+
+  // @LINE:1
+  object Appeal {
+
+  
+    // @LINE:3
+    def landing: Call = {
+      
+      Call("GET", "/" + "appeal/landing")
+    }
+  
+    // @LINE:8
+    def mute(username:UserStr): Call = {
+      
+      Call("POST", "/" + "appeal/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/mute")
+    }
+  
+    // @LINE:2
+    def post: Call = {
+      
+      Call("POST", "/" + "appeal")
+    }
+  
+    // @LINE:7
+    def reply(username:UserStr): Call = {
+      
+      Call("POST", "/" + "appeal/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)))
+    }
+  
+    // @LINE:1
+    def home: Call = {
+      
+      Call("GET", "/" + "appeal")
+    }
+  
+    // @LINE:10
+    def sendToZulip(username:UserStr): Call = {
+      
+      Call("POST", "/" + "appeal/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/send-to-zulip")
+    }
+  
+    // @LINE:4
+    def closedByTeacher: Call = {
+      
+      Call("GET", "/" + "appeal/closed-by-teacher")
+    }
+  
+    // @LINE:9
+    def snooze(username:UserStr, dur:String): Call = {
+      
+      Call("POST", "/" + "appeal/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)) + "/snooze/" + dynamicString(dur))
+    }
+  
+    // @LINE:6
+    def show(username:UserStr): Call = {
+      
+      Call("GET", "/" + "appeal/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)))
+    }
+  
+    // @LINE:5
+    def queue(filter:Option[String] = None): Call = {
+      
+      Call("GET", "/" + "appeal/queue" + play.core.routing.queryString(List(if(filter == None) None else Some(implicitly[play.api.mvc.QueryStringBindable[Option[String]]].unbind("filter", filter)))))
+    }
+  
+  }
+
+}
+
+// ===== report/ReverseRoutes.scala =====
+// @GENERATOR:play-routes-compiler
+
+import play.api.mvc.{Call, PathBindable}
+import play.core.routing.{dynamicString}
+
+
+
+// @LINE:51
+package routes {
+
+
+  // @LINE:51
+  object Report {
+
+  
+    // @LINE:54
+    def inboxCreate(username:UserStr): Call = {
+      
+      Call("POST", "/" + "report/inbox/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)))
+    }
+  
+    // @LINE:62
+    def snooze(id:ReportId, dur:String): Call = {
+      
+      Call("POST", "/" + "report/" + dynamicString(implicitly[PathBindable[ReportId]].unbind("id", id)) + "/snooze/" + dynamicString(dur))
+    }
+  
+    // @LINE:63
+    def currentCheatInquiry(user:UserStr): Call = {
+      
+      Call("GET", "/" + "report/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("user", user)) + "/cheat-inquiry")
+    }
+  
+    // @LINE:61
+    def xfiles(id:ReportId): Call = {
+      
+      Call("POST", "/" + "report/" + dynamicString(implicitly[PathBindable[ReportId]].unbind("id", id)) + "/xfiles")
+    }
+  
+    // @LINE:57
+    def list: Call = {
+      
+      Call("GET", "/" + "report/list")
+    }
+  
+    // @LINE:52
+    def create: Call = {
+      
+      Call("POST", "/" + "report")
+    }
+  
+    // @LINE:58
+    def listWithFilter(room:String): Call = {
+      
+      Call("GET", "/" + "report/list/" + dynamicString(room))
+    }
+  
+    // @LINE:53
+    def inboxForm(username:UserStr): Call = {
+      
+      Call("GET", "/" + "report/inbox/" + dynamicString(implicitly[PathBindable[UserStr]].unbind("username", username)))
+    }
+  
+    // @LINE:59
+    def inquiry(id:String): Call = {
+      
+      Call("POST", "/" + "report/" + dynamicString(id) + "/inquiry")
+    }
+  
+    // @LINE:51
+    def form: Call = {
+      
+      Call("GET", "/" + "report")
+    }
+  
+    // @LINE:55
+    def flag: Call = {
+      
+      Call("POST", "/" + "report/flag")
+    }
+  
+    // @LINE:56
+    def thanks: Call = {
+      
+      Call("GET", "/" + "report/thanks")
+    }
+  
+    // @LINE:60
+    def process(id:ReportId): Call = {
+      
+      Call("POST", "/" + "report/" + dynamicString(implicitly[PathBindable[ReportId]].unbind("id", id)) + "/process")
+    }
+  
+  }
+
+}

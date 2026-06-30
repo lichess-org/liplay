@@ -1,0 +1,200 @@
+GET   /appeal                          controllers.appeal.Appeal.home
+POST  /appeal                          controllers.appeal.Appeal.post
+GET   /appeal/landing                  controllers.appeal.Appeal.landing
+GET   /appeal/closed-by-teacher        controllers.appeal.Appeal.closedByTeacher
+GET   /appeal/queue                    controllers.appeal.Appeal.queue(filter: Option[String] ?= None)
+GET   /appeal/:username                controllers.appeal.Appeal.show(username: UserStr)
+POST  /appeal/:username                controllers.appeal.Appeal.reply(username: UserStr)
+POST  /appeal/:username/mute           controllers.appeal.Appeal.mute(username: UserStr)
+POST  /appeal/:username/snooze/:dur    controllers.appeal.Appeal.snooze(username: UserStr, dur: String)
+POST  /appeal/:username/send-to-zulip  controllers.appeal.Appeal.sendToZulip(username: UserStr)
+GET   /class                           controllers.clas.Clas.index
+GET   /class/new                       controllers.clas.Clas.form
+POST  /class/become-teacher            controllers.clas.Clas.becomeTeacher
+POST  /class/new                       controllers.clas.Clas.create
+GET   /class/invitation/:id            controllers.clas.Clas.invitation(id: ClasInviteId)
+POST  /class/invitation/:id            controllers.clas.Clas.invitationAccept(id: ClasInviteId)
+GET   /class/teacher/:username         controllers.clas.Clas.teacher(username: UserStr)
+GET   /class/$id<\w{8}>                controllers.clas.Clas.show(id: ClasId)
+GET   /class/$id<\w{8}>/edit           controllers.clas.Clas.edit(id: ClasId)
+POST  /class/$id<\w{8}>/edit           controllers.clas.Clas.update(id: ClasId)
+GET   /class/$id<\w{8}>/news           controllers.clas.Clas.wall(id: ClasId)
+GET   /class/$id<\w{8}>/news/edit      controllers.clas.Clas.wallEdit(id: ClasId)
+POST  /class/$id<\w{8}>/news/edit      controllers.clas.Clas.wallUpdate(id: ClasId)
+GET   /class/$id<\w{8}>/notify         controllers.clas.Clas.notifyStudents(id: ClasId)
+POST  /class/$id<\w{8}>/notifyPost     controllers.clas.Clas.notifyPost(id: ClasId)
+GET   /class/$id<\w{8}>/students       controllers.clas.Clas.students(id: ClasId)
+POST  /class/$id<\w{8}>/archive        controllers.clas.Clas.archive(id: ClasId, v: Boolean)
+GET   /class/$id<\w{8}>/progress/learn controllers.clas.Clas.learn(id: ClasId)
+GET   /class/$id<\w{8}>/progress/:pk/:days controllers.clas.Clas.progress(id: ClasId, pk: PerfKey, days: Days)
+GET   /class/$id<\w{8}>/student/add    controllers.clas.Clas.studentForm(id: ClasId)
+POST  /class/$id<\w{8}>/student/new    controllers.clas.Clas.studentCreate(id: ClasId)
+GET   /class/$id<\w{8}>/student/many   controllers.clas.Clas.studentManyForm(id: ClasId)
+POST  /class/$id<\w{8}>/student/many   controllers.clas.Clas.studentManyCreate(id: ClasId)
+POST  /class/$id<\w{8}>/student/invite controllers.clas.Clas.studentInvite(id: ClasId)
+GET   /class/$id<\w{8}>/student/:username controllers.clas.Clas.studentShow(id: ClasId, username: UserStr)
+POST  /class/$id<\w{8}>/student/:username/archive controllers.clas.Clas.studentArchive(id: ClasId, username: UserStr, v: Boolean)
+POST  /class/$id<\w{8}>/student/:username/reset-password controllers.clas.Clas.studentResetPassword(id: ClasId, username: UserStr)
+GET   /class/$id<\w{8}>/student/:username/edit controllers.clas.Clas.studentEdit(id: ClasId, username: UserStr)
+POST  /class/$id<\w{8}>/student/:username/edit controllers.clas.Clas.studentUpdate(id: ClasId, username: UserStr)
+GET   /class/$id<\w{8}>/student/:username/release controllers.clas.Clas.studentRelease(id: ClasId, username: UserStr)
+POST  /class/$id<\w{8}>/student/:username/release controllers.clas.Clas.studentReleasePost(id: ClasId, username: UserStr)
+GET   /class/$id<\w{8}>/student/:username/close controllers.clas.Clas.studentClose(id: ClasId, username: UserStr)
+POST  /class/$id<\w{8}>/student/:username/close controllers.clas.Clas.studentClosePost(id: ClasId, username: UserStr)
+POST  /class/$id<\w{8}>/invitation/revoke controllers.clas.Clas.invitationRevoke(id: ClasInviteId)
+GET   /class/$id<\w{8}>/student/:username/move controllers.clas.Clas.studentMove(id: ClasId, username: UserStr)
+POST  /class/$id<\w{8}>/student/:username/move/$to<\w{8}> controllers.clas.Clas.studentMovePost(id: ClasId, username: UserStr, to: ClasId)
+POST  /class/$id<\w{8}>/login          controllers.clas.Clas.loginCreate(id: ClasId)
+GET   /class/$id<\w{8}>/bulk-actions   controllers.clas.Clas.bulkActions(id: ClasId)
+POST  /class/$id<\w{8}>/bulk-actions   controllers.clas.Clas.bulkActionsPost(id: ClasId)
+POST  /class/$id<\w{8}>/oauth-tokens    controllers.clas.Clas.makeStudentOauthTokens(id: ClasId)
+GET   /report                          controllers.report.Report.form
+POST  /report                          controllers.report.Report.create
+GET   /report/inbox/:username          controllers.report.Report.inboxForm(username: UserStr)
+POST  /report/inbox/:username          controllers.report.Report.inboxCreate(username: UserStr)
+POST  /report/flag                     controllers.report.Report.flag
+GET   /report/thanks                   controllers.report.Report.thanks
+GET   /report/list                     controllers.report.Report.list
+GET   /report/list/:room               controllers.report.Report.listWithFilter(room: String)
+POST  /report/:id/inquiry              controllers.report.Report.inquiry(id: String)
+POST  /report/:id/process              controllers.report.Report.process(id: ReportId)
+POST  /report/:id/xfiles               controllers.report.Report.xfiles(id: ReportId)
+POST  /report/:id/snooze/:dur          controllers.report.Report.snooze(id: ReportId, dur: String)
+GET   /report/:user/cheat-inquiry  controllers.report.Report.currentCheatInquiry(user: UserStr)
+GET   /team                                   controllers.team.Team.home(page: Int ?= 1)
+GET   /team/new                               controllers.team.Team.form
+POST  /team/new                               controllers.team.Team.create
+GET   /team/me                                controllers.team.Team.mine
+GET   /team/leader                            controllers.team.Team.leader
+GET   /team/all                               controllers.team.Team.all(page: Int ?= 1)
+GET   /team/requests                          controllers.team.Team.requests
+GET   /team/search                            controllers.team.Team.search(text ?= "", page: Int ?= 1)
+GET   /team/autocomplete                      controllers.team.Team.autocomplete
+GET   /team/:id                               controllers.team.Team.show(id: TeamId, page: Int ?= 1, mod: Boolean ?= false)
+POST  /team/:id/join                          controllers.team.Team.join(id: TeamId)
+POST  /team/:id/quit                          controllers.team.Team.quit(id: TeamId)
+GET   /team/:id/request/new                   controllers.team.Team.requestForm(id: TeamId)
+POST  /team/:id/request/new                   controllers.team.Team.requestCreate(id: TeamId)
+POST  /team/-/request/process/:reqId          controllers.team.Team.requestProcess(reqId)
+GET   /team/:id/declined-requests             controllers.team.Team.declinedRequests(id: TeamId, page: Int ?=1)
+GET   /team/:id/edit                          controllers.team.Team.edit(id: TeamId)
+POST  /team/:id/edit                          controllers.team.Team.update(id: TeamId)
+GET   /team/:id/kick                          controllers.team.Team.kickForm(id: TeamId)
+POST  /team/:id/kick                          controllers.team.Team.kick(id: TeamId)
+POST  /team/:id/blocklist                     controllers.team.Team.blocklist(id: TeamId)
+GET   /team/:id/leaders                       controllers.team.Team.leaders(id: TeamId)
+POST  /team/:id/permissions                   controllers.team.Team.permissions(id: TeamId)
+POST  /team/:id/leaders                       controllers.team.Team.addLeader(id: TeamId)
+GET   /team/:id/members                       controllers.team.Team.members(id: TeamId, page: Int ?= 1)
+POST  /team/:id/close                         controllers.team.Team.close(id: TeamId)
+POST  /team/:id/disable                       controllers.team.Team.disable(id: TeamId)
+GET   /team/:id/tournaments                   controllers.team.Team.tournaments(id: TeamId)
+GET   /team/:id/pm-all                        controllers.team.Team.pmAll(id: TeamId)
+POST  /team/:id/pm-all                        controllers.team.Team.pmAllSubmit(id: TeamId)
+POST  /team/:id/subscribe                     controllers.team.Team.subscribe(id: TeamId)
+GET   /                                controllers.Lobby.home
+GET   /lobby/seeks                     controllers.Lobby.seeks
+GET   /tv                              controllers.Tv.index
+GET   /$lang<\w\w>                     controllers.Lobby.homeLang(lang: Language)
+GET   /account/info                    controllers.Account.info
+GET   /timeline                        controllers.Timeline.home
+GET   /api/timeline                    controllers.Timeline.api
+POST  /timeline/unsub/:channel         controllers.Timeline.unsub(channel)
+GET   /games/search                    controllers.Search.index(page: Int ?= 1)
+POST  /games/export/_ids               controllers.Game.exportByIds
+GET   /games/export/:username          controllers.Game.exportByUser(username: UserStr)
+POST  /bookmark/$gameId<\w{8}>         controllers.Game.bookmark(gameId: GameId)
+GET   /$lang<\w\w\w?>/tv               controllers.Tv.indexLang(lang: Language)
+GET   /tv/frame                        controllers.Tv.frameDefault
+GET   /tv/feed                         controllers.Tv.feedDefault
+GET   /tv/channels                     controllers.Main.movedPermanently(to = "/api/tv/channels")
+GET   /tv/:chanKey                     controllers.Tv.onChannel(chanKey)
+GET   /tv/:chanKey/frame               controllers.Tv.frame(chanKey)
+GET   /tv/:chanKey/feed                controllers.Tv.feed(chanKey)
+GET   /tv/$gameId<\w{8}>/:color/sides controllers.Tv.sides(gameId: GameId, color: Color)
+GET   /games                           controllers.Tv.games
+GET   /games/:chanKey                  controllers.Tv.gamesChannel(chanKey)
+GET   /games/:chanKey/replacement/$gameId<\w{8}> controllers.Tv.gameChannelReplacement(chanKey, gameId: GameId, exclude: List[GameId])
+GET   /api/tv/channels                 controllers.Tv.channels
+GET   /api/tv/:chanKey                 controllers.Tv.apiGamesChannel(chanKey)
+GET   /api/rel/following               controllers.Relation.apiFollowing
+POST  /api/rel/follow/:user            controllers.Relation.follow(user: UserStr)
+POST  /api/rel/unfollow/:user          controllers.Relation.unfollow(user: UserStr)
+POST  /api/rel/block/:userId           controllers.Relation.block(userId: UserStr)
+POST  /api/rel/unblock/:userId         controllers.Relation.unblock(userId: UserStr)
+POST  /rel/unfollow/:user              controllers.Relation.unfollowBc(user: UserStr)
+POST  /rel/follow/:user                controllers.Relation.followBc(user: UserStr)
+GET   /@/:username/following           controllers.Relation.following(username: UserStr, page: Int ?= 1)
+GET   /rel/blocks                      controllers.Relation.blocks(page: Int ?= 1)
+POST  /rel/:action/:user               controllers.Relation.bcAction(action: String, user: UserStr)
+POST  /insights/refresh/:username      controllers.Insight.refresh(username: UserStr)
+POST  /insights/data/:username         controllers.Insight.json(username: UserStr)
+GET   /insights/:username              controllers.Insight.index(username: UserStr)
+GET   /insights/:username/:metric/:dimension controllers.Insight.path(username: UserStr, metric, dimension, filters = "")
+GET   /@/:username/tournaments/:path   controllers.UserTournament.path(username: UserStr, path, page: Int ?= 1)
+GET   /@/:username/simuls/hosted       controllers.Simul.byUser(username: UserStr, page: Int ?= 1)
+GET   /api/stream/:username/mod        controllers.User.mod(username: UserStr)
+POST  /@/:username/note                controllers.User.writeNote(username: UserStr)
+POST  /note/delete/:id                 controllers.User.deleteNote(id)
+POST  /note/setDox/:id/:v              controllers.User.setDoxNote(id, v: Boolean)
+GET   /@/:username/mini                controllers.User.showMini(username: UserStr)
+GET   /@/:username/tv                  controllers.User.tv(username: UserStr)
+GET   /@/:username/perf/:perfKey       controllers.User.perfStat(username: UserStr, perfKey: PerfKey)
+GET   /@/:username/all                 controllers.User.gamesAll(username: UserStr, page: Int ?= 1)
+GET   /@/:username/download            controllers.User.download(username: UserStr)
+GET   /@/:username/blog                controllers.Ublog.index(username: UserStr, page: Int ?= 1)
+GET   /@/:username/blog.atom           controllers.Ublog.userAtom(username: UserStr)
+GET   /@/:username/:filterName         controllers.User.games(username: UserStr, filterName, page: Int ?= 1)
+GET   /@/:username                     controllers.User.show(username: UserStr)
+GET   /player/myself                   controllers.User.myself
+GET   /player/opponents                controllers.User.opponents
+GET   /player/search/:term             controllers.User.search(term: String)
+GET   /player                          controllers.User.list
+GET   /player/top/:nb/:perfKey         controllers.User.topBcRedirect(nb: Int, perfKey: PerfKey)
+GET   /player/top/:perfKey             controllers.User.top(perfKey: PerfKey, page: Int ?= 1)
+GET   /api/player/top/:nb/:perfKey     controllers.User.topNbApi(nb: Int, perfKey: PerfKey)
+GET   /player/online                   controllers.User.online
+GET   /api/player/autocomplete         controllers.User.autocomplete
+GET   /api/player                      controllers.User.apiList
+GET   /fide                            controllers.Fide.index(page: Int ?= 1, q: Option[String] ?= None)
+GET   /fide/federation                 controllers.Fide.federations(page: Int ?= 1)
+GET   /fide/federation/:name           controllers.Fide.federation(name, page: Int ?= 1)
+GET   /fide/:fideId/:name              controllers.Fide.show(fideId: chess.FideId, name, page: Int ?= 1)
+POST  /fide/:fideId/follow             controllers.Fide.follow(fideId: chess.FideId, follow: Boolean)
+GET   /api/fide/player/:id             controllers.Fide.apiShow(id: chess.FideId)
+GET   /api/fide/player/:id/ratings     controllers.Fide.apiRatings(id: chess.FideId)
+GET   /api/fide/player                 controllers.Fide.apiSearch(q: String)
+POST  /upload/image/fide/player/:id    controllers.Fide.playerPhoto(id: chess.FideId)
+POST  /fide/player/:id                 controllers.Fide.playerUpdate(id: chess.FideId)
+GET   /dasher                          controllers.Dasher.get
+GET   /blog/topic                      controllers.Ublog.topics
+GET   /blog/topic/:topic               controllers.Ublog.topic(topic, filter: Option[BlogQualityFilter] ?= None, by: BlogsBy ?= BlogsBy.newest, page: Int ?= 1)
+GET   /blog/monthly                    controllers.Ublog.thisMonth(filter: Option[BlogQualityFilter] ?= None, by: BlogsBy ?= BlogsBy.newest, page: Int ?= 1)
+GET   /blog/monthly/:year/:month       controllers.Ublog.byMonth(year: Int, month: Int, filter: Option[BlogQualityFilter] ?= None, by: BlogsBy ?= BlogsBy.newest, page: Int ?= 1)
+GET   /api/blog/carousel               controllers.Ublog.apiCarousel
+GET   /blog/friends                    controllers.Ublog.friends(page: Int ?= 1)
+GET   /blog/liked                      controllers.Ublog.liked(page: Int ?= 1)
+GET   /blog/search                     controllers.Ublog.search(text ?= "", by: BlogsBy ?= BlogsBy.score, page: Int ?= 1)
+GET   /blog/community                  controllers.Ublog.communityAll(filter: Option[BlogQualityFilter] ?= None, page: Int ?= 1)
+GET   /$lang<\w\w\w?>/blog/community   controllers.Ublog.communityLang(lang: Language, filter: Option[BlogQualityFilter] ?= None, page: Int ?= 1)
+GET   /blog/community.atom             controllers.Ublog.communityAtom(lang: Language ?= Language("all"))
+GET   /blog/:id/:slug                  controllers.Ublog.historicalBlogPost(id, slug)
+GET   /@/:username/blog/:slug/:id      controllers.Ublog.post(username: UserStr, slug, id: UblogPostId)
+GET   /@/:username/blog/drafts         controllers.Ublog.drafts(username: UserStr, page: Int ?= 1)
+GET   /@/:username/blog/new            controllers.Ublog.form(username: UserStr)
+POST  /@/:username/blog/new            controllers.Ublog.create(username: UserStr)
+GET   /ublog/$id<\w{8}>/discuss        controllers.Ublog.discuss(id: UblogPostId)
+GET   /ublog/$id<\w{8}>/redirect       controllers.Ublog.redirect(id: UblogPostId)
+GET   /ublog/$id<\w{8}>/edit           controllers.Ublog.edit(id: UblogPostId)
+POST  /ublog/$id<\w{8}>/edit           controllers.Ublog.update(id: UblogPostId)
+POST  /ublog/$id<\w{8}>/del            controllers.Ublog.delete(id: UblogPostId)
+POST  /ublog/$id<\w{8}>/like           controllers.Ublog.like(id: UblogPostId, v: Boolean)
+POST  /ublog/:blogId/tier              controllers.Ublog.modBlog(blogId: String)
+POST  /ublog/$id<\w{8}>/adjust         controllers.Ublog.modPost(id: UblogPostId)
+POST  /ublog/$id<\w{8}>/pull           controllers.Ublog.modPull(id: UblogPostId)
+POST  /ublog/$id<\w{8}>/assess         controllers.Ublog.modAssess(id: UblogPostId)
+POST  /ublog/carousel/size             controllers.Ublog.modSetCarouselSize
+GET   /ublog/carousel                  controllers.Ublog.modShowCarousel
+POST  /upload/image/ublog/$id<\w{8}>   controllers.Ublog.image(id: UblogPostId)
+GET   /feed                            controllers.Feed.index(page: Int ?= 1)
+GET   /feed/new                        controllers.Feed.createForm
