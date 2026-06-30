@@ -120,8 +120,6 @@ case class CookiesConfiguration(strict: Boolean = true):
  *   The path for which this cookie is valid
  * @param sameSite
  *   The cookie's SameSite attribute
- * @param jwt
- *   The JWT specific information
  */
 case class SessionConfiguration(
     cookieName: String = "PLAY_SESSION",
@@ -148,8 +146,6 @@ case class SessionConfiguration(
  *   The path for which this cookie is valid
  * @param sameSite
  *   The cookie's SameSite attribute
- * @param jwt
- *   The JWT specific information
  */
 case class FlashConfiguration(
     cookieName: String = "PLAY_FLASH",
