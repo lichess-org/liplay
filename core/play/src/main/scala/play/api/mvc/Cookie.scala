@@ -534,22 +534,6 @@ trait UrlEncodedCookieDataCodec extends CookieDataCodec:
         Map.empty[String, String]
 
 /**
- * A trait that identifies the cookie encoding and uses the appropriate codec, for upgrading from a signed
- * cookie encoding to a JWT cookie encoding.
- */
-trait FallbackCookieDataCodec extends CookieDataCodec:
-
-  def signedCodec: UrlEncodedCookieDataCodec
-
-  def decode(encodedData: String): Map[String, String] =
-    signedCodec.decode(encodedData)
-
-case class DefaultUrlEncodedCookieDataCodec(
-    isSigned: Boolean,
-    cookieSigner: CookieSigner
-) extends UrlEncodedCookieDataCodec
-
-/**
  * A cookie module that uses the urlencoded cookie encoding.
  */
 class LegacyCookiesModule
