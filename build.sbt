@@ -90,8 +90,9 @@ lazy val SbtRoutesCompilerProject = PlaySbtProject("Sbt-Routes-Compiler", "dev-m
   )
 
 lazy val SbtPluginProject = PlaySbtPluginProject("Sbt-Plugin", "dev-mode/sbt-plugin")
-  .enablePlugins(SbtPlugin)
+  .enablePlugins(SbtPlugin, BuildInfoPlugin)
   .settings(
+    buildInfoPackage := "lichess.play.sbt",
     libraryDependencies ++= sbtDependencies,
     (Compile / sourceGenerators) += Def.task {
       PlayVersion(
