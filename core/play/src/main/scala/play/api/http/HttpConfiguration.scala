@@ -195,8 +195,6 @@ case class FileMimeTypesConfiguration(mimeTypes: Map[String, String] = Map.empty
 
 object HttpConfiguration:
   private val logger = LoggerFactory.getLogger(classOf[HttpConfiguration])
-  private val httpConfigurationCache = Application.instanceCache[HttpConfiguration]
-
   def parseSameSite(config: Configuration, key: String): Option[SameSite] =
     config.get[Option[String]](key).flatMap { value =>
       val result = SameSite.parse(value)

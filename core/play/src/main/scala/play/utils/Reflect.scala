@@ -4,8 +4,6 @@
 
 package play.utils
 
-import play.api.inject.Binding
-import play.api.inject.BindingKey
 import play.api.Configuration
 import play.api.Environment
 import play.api.PlayException
@@ -13,60 +11,6 @@ import play.api.PlayException
 import scala.reflect.ClassTag
 
 object Reflect:
-
-  /**
-   * Lookup the given key from the given configuration, and provide bindings for the ScalaTrait to a class by
-   * that key.
-   *
-   * The end goal is to provide a binding for `ScalaTrait`. The logic for finding the implementation goes like
-   * this:
-   *
-   *   - If the value of the configured key is `provided`, this indicates the user will provide their own
-   *     binding, so return nothing.
-   *   - If the value of the configured key is a class that exists, then use that
-   *   - If the value of the configured key is not a class that exists, fail
-   *   - Otherwise if no configuration value is found for key, then if there is a class found with name
-   *     `defaultClassName`, use that
-   *   - Otherwise, use the class `Default`
-   *
-   * If a class has been located, convert that to a binding, by the following rules:
-   *
-   *   - If it's a subclass of `ScalaTrait` bind it directly
-   *   - Otherwise, if it's a subclass of `JavaInterface`, bind that to `JavaInterface`, and then also return
-   *     a binding of `JavaAdapter` to `ScalaTrait`
-   *   - Otherwise, fail
-   *
-   * @param environment
-   *   The environment to load classes from
-   * @param config
-   *   The configuration
-   * @param key
-   *   The key to look up the classname from the configuration
-   * @tparam ScalaTrait
-   *   The trait to bind
-   * @tparam Default
-   *   The default implementation of `ScalaTrait` if no user implementation has been provided
-   * @return
-   *   Zero or more bindings to provide `ScalaTrait`
-   */
-  def bindingsFromConfiguration[
-      ScalaTrait,
-      Default <: ScalaTrait
-  ](environment: Environment, config: Configuration, key: String, defaultClassName: String)(using
-      scalaTrait: SubClassOf[ScalaTrait],
-      default: ClassTag[Default]
-  ): Seq[Binding[?]] =
-    def bind[T: SubClassOf]: BindingKey[T] = BindingKey(implicitly[SubClassOf[T]].runtimeClass)
-
-    configuredClass[ScalaTrait, Default](environment, config, key, defaultClassName) match
-      // Directly implements the scala trait
-      case Some(direct) =>
-        Seq(
-          bind[ScalaTrait].to(direct),
-          BindingKey(direct).toSelf
-        )
-
-      case None => Nil
 
   /**
    * Lookup the given key from the given configuration, and load it either as an instance of ScalaTrait, or
