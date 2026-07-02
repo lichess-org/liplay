@@ -13,7 +13,6 @@ import play.api.mvc.*
 import play.api.routing.Router
 import play.api.Configuration
 import play.api.Environment
-import play.utils.Reflect
 
 /**
  * Primary entry point for all HTTP requests on Play applications.
