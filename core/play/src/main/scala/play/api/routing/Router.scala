@@ -10,7 +10,6 @@ import play.api.Environment
 import play.api.mvc.Handler
 import play.api.mvc.RequestHeader
 import play.api.routing.Router.Routes
-import play.utils.Reflect
 
 /**
  * A router.
@@ -63,24 +62,6 @@ object Router:
    * The type of the routes partial function
    */
   type Routes = PartialFunction[RequestHeader, Handler]
-
-  /**
-   * Try to load the configured router class.
-   *
-   * @return
-   *   The router class if configured or if a default one in the root package was detected.
-   */
-  def load(env: Environment, configuration: Configuration): Option[Class[? <: Router]] =
-    val className = configuration.getDeprecated[Option[String]]("play.http.router", "application.router")
-
-    try Some(Reflect.getClass[Router](className.getOrElse("router.Routes"), env.classLoader))
-    catch
-      case e: ClassNotFoundException =>
-        // Only throw an exception if a router was explicitly configured, but not found.
-        // Otherwise, it just means this application has no router, and that's ok.
-        className.map { routerName =>
-          throw configuration.reportError("application.router", s"Router not found: $routerName")
-        }
 
   /**
    * Request attributes used by the router.

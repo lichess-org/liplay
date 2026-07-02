@@ -12,7 +12,6 @@ import play.api.Configuration
 import play.api.Environment
 import play.api.Logger
 import play.api.mvc.EssentialFilter
-import play.utils.Reflect
 
 /**
  * Provides filters to the [[play.api.http.HttpRequestHandler]].
