@@ -26,7 +26,7 @@ object Dependencies {
     "org.scalacheck" %% "scalacheck" % "1.17.0" % Test
   )
 
-  val playJson = "org.playframework" %% "play-json" % "3.0.4"
+  val playJson = "org.playframework" %% "play-json" % "3.0.6"
 
   val slf4jVersion = "2.0.18"
   val slf4j = Seq("slf4j-api", "jul-to-slf4j", "jcl-over-slf4j").map("org.slf4j" % _ % slf4jVersion)
