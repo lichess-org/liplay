@@ -7,7 +7,6 @@ package play.api.http
 import javax.inject.*
 import play.api.*
 import play.api.http.Status.*
-import play.api.inject.Binding
 import play.api.libs.json.*
 import play.api.libs.typedmap.TypedKey
 import play.api.mvc.Results.*
@@ -91,15 +90,6 @@ object PreferredMediaTypeHttpErrorHandler:
   def apply(handlers: (String, HttpErrorHandler)*) = new PreferredMediaTypeHttpErrorHandler(handlers*)
 
 object HttpErrorHandler:
-
-  /**
-   * Get the bindings for the error handler from the configuration
-   */
-  def bindingsFromConfiguration(environment: Environment, configuration: Configuration): Seq[Binding[?]] =
-    Reflect.bindingsFromConfiguration[
-      HttpErrorHandler,
-      DefaultHttpErrorHandler
-    ](environment, configuration, "play.http.errorHandler", "ErrorHandler")
 
   /**
    * Request attributes used by the error handler.
