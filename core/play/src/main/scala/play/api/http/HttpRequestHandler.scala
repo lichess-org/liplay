@@ -8,7 +8,6 @@ import javax.inject.Inject
 import javax.inject.Provider
 
 import play.api.http.Status.*
-import play.api.inject.Binding
 import play.api.libs.streams.Accumulator
 import play.api.mvc.*
 import play.api.routing.Router
@@ -38,13 +37,6 @@ trait HttpRequestHandler:
    *   The possibly modified/tagged request, and a handler to handle it
    */
   def handlerForRequest(request: RequestHeader): (RequestHeader, Handler)
-
-object HttpRequestHandler:
-  def bindingsFromConfiguration(environment: Environment, configuration: Configuration): Seq[Binding[?]] =
-    Reflect.bindingsFromConfiguration[
-      HttpRequestHandler,
-      DefaultHttpRequestHandler
-    ](environment, configuration, "play.http.requestHandler", "RequestHandler")
 
 /**
  * Implementation of a [HttpRequestHandler] that always returns NotImplemented results

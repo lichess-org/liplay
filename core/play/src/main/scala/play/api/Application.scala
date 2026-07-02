@@ -113,40 +113,10 @@ trait Application:
    */
   def stop(): Future[?]
 
-  /**
-   * Get the runtime injector for this application. In a runtime dependency injection based application, this
-   * can be used to obtain components as bound by the DI framework.
-   *
-   * @return
-   *   The injector.
-   */
-  def injector: Injector = NewInstanceInjector
-
-object Application:
-
-  /**
-   * Creates a function that caches results of calls to `app.injector.instanceOf[T]`. The cache speeds up
-   * calls when called with the same Application each time, which is a big benefit in production. It still
-   * works properly if called with a different Application each time, such as when running unit tests, but it
-   * will run more slowly.
-   *
-   * Since values are cached, it's important that this is only used for singleton values.
-   *
-   * This method avoids synchronization so it's possible that the injector might be called more than once for
-   * a single instance if this method is called from different threads at the same time.
-   *
-   * The cache uses a SoftReference to both the Application and the returned instance so it will not cause
-   * memory leaks. Unlike WeakHashMap it doesn't use a ReferenceQueue, so values will still be cleaned even if
-   * the ReferenceQueue is never activated.
-   */
-  def instanceCache[T: ClassTag]: Application => T =
-    new InlineCache((app: Application) => app.injector.instanceOf[T])
-
 @Singleton
 class DefaultApplication @Inject() (
     override val environment: Environment,
     applicationLifecycle: ApplicationLifecycle,
-    override val injector: Injector,
     override val configuration: Configuration,
     override val requestFactory: RequestFactory,
     override val requestHandler: HttpRequestHandler,
@@ -158,7 +128,6 @@ class DefaultApplication @Inject() (
   def this(
       environment: Environment,
       applicationLifecycle: ApplicationLifecycle,
-      injector: Injector,
       configuration: Configuration,
       requestFactory: RequestFactory,
       requestHandler: HttpRequestHandler,
@@ -168,7 +137,6 @@ class DefaultApplication @Inject() (
   ) = this(
     environment,
     applicationLifecycle,
-    injector,
     configuration,
     requestFactory,
     requestHandler,
@@ -205,18 +173,6 @@ trait BuiltInComponents extends AkkaComponents with AkkaTypedComponents:
 
   /** The router that's used to pass requests to the correct handler. */
   def router: Router
-
-  /**
-   * The runtime [[Injector]] instance provided to the [[DefaultApplication]]. This injector is set up to
-   * allow existing (deprecated) legacy APIs to function. It is not set up to support injecting arbitrary Play
-   * components.
-   */
-  lazy val injector: Injector =
-    val simple = new SimpleInjector(NewInstanceInjector) +
-      cookieSigner + // play.api.libs.Crypto (for cookies)
-      httpConfiguration + // play.api.mvc.BodyParsers trait
-      tempFileCreator // play.api.libs.TemporaryFileCreator object
-    new ContextClassLoaderInjector(simple, environment.classLoader)
 
   lazy val playBodyParsers: PlayBodyParsers =
     PlayBodyParsers(tempFileCreator, httpErrorHandler, httpConfiguration.parser)(using materializer)
@@ -272,7 +228,6 @@ trait BuiltInComponents extends AkkaComponents with AkkaTypedComponents:
   lazy val application: Application = new DefaultApplication(
     environment,
     applicationLifecycle,
-    injector,
     configuration,
     requestFactory,
     httpRequestHandler,
