@@ -72,7 +72,7 @@ object Dependencies {
 
   val cookieEncodingDependencies = slf4j
 
-  val jimfs = "com.google.jimfs" % "jimfs" % "1.2"
+  val jimfs = "com.google.jimfs" % "jimfs" % "1.3.1"
 
   val typesafeConfig = "com.typesafe" % "config" % "1.4.2"
 
