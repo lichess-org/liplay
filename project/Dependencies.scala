@@ -10,7 +10,7 @@ object Dependencies {
   val akkaVersion: String = sys.props.getOrElse("akka.version", "2.6.21")
   val akkaHttpVersion = sys.props.getOrElse("akka.http.version", "10.2.10")
 
-  val logback = "ch.qos.logback" % "logback-classic" % "1.5.35"
+  val logback = "ch.qos.logback" % "logback-classic" % "1.5.37"
 
   val specs2Version = "4.20.0"
   val specs2CoreDeps = Seq(
