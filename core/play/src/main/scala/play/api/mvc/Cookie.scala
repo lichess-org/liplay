@@ -13,7 +13,6 @@ import play.api.MarkerContexts.SecurityMarkerContext
 import play.api.*
 import play.api.http.*
 import play.api.libs.crypto.CookieSigner
-import play.api.libs.crypto.CookieSignerProvider
 import play.api.mvc.Cookie.SameSite
 
 import scala.collection.immutable.ListMap
