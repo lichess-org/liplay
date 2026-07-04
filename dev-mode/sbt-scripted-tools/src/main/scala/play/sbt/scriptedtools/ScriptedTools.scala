@@ -18,7 +18,6 @@ import scala.collection.mutable.ListBuffer
 import sbt.*
 import sbt.Keys.*
 import sbt.ProjectExtra.inConfig
-import sbt.ProjectExtra.given
 
 import play.sbt.routes.RoutesCompiler.autoImport.*
 

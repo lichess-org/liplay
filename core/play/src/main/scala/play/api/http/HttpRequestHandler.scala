@@ -11,8 +11,6 @@ import play.api.http.Status.*
 import play.api.libs.streams.Accumulator
 import play.api.mvc.*
 import play.api.routing.Router
-import play.api.Configuration
-import play.api.Environment
 
 /**
  * Primary entry point for all HTTP requests on Play applications.

@@ -31,7 +31,6 @@ import play.api.http.HttpErrorHandler
 import play.api.libs.typedmap.TypedMap
 import play.api.mvc.*
 import play.api.mvc.request.RemoteConnection
-import play.api.mvc.request.RequestAttrKey
 import play.api.mvc.request.RequestTarget
 import play.core.server.common.ForwardedHeaderHandler
 import play.core.server.common.PathAndQueryParser

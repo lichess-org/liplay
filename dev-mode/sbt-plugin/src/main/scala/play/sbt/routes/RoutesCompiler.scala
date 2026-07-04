@@ -5,7 +5,6 @@
 package play.sbt.routes
 
 import play.api.PlayException
-import play.core.PlayVersion
 import play.routes.compiler.RoutesGenerator
 import play.routes.compiler.RoutesCompilationError
 import play.routes.compiler.RoutesCompiler.GeneratedSource
@@ -17,8 +16,7 @@ import sbt.io.IO
 import sbt.io.syntax.*
 import sbt.librarymanagement.Configurations.{ Compile, Test }
 import sbt.util.Logger
-import sbt.ProjectExtra.{ inConfig, given }
-import sbt.std.TaskExtra.*
+import sbt.ProjectExtra.inConfig
 import sbt.internal.util.FeedbackProvidedException
 
 import xsbti.Position

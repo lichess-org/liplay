@@ -7,7 +7,6 @@ package play.api.http
 import javax.inject.*
 import play.api.*
 import play.api.http.Status.*
-import play.api.libs.json.*
 import play.api.libs.typedmap.TypedKey
 import play.api.mvc.Results.*
 import play.api.mvc.*

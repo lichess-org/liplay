@@ -19,8 +19,6 @@ import play.core.cookie.encoding.ServerCookieDecoder
 import play.core.cookie.encoding.ServerCookieEncoder
 
 import scala.concurrent.duration.*
-import scala.util.Failure
-import scala.util.Success
 
 /**
  * HTTP related configuration of a Play application

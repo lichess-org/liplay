@@ -4,13 +4,6 @@
 
 package play.api.http
 
-import javax.inject.Inject
-import javax.inject.Singleton
-
-import com.typesafe.config.ConfigException
-import play.api.Configuration
-import play.api.Environment
-import play.api.Logger
 import play.api.mvc.EssentialFilter
 
 /**

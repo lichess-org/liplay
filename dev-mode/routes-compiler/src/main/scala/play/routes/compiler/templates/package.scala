@@ -5,7 +5,6 @@
 package play.routes.compiler
 
 import scala.collection.immutable.ListMap
-import scala.util.matching.Regex
 
 /**
  * Helper methods used in the templates

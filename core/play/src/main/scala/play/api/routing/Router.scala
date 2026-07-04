@@ -5,8 +5,6 @@
 package play.api.routing
 
 import play.api.libs.typedmap.TypedKey
-import play.api.Configuration
-import play.api.Environment
 import play.api.mvc.Handler
 import play.api.mvc.RequestHeader
 import play.api.routing.Router.Routes

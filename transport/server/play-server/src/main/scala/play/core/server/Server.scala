@@ -6,11 +6,8 @@ package play.core.server
 
 import akka.actor.CoordinatedShutdown
 import com.typesafe.config.Config
-import com.typesafe.config.ConfigFactory
 import play.api.*
 import play.api.http.HttpErrorHandler
-import play.api.inject.ApplicationLifecycle
-import play.api.inject.DefaultApplicationLifecycle
 import play.api.libs.streams.Accumulator
 import play.api.mvc.*
 import play.core.*

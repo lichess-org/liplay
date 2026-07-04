@@ -13,7 +13,6 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import play.api.http.*
 import play.api.inject.ApplicationLifecycle
-import play.api.inject.*
 import play.api.internal.libs.concurrent.CoordinatedShutdownSupport
 import play.api.libs.Files.*
 import play.api.libs.concurrent.AkkaComponents
@@ -24,11 +23,9 @@ import play.api.mvc.*
 import play.api.mvc.request.DefaultRequestFactory
 import play.api.mvc.request.RequestFactory
 import play.api.routing.Router
-import play.utils.*
 
 import scala.annotation.implicitNotFound
 import scala.concurrent.Future
-import scala.reflect.ClassTag
 
 /**
  * A Play application.
