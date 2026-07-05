@@ -122,8 +122,8 @@ object InjectedRoutesGenerator extends RoutesGenerator:
         .flatMap { case ((key @ (packageName, controller, instantiate), routes), index) =>
           routes.headOption.map { route =>
             val clazz = packageName.map(_ + ".").getOrElse("") + controller
-            // If it's using the @ syntax, we depend on the provider (ie, look it up each time)
-            val dep = if instantiate then s"javax.inject.Provider[$clazz]" else clazz
+            // If it's using the @ syntax, we depend on a factory (ie, look it up each time)
+            val dep = if instantiate then s"() => $clazz" else clazz
             val ident = controller + "_" + index
 
             key -> Dependency(ident, dep, route)

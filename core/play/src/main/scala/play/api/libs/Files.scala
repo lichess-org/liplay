@@ -14,9 +14,6 @@ import java.time.Clock
 import java.time.Instant
 import java.util.stream
 
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
 import akka.actor.ActorSystem
 import akka.actor.Cancellable
 import com.google.common.base.FinalizablePhantomReference
@@ -248,8 +245,7 @@ object Files:
    * application stop. Note that this will not clean up the filesystem if the application / JVM terminates
    * abnormally.
    */
-  @Singleton
-  class DefaultTemporaryFileCreator @Inject() (
+  class DefaultTemporaryFileCreator(
       applicationLifecycle: ApplicationLifecycle,
       temporaryFileReaper: TemporaryFileReaper,
       conf: Configuration
@@ -335,8 +331,7 @@ object Files:
   trait TemporaryFileReaper:
     def updateTempFolder(folder: Path): Unit
 
-  @Singleton
-  class DefaultTemporaryFileReaper @Inject() (
+  class DefaultTemporaryFileReaper(
       actorSystem: ActorSystem,
       config: TemporaryFileReaperConfiguration
   ) extends TemporaryFileReaper:
@@ -447,21 +442,6 @@ object Files:
      * For calling from Java.
      */
     def createWithDefaults() = apply()
-
-    @Singleton
-    @deprecated(
-      "On JDK8 and earlier, Class.getSimpleName on doubly nested Scala classes throws an exception. Use Files.TemporaryFileReaperConfigurationProvider instead. See https://github.com/scala/bug/issues/2034.",
-      "2.6.14"
-    )
-    class TemporaryFileReaperConfigurationProvider @Inject() (configuration: Configuration)
-        extends Provider[TemporaryFileReaperConfiguration]:
-      lazy val get: TemporaryFileReaperConfiguration = fromConfiguration(configuration)
-
-  @Singleton
-  class TemporaryFileReaperConfigurationProvider @Inject() (configuration: Configuration)
-      extends Provider[TemporaryFileReaperConfiguration]:
-    lazy val get: TemporaryFileReaperConfiguration =
-      TemporaryFileReaperConfiguration.fromConfiguration(configuration)
 
   /**
    * Creates temporary folders using java.nio.file.Files.createTempFile.

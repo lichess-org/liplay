@@ -6,9 +6,6 @@ package play.api.http
 
 import com.typesafe.config.ConfigMemorySize
 
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
 import org.slf4j.LoggerFactory
 import play.api.*
 import play.api.libs.Codecs
@@ -314,40 +311,3 @@ object HttpConfiguration:
    * For calling from Java.
    */
   def createWithDefaults() = apply()
-
-  @Singleton
-  class HttpConfigurationProvider @Inject() (configuration: Configuration, environment: Environment)
-      extends Provider[HttpConfiguration]:
-    lazy val get = fromConfiguration(configuration, environment)
-
-  @Singleton
-  class ParserConfigurationProvider @Inject() (conf: HttpConfiguration) extends Provider[ParserConfiguration]:
-    lazy val get = conf.parser
-
-  @Singleton
-  class CookiesConfigurationProvider @Inject() (conf: HttpConfiguration)
-      extends Provider[CookiesConfiguration]:
-    lazy val get = conf.cookies
-
-  @Singleton
-  class SessionConfigurationProvider @Inject() (conf: HttpConfiguration)
-      extends Provider[SessionConfiguration]:
-    lazy val get = conf.session
-
-  @Singleton
-  class FlashConfigurationProvider @Inject() (conf: HttpConfiguration) extends Provider[FlashConfiguration]:
-    lazy val get = conf.flash
-
-  @Singleton
-  class ActionCompositionConfigurationProvider @Inject() (conf: HttpConfiguration)
-      extends Provider[ActionCompositionConfiguration]:
-    lazy val get = conf.actionComposition
-
-  @Singleton
-  class FileMimeTypesConfigurationProvider @Inject() (conf: HttpConfiguration)
-      extends Provider[FileMimeTypesConfiguration]:
-    lazy val get = conf.fileMimeTypes
-
-  @Singleton
-  class SecretConfigurationProvider @Inject() (conf: HttpConfiguration) extends Provider[SecretConfiguration]:
-    lazy val get: SecretConfiguration = conf.secret

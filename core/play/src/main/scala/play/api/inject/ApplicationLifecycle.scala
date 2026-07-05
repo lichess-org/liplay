@@ -10,8 +10,6 @@ import java.util.concurrent.CompletionStage
 import java.util.concurrent.ConcurrentLinkedDeque
 
 import akka.Done
-import javax.inject.Inject
-import javax.inject.Singleton
 import play.api.Logger
 
 import scala.annotation.tailrec
@@ -44,9 +42,8 @@ import scala.util.Try
  *
  * {{{
  *   import play.api.inject.ApplicationLifecycle
- *   import javax.inject.Inject
  *
- *   class SomeDatabase @Inject() (applicationLifecycle: ApplicationLifecycle) {
+ *   class SomeDatabase(applicationLifecycle: ApplicationLifecycle) {
  *
  *     private val connectionPool = new SomeConnectionPool()
  *     applicationLifecycle.addStopHook { () =>
@@ -96,8 +93,7 @@ trait ApplicationLifecycle:
 /**
  * Default implementation of the application lifecycle.
  */
-@Singleton
-class DefaultApplicationLifecycle @Inject() () extends ApplicationLifecycle:
+class DefaultApplicationLifecycle() extends ApplicationLifecycle:
   private val logger = Logger(getClass)
   private val hooks = new ConcurrentLinkedDeque[() => Future[?]]()
 

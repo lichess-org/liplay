@@ -4,8 +4,6 @@
 
 package play.api.libs.concurrent
 
-import javax.inject.Inject
-
 import akka.Done
 import akka.actor.ActorSystem
 
@@ -21,7 +19,7 @@ import scala.language.implicitConversions
  * period of time:
  *
  * {{{
- * class MyService @Inject()(futures: Futures, piCalculator: PiCalculator) extends Timeout {
+ * class MyService(futures: Futures, piCalculator: PiCalculator) extends Timeout {
  *   def calculateWithTimeout(timeoutDuration: FiniteDuration): Future[Int] = {
  *     futures.timeout(timeoutDuration)(piCalculator.rawCalculation())
  *   }
@@ -31,7 +29,7 @@ import scala.language.implicitConversions
  * And you can also use a delay to return data after a given period of time.
  *
  * {{{
- * class PiCalculator @Inject()(futures: Futures) {
+ * class PiCalculator(futures: Futures) {
  *   def rawCalculation(): Future[Int] = {
  *     futures.delay(300 millis) { Future.successful(42) }
  *   }
@@ -101,7 +99,7 @@ trait Futures:
  * @param actorSystem
  *   the actor system to use.
  */
-class DefaultFutures @Inject() (actorSystem: ActorSystem) extends Futures:
+class DefaultFutures(actorSystem: ActorSystem) extends Futures:
   override def timeout[A](timeoutDuration: FiniteDuration)(f: => Future[A]): Future[A] =
     implicit val ec = actorSystem.dispatchers.defaultGlobalDispatcher
     val timeoutFuture = akka.pattern.after(timeoutDuration, actorSystem.scheduler) {
@@ -125,7 +123,7 @@ class DefaultFutures @Inject() (actorSystem: ActorSystem) extends Futures:
  * period of time:
  *
  * {{{
- * class MyService @Inject()(piCalculator: PiCalculator)(implicit futures: Futures) {
+ * class MyService(piCalculator: PiCalculator)(implicit futures: Futures) {
  *
  *   def calculateWithTimeout(timeoutDuration: FiniteDuration): Future[Int] = {
  *      piCalculator.rawCalculation().withTimeout(timeoutDuration)

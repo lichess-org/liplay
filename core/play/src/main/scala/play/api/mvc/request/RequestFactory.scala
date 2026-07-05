@@ -4,10 +4,8 @@
 
 package play.api.mvc.request
 
-import javax.inject.Inject
-
 import play.api.http.HttpConfiguration
-import play.api.libs.crypto.CookieSignerProvider
+import play.api.libs.crypto.DefaultCookieSigner
 import play.api.libs.typedmap.TypedMap
 import play.api.mvc.*
 
@@ -80,15 +78,15 @@ object RequestFactory:
  *   - session cookie
  *   - flash cookie
  */
-class DefaultRequestFactory @Inject() (
+class DefaultRequestFactory(
     val cookieHeaderEncoding: CookieHeaderEncoding,
     val sessionBaker: SessionCookieBaker,
     val flashBaker: FlashCookieBaker
 ) extends RequestFactory:
   def this(config: HttpConfiguration) = this(
     new DefaultCookieHeaderEncoding(config.cookies),
-    new LegacySessionCookieBaker(config.session, new CookieSignerProvider(config.secret).get),
-    new LegacyFlashCookieBaker(config.flash, config.secret, new CookieSignerProvider(config.secret).get)
+    new LegacySessionCookieBaker(config.session, new DefaultCookieSigner(config.secret)),
+    new LegacyFlashCookieBaker(config.flash, config.secret, new DefaultCookieSigner(config.secret))
   )
 
   override def createRequestHeader(

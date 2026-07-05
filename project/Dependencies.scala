@@ -35,7 +35,6 @@ object Dependencies {
   val guava = "com.google.guava" % "guava" % "33.6.0-jre"
   val findBugs = "com.google.code.findbugs" % "jsr305" % "3.0.2" // Needed by guava
   val mockitoAll = "org.mockito" % "mockito-core" % "4.11.0"
-  val javaxInject = "javax.inject" % "javax.inject" % "1"
 
   val scalaParserCombinators = "org.scala-lang.modules" %% "scala-parser-combinators" % "2.4.0"
 
@@ -53,7 +52,6 @@ object Dependencies {
       Seq(
         playJson,
         guava,
-        javaxInject,
         scalaXml,
         scalaParserCombinators
       ) ++ specs2Deps.map(_ % Test)

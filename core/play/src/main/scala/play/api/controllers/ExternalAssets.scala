@@ -5,7 +5,6 @@
 package controllers
 
 import java.io.*
-import javax.inject.Inject
 import play.api.*
 import play.api.http.FileMimeTypes
 import play.api.mvc.*
@@ -28,7 +27,7 @@ import scala.concurrent.Future
  * GET     /assets/\uFEFF*file               controllers.ExternalAssets.at(path="relativeToYourApp", file)
  * }}}
  */
-class ExternalAssets @Inject() (environment: Environment)(using
+class ExternalAssets(environment: Environment)(using
     ec: ExecutionContext,
     fileMimeTypes: FileMimeTypes
 ) extends ControllerHelpers:

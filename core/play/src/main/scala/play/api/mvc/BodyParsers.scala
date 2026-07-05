@@ -10,7 +10,6 @@ import java.nio.charset.*
 import java.nio.file.Files
 import java.util.Locale
 
-import javax.inject.Inject
 import akka.stream.*
 import akka.stream.scaladsl.Flow
 import akka.stream.scaladsl.Sink
@@ -389,7 +388,7 @@ object BodyParserUtils:
       .flatMap(clh => catching(classOf[NumberFormatException]).opt(clh.toLong))
       .exists(_ > maxLength)
 
-class DefaultPlayBodyParsers @Inject() (
+class DefaultPlayBodyParsers(
     val config: ParserConfiguration,
     val errorHandler: HttpErrorHandler,
     val materializer: Materializer,
@@ -1117,7 +1116,7 @@ object BodyParsers:
   /**
    * The default body parser provided by Play
    */
-  class Default @Inject() (parse: PlayBodyParsers) extends BodyParser[AnyContent]:
+  class Default(parse: PlayBodyParsers) extends BodyParser[AnyContent]:
 
     /**
      * An alternate constructor primarily designed for unit testing. Default values are set to empty or

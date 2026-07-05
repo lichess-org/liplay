@@ -4,7 +4,6 @@
 
 package play.api.mvc
 
-import javax.inject.Inject
 import play.api.data.FormBinding
 import play.api.http.*
 
@@ -17,7 +16,7 @@ import scala.concurrent.ExecutionContext
  * helpers and useful constants.
  *
  * {{{
- *   class MyController @Inject() (action: DefaultActionBuilder, parse: PlayBodyParsers) extends ControllerHelpers {
+ *   class MyController(action: DefaultActionBuilder, parse: PlayBodyParsers) extends ControllerHelpers {
  *     def index = action(parse.text) {
  *       Ok
  *     }
@@ -125,7 +124,7 @@ trait RequestImplicits:
  *
  * For example:
  * {{{
- * class HomeController @Inject() (val controllerComponents: ControllerComponents) extends BaseController {
+ * class HomeController(val controllerComponents: ControllerComponents) extends BaseController {
  *
  *   def hello(name:String) = Action { request =>
  *     Ok("Hello " + name)
@@ -171,7 +170,6 @@ trait InjectedController extends BaseController:
   /**
    * Call this method to set the [[ControllerComponents]] instance.
    */
-  @Inject
   def setControllerComponents(components: ControllerComponents): Unit =
     _components = components
 
@@ -192,7 +190,7 @@ trait ControllerComponents:
   def fileMimeTypes: FileMimeTypes
   def executionContext: scala.concurrent.ExecutionContext
 
-case class DefaultControllerComponents @Inject() (
+case class DefaultControllerComponents(
     actionBuilder: DefaultActionBuilder,
     parsers: PlayBodyParsers,
     fileMimeTypes: FileMimeTypes,

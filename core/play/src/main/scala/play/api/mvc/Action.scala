@@ -4,8 +4,6 @@
 
 package play.api.mvc
 
-import javax.inject.Inject
-
 import akka.util.ByteString
 import play.api.*
 import play.api.libs.streams.Accumulator
@@ -467,7 +465,6 @@ class ActionBuilderImpl[B](val parser: BodyParser[B])(using val executionContext
 class DefaultActionBuilderImpl(parser: BodyParser[AnyContent])(using ec: ExecutionContext)
     extends ActionBuilderImpl(parser)
     with DefaultActionBuilder:
-  @Inject
   def this(parser: BodyParsers.Default)(using ec: ExecutionContext) = this(parser: BodyParser[AnyContent])
 
 /* NOTE: the following are all example uses of ActionFunction, each subtly

@@ -24,7 +24,6 @@ import play.api.libs.json.JsValue
  * {{{
  *   import java.time.ZonedDateTime
  *   import java.time.format.DateTimeFormatter
- *   import javax.inject.Singleton
  *   import akka.stream.scaladsl.Source
  *   import play.api.http.ContentTypes
  *   import play.api.libs.EventSource

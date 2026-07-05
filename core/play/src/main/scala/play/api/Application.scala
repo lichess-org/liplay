@@ -9,8 +9,6 @@ import java.io.*
 import akka.actor.ActorSystem
 import akka.actor.CoordinatedShutdown
 import akka.stream.Materializer
-import javax.inject.Inject
-import javax.inject.Singleton
 import play.api.http.*
 import play.api.inject.ApplicationLifecycle
 import play.api.internal.libs.concurrent.CoordinatedShutdownSupport
@@ -110,8 +108,7 @@ trait Application:
    */
   def stop(): Future[?]
 
-@Singleton
-class DefaultApplication @Inject() (
+class DefaultApplication(
     override val environment: Environment,
     applicationLifecycle: ApplicationLifecycle,
     override val configuration: Configuration,
@@ -140,7 +137,7 @@ class DefaultApplication @Inject() (
     errorHandler,
     actorSystem,
     materializer,
-    new CoordinatedShutdownProvider(actorSystem, applicationLifecycle).get
+    CoordinatedShutdownProvider.build(actorSystem, applicationLifecycle)
   )
 
   override def path: File = environment.rootPath
@@ -234,7 +231,7 @@ trait BuiltInComponents extends AkkaComponents with AkkaTypedComponents:
     coordinatedShutdown
   )
 
-  lazy val cookieSigner: CookieSigner = new CookieSignerProvider(httpConfiguration.secret).get
+  lazy val cookieSigner: CookieSigner = new DefaultCookieSigner(httpConfiguration.secret)
 
   lazy val tempFileReaper: TemporaryFileReaper =
     new DefaultTemporaryFileReaper(
@@ -244,9 +241,7 @@ trait BuiltInComponents extends AkkaComponents with AkkaTypedComponents:
   lazy val tempFileCreator: TemporaryFileCreator =
     new DefaultTemporaryFileCreator(applicationLifecycle, tempFileReaper, configuration)
 
-  lazy val fileMimeTypes: FileMimeTypes = new DefaultFileMimeTypesProvider(
-    httpConfiguration.fileMimeTypes
-  ).get
+  lazy val fileMimeTypes: FileMimeTypes = new DefaultFileMimeTypes(httpConfiguration.fileMimeTypes)
 
   // NOTE: the following helpers are declared as protected since they are only meant to be used inside BuiltInComponents
   // This also makes them not conflict with other methods of the same type when used with Macwire.

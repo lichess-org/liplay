@@ -7,7 +7,6 @@ package play.api.mvc
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.util.Locale
-import javax.inject.Inject
 
 import play.api.MarkerContexts.SecurityMarkerContext
 import play.api.*
@@ -315,7 +314,7 @@ trait CookieHeaderEncoding:
 /**
  * The default implementation of `CookieHeaders`.
  */
-class DefaultCookieHeaderEncoding @Inject() (
+class DefaultCookieHeaderEncoding(
     protected override val config: CookiesConfiguration = CookiesConfiguration()
 ) extends CookieHeaderEncoding
 
