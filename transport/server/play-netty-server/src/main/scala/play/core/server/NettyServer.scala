@@ -15,8 +15,8 @@ import akka.stream.scaladsl.Source
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigMemorySize
 import com.typesafe.config.ConfigValue
-import com.typesafe.netty.HandlerPublisher
-import com.typesafe.netty.http.HttpStreamsServerHandler
+import org.playframework.netty.HandlerPublisher
+import org.playframework.netty.http.HttpStreamsServerHandler
 import io.netty.bootstrap.Bootstrap
 import io.netty.channel.*
 import io.netty.channel.epoll.EpollChannelOption

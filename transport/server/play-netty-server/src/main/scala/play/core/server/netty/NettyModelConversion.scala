@@ -15,8 +15,8 @@ import akka.stream.Materializer
 import akka.stream.scaladsl.Sink
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
-import com.typesafe.netty.http.DefaultStreamedHttpResponse
-import com.typesafe.netty.http.StreamedHttpRequest
+import org.playframework.netty.http.DefaultStreamedHttpResponse
+import org.playframework.netty.http.StreamedHttpRequest
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
 import io.netty.channel.Channel
