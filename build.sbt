@@ -44,7 +44,6 @@ lazy val PlayProject = Project("Play", file("core/play"))
           scalaVersion.value,
           sbtVersion.value,
           Dependencies.akkaVersion,
-          Dependencies.akkaHttpVersion,
           (Compile / sourceManaged).value
         )
       )
@@ -100,7 +99,6 @@ lazy val SbtPluginProject = PlaySbtPluginProject("Sbt-Plugin", "dev-mode/sbt-plu
         (SbtRoutesCompilerProject / scalaVersion).value,
         sbtVersion.value,
         Dependencies.akkaVersion,
-        Dependencies.akkaHttpVersion,
         (Compile / sourceManaged).value
       )
     }.taskValue
