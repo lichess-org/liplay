@@ -15,9 +15,6 @@ import akka.actor.CoordinatedShutdown
 import akka.stream.Materializer
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigValueFactory
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
 import org.slf4j.LoggerFactory
 import play.api.*
 import play.api.inject.ApplicationLifecycle
@@ -38,15 +35,14 @@ trait AkkaComponents:
   @deprecated("Since Play 2.7.0 this is no longer required to create an ActorSystem.", "2.7.0")
   def applicationLifecycle: ApplicationLifecycle
 
-  lazy val actorSystem: ActorSystem = new ActorSystemProvider(environment, configuration).get
+  lazy val actorSystem: ActorSystem =
+    ActorSystemProvider.start(environment.classLoader, configuration, Nil*)
 
-  lazy val classicActorSystemProvider: ClassicActorSystemProvider = new ClassicActorSystemProviderProvider(
-    actorSystem
-  ).get
+  lazy val classicActorSystemProvider: ClassicActorSystemProvider = actorSystem
 
   @nowarn
   lazy val coordinatedShutdown: CoordinatedShutdown =
-    new CoordinatedShutdownProvider(actorSystem, applicationLifecycle).get
+    CoordinatedShutdownProvider.build(actorSystem, applicationLifecycle)
 
   implicit lazy val materializer: Materializer = Materializer.matFromSystem(using actorSystem)
 
@@ -57,62 +53,16 @@ trait AkkaComponents:
  */
 trait AkkaTypedComponents:
   def actorSystem: ActorSystem
-  implicit lazy val scheduler: Scheduler = new AkkaSchedulerProvider(actorSystem).get
-
-/**
- * Provider for the actor system
- */
-@Singleton
-class ActorSystemProvider @Inject() (environment: Environment, configuration: Configuration)
-    extends Provider[ActorSystem]:
-  lazy val get: ActorSystem = ActorSystemProvider.start(environment.classLoader, configuration, Nil*)
-
-/**
- * Provider for a classic actor system provide
- */
-@Singleton
-class ClassicActorSystemProviderProvider @Inject() (actorSystem: ActorSystem)
-    extends Provider[ClassicActorSystemProvider]:
-  lazy val get: ClassicActorSystemProvider = actorSystem
-
-/**
- * Provider for an [[akka.actor.typed.Scheduler Akka Typed Scheduler]].
- */
-@Singleton
-class AkkaSchedulerProvider @Inject() (actorSystem: ActorSystem) extends Provider[Scheduler]:
-  import akka.actor.typed.scaladsl.adapter.*
-  override lazy val get: Scheduler = actorSystem.scheduler.toTyped
+  implicit lazy val scheduler: Scheduler =
+    import akka.actor.typed.scaladsl.adapter.*
+    actorSystem.scheduler.toTyped
 
 object ActorSystemProvider:
   type StopHook = () => Future[?]
 
-  private val logger = LoggerFactory.getLogger(classOf[ActorSystemProvider])
+  private val logger = LoggerFactory.getLogger("play.api.libs.concurrent.ActorSystemProvider")
 
   case object ApplicationShutdownReason extends CoordinatedShutdown.Reason
-
-  /**
-   * Start an ActorSystem, using the given configuration and ClassLoader.
-   *
-   * @return
-   *   The ActorSystem and a function that can be used to stop it.
-   */
-  @deprecated("Use start(ClassLoader, Configuration, Setup*) instead", "2.8.0")
-  protected[ActorSystemProvider] def start(classLoader: ClassLoader, config: Configuration): ActorSystem =
-    start(classLoader, config, Nil*)
-
-  /**
-   * Start an ActorSystem, using the given configuration, ClassLoader, and additional ActorSystem Setup.
-   *
-   * @return
-   *   The ActorSystem and a function that can be used to stop it.
-   */
-  @deprecated("Use start(ClassLoader, Configuration, Setup*) instead", "2.8.0")
-  protected[ActorSystemProvider] def start(
-      classLoader: ClassLoader,
-      config: Configuration,
-      additionalSetup: Setup
-  ): ActorSystem =
-    start(classLoader, config, Seq(additionalSetup)*)
 
   /**
    * Start an ActorSystem, using the given configuration, ClassLoader, and optional additional ActorSystem
@@ -159,22 +109,16 @@ object ActorSystemProvider:
     logger.debug(s"Starting application default Akka system: $name")
     ActorSystem(name, actorSystemSetup)
 
-private object CoordinatedShutdownProvider:
-  private val logger = LoggerFactory.getLogger(classOf[CoordinatedShutdownProvider])
+private[play] object CoordinatedShutdownProvider:
+  private val logger = LoggerFactory.getLogger("play.api.libs.concurrent.CoordinatedShutdownProvider")
 
-/**
- * Provider for the coordinated shutdown
- */
-@Singleton
-class CoordinatedShutdownProvider @Inject() (
-    actorSystem: ActorSystem,
-    applicationLifecycle: ApplicationLifecycle
-) extends Provider[CoordinatedShutdown]:
-  import CoordinatedShutdownProvider.logger
-
+  /**
+   * Build the [[CoordinatedShutdown]] for the given actor system, registering the application lifecycle stop
+   * hooks as a shutdown phase.
+   */
   @nowarn // for applicationLifecycle.stop()
-  lazy val get: CoordinatedShutdown =
-    logWarningWhenRunPhaseConfigIsPresent()
+  def build(actorSystem: ActorSystem, applicationLifecycle: ApplicationLifecycle): CoordinatedShutdown =
+    logWarningWhenRunPhaseConfigIsPresent(actorSystem)
 
     implicit val ec = actorSystem.dispatcher
 
@@ -188,7 +132,7 @@ class CoordinatedShutdownProvider @Inject() (
 
     cs
 
-  private def logWarningWhenRunPhaseConfigIsPresent(): Unit =
+  private def logWarningWhenRunPhaseConfigIsPresent(actorSystem: ActorSystem): Unit =
     val config = actorSystem.settings.config
     if config.hasPath("play.akka.run-cs-from-phase") then
       logger.warn(

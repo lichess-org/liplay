@@ -57,7 +57,7 @@ package object templates:
    * Generate a controller method call for the given injected route
    */
   def injectedControllerMethodCall(r: Route, ident: String, paramFormat: Parameter => String): String =
-    val methodPart = if r.call.instantiate then s"$ident.get.${r.call.method}"
+    val methodPart = if r.call.instantiate then s"$ident().${r.call.method}"
     else s"$ident.${r.call.method}"
     val paramPart = r.call.parameters
       .map { params =>
@@ -132,12 +132,6 @@ package object templates:
   def localNames(route: Route): String =
     if route.call.parameters.map(_.size).getOrElse(0) < 22 then tupleNames(route)
     else listNames(route)
-
-  /**
-   * The code to statically get the Play injector
-   */
-  val Injector =
-    "play.api.Play.routesCompilerMaybeApplication.map(_.injector).getOrElse(play.api.inject.NewInstanceInjector)"
 
   val scalaReservedWords = List(
     "abstract",

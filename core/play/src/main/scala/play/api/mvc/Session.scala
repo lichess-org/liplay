@@ -4,12 +4,10 @@
 
 package play.api.mvc
 
-import javax.inject.Inject
-
 import play.api.http.SecretConfiguration
 import play.api.http.SessionConfiguration
 import play.api.libs.crypto.CookieSigner
-import play.api.libs.crypto.CookieSignerProvider
+import play.api.libs.crypto.DefaultCookieSigner
 
 /**
  * HTTP Session.
@@ -123,10 +121,10 @@ trait SessionCookieBaker extends CookieBaker[Session] with CookieDataCodec:
  * @param cookieSigner
  *   the cookie signer, typically HMAC-SHA1
  */
-class LegacySessionCookieBaker @Inject() (val config: SessionConfiguration, val cookieSigner: CookieSigner)
+class LegacySessionCookieBaker(val config: SessionConfiguration, val cookieSigner: CookieSigner)
     extends SessionCookieBaker
     with UrlEncodedCookieDataCodec:
-  def this() = this(SessionConfiguration(), new CookieSignerProvider(SecretConfiguration()).get)
+  def this() = this(SessionConfiguration(), new DefaultCookieSigner(SecretConfiguration()))
 
 object Session:
   lazy val emptyCookie = new Session

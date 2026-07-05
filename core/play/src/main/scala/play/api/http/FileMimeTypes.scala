@@ -5,9 +5,6 @@
 package play.api.http
 
 import java.util.Locale
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
 
 import scala.annotation.implicitNotFound
 
@@ -29,7 +26,7 @@ import scala.annotation.implicitNotFound
  * In a controller, an implicit FileMimeTypes object can either be defined explicitly:
  *
  * {{{
- * class MyController @Inject()(implicit val fileMimeTypes: FileMimeTypes) extends BaseController {
+ * class MyController(implicit val fileMimeTypes: FileMimeTypes) extends BaseController {
  *    def sendFile() = ...
  * }
  * }}}
@@ -38,7 +35,7 @@ import scala.annotation.implicitNotFound
  * available from [[play.api.mvc.ControllerComponents]], meaning that no explicit import is required:
  *
  * {{{
- * class MyController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
+ * class MyController(val controllerComponents: ControllerComponents) extends BaseController {
  *   def sendFile() = ...
  * }
  * }}}
@@ -58,15 +55,10 @@ trait FileMimeTypes:
    */
   def forFileName(name: String): Option[String]
 
-@Singleton
-class DefaultFileMimeTypesProvider @Inject() (fileMimeTypesConfiguration: FileMimeTypesConfiguration)
-    extends Provider[FileMimeTypes]:
-  lazy val get = new DefaultFileMimeTypes(fileMimeTypesConfiguration)
-
 /**
  * Default implementation of FileMimeTypes.
  */
-class DefaultFileMimeTypes @Inject() (config: FileMimeTypesConfiguration) extends FileMimeTypes:
+class DefaultFileMimeTypes(config: FileMimeTypesConfiguration) extends FileMimeTypes:
 
   /**
    * Retrieves the usual MIME type for a given file name

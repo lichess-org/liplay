@@ -4,12 +4,10 @@
 
 package play.api.mvc
 
-import javax.inject.Inject
-
 import play.api.http.FlashConfiguration
 import play.api.http.SecretConfiguration
 import play.api.libs.crypto.CookieSigner
-import play.api.libs.crypto.CookieSignerProvider
+import play.api.libs.crypto.DefaultCookieSigner
 
 /**
  * HTTP Flash scope.
@@ -113,14 +111,14 @@ trait FlashCookieBaker extends CookieBaker[Flash] with CookieDataCodec:
 
   def serialize(flash: Flash): Map[String, String] = flash.data
 
-class LegacyFlashCookieBaker @Inject() (
+class LegacyFlashCookieBaker(
     val config: FlashConfiguration,
     val secretConfiguration: SecretConfiguration,
     val cookieSigner: CookieSigner
 ) extends FlashCookieBaker
     with UrlEncodedCookieDataCodec:
   def this() =
-    this(FlashConfiguration(), SecretConfiguration(), new CookieSignerProvider(SecretConfiguration()).get)
+    this(FlashConfiguration(), SecretConfiguration(), new DefaultCookieSigner(SecretConfiguration()))
 
 object Flash:
   val emptyCookie = new Flash

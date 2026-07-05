@@ -4,9 +4,6 @@
 
 package play.api.http
 
-import javax.inject.Inject
-import javax.inject.Provider
-
 import play.api.http.Status.*
 import play.api.libs.streams.Accumulator
 import play.api.mvc.*
@@ -51,14 +48,13 @@ object NotImplementedHttpRequestHandler extends HttpRequestHandler:
  * [[JavaCompatibleHttpRequestHandler]] is the default one, in order to provide support for Java actions.
  */
 class DefaultHttpRequestHandler(
-    router: Provider[Router],
+    router: () => Router,
     errorHandler: HttpErrorHandler,
     configuration: HttpConfiguration,
     filters: Seq[EssentialFilter]
 ) extends HttpRequestHandler:
-  @Inject
   def this(
-      router: Provider[Router],
+      router: () => Router,
       errorHandler: HttpErrorHandler,
       configuration: HttpConfiguration,
       filters: HttpFilters
@@ -169,4 +165,4 @@ class DefaultHttpRequestHandler(
    *   A handler to handle the request, if one can be found
    */
   def routeRequest(request: RequestHeader): Option[Handler] =
-    router.get().handlerFor(request)
+    router().handlerFor(request)

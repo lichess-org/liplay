@@ -4,7 +4,6 @@
 
 package play.api.http
 
-import javax.inject.*
 import play.api.*
 import play.api.http.Status.*
 import play.api.libs.typedmap.TypedKey
@@ -65,7 +64,6 @@ case class HttpErrorConfig(showDevErrors: Boolean = false, playEditor: Option[St
  *   handler can't be found. This is a lazy parameter, to avoid circular dependency issues, since the router
  *   may well depend on this.
  */
-@Singleton
 class DefaultHttpErrorHandler(
     config: HttpErrorConfig = HttpErrorConfig(),
     router: => Option[Router] = None
@@ -89,14 +87,6 @@ class DefaultHttpErrorHandler(
       HttpErrorConfig(environment.mode != Mode.Prod, configuration.getOptional[String]("play.editor")),
       router
     )
-
-  @Inject
-  def this(
-      environment: Environment,
-      configuration: Configuration,
-      router: Provider[Router]
-  ) =
-    this(environment, configuration, Some(router.get))
 
   /**
    * Invoked when a client error occurs, that is, an error in the 4xx series.
