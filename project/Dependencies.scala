@@ -8,7 +8,6 @@ import snapshot4s.BuildInfo.snapshot4sVersion
 
 object Dependencies {
   val akkaVersion: String = sys.props.getOrElse("akka.version", "2.6.21")
-  val akkaHttpVersion = sys.props.getOrElse("akka.http.version", "10.2.10")
 
   val logback = "ch.qos.logback" % "logback-classic" % "1.5.37"
 
@@ -65,10 +64,6 @@ object Dependencies {
     "com.typesafe.netty" % "netty-reactive-streams-http" % "2.0.19",
     ("io.netty" % "netty-transport-native-epoll" % nettyVersion).classifier("linux-x86_64")
   ) ++ specs2Deps.map(_ % Test)
-
-  val akkaHttp = "com.typesafe.akka" %% "akka-http-core" % akkaHttpVersion
-
-  val akkaHttp2Support = "com.typesafe.akka" %% "akka-http2-support" % akkaHttpVersion
 
   val cookieEncodingDependencies = slf4j
 
