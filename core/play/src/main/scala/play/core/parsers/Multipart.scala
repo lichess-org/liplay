@@ -72,7 +72,7 @@ object Multipart:
           .via(new BodyPartParser(boundary, maxMemoryBufferSize, maxHeaderBuffer, allowEmptyFiles))
           .splitWhen(_.isLeft)
           .prefixAndTail(1)
-          .map {
+          .collect {
             case (Seq(Left(part: FilePart[?])), body) =>
               part.copy[Source[ByteString, ?]](
                 ref = body.collect { case Right(bytes) =>
