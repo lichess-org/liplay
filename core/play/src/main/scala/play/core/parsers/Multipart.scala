@@ -14,6 +14,8 @@ import scala.util.Failure
 
 import org.apache.pekko.stream.Materializer
 import org.apache.pekko.stream.scaladsl.*
+import org.apache.pekko.stream.ActorAttributes
+import org.apache.pekko.stream.Supervision
 import org.apache.pekko.stream.Attributes
 import org.apache.pekko.stream.FlowShape
 import org.apache.pekko.stream.Inlet
@@ -72,7 +74,7 @@ object Multipart:
           .via(new BodyPartParser(boundary, maxMemoryBufferSize, maxHeaderBuffer, allowEmptyFiles))
           .splitWhen(_.isLeft)
           .prefixAndTail(1)
-          .collect {
+          .map {
             case (Seq(Left(part: FilePart[?])), body) =>
               part.copy[Source[ByteString, ?]](
                 ref = body.collect { case Right(bytes) =>
@@ -88,6 +90,7 @@ object Multipart:
               other.asInstanceOf[Part[Nothing]]
           }
           .concatSubstreams
+          .withAttributes(ActorAttributes.supervisionStrategy(Supervision.resumingDecider))
 
         partHandler.through(multipartFlow)
       }
