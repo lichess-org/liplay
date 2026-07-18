@@ -4,9 +4,9 @@
 
 package play.api.http
 
-import akka.stream.Materializer
-import akka.stream.scaladsl.Source
-import akka.util.ByteString
+import org.apache.pekko.stream.Materializer
+import org.apache.pekko.stream.scaladsl.Source
+import org.apache.pekko.util.ByteString
 import play.api.mvc.Headers
 
 import scala.concurrent.Future

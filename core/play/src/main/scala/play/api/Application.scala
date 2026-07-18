@@ -6,15 +6,15 @@ package play.api
 
 import java.io.*
 
-import akka.actor.ActorSystem
-import akka.actor.CoordinatedShutdown
-import akka.stream.Materializer
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.actor.CoordinatedShutdown
+import org.apache.pekko.stream.Materializer
 import play.api.http.*
 import play.api.inject.ApplicationLifecycle
 import play.api.internal.libs.concurrent.CoordinatedShutdownSupport
 import play.api.libs.Files.*
-import play.api.libs.concurrent.AkkaComponents
-import play.api.libs.concurrent.AkkaTypedComponents
+import play.api.libs.concurrent.PekkoComponents
+import play.api.libs.concurrent.PekkoTypedComponents
 import play.api.libs.concurrent.CoordinatedShutdownProvider
 import play.api.libs.crypto.*
 import play.api.mvc.*
@@ -152,7 +152,7 @@ private[play] case object ApplicationStoppedReason extends CoordinatedShutdown.R
 /**
  * Helper to provide the Play built in components.
  */
-trait BuiltInComponents extends AkkaComponents with AkkaTypedComponents:
+trait BuiltInComponents extends PekkoComponents with PekkoTypedComponents:
 
   /** The application's environment, e.g. it's [[ClassLoader]] and root path. */
   def environment: Environment

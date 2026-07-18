@@ -7,7 +7,7 @@ import Keys._
 import snapshot4s.BuildInfo.snapshot4sVersion
 
 object Dependencies {
-  val akkaVersion: String = sys.props.getOrElse("akka.version", "2.6.21")
+  val pekkoVersion: String = sys.props.getOrElse("pekko.version", "1.1.5")
 
   val logback = "ch.qos.logback" % "logback-classic" % "1.5.38"
 
@@ -45,10 +45,10 @@ object Dependencies {
 
   def runtime(scalaVersion: String) =
     slf4j ++
-      Seq("akka-actor", "akka-actor-typed", "akka-slf4j")
-        .map("com.typesafe.akka" %% _ % akkaVersion) ++
-      Seq("akka-testkit", "akka-actor-testkit-typed")
-        .map("com.typesafe.akka" %% _ % akkaVersion % Test) ++
+      Seq("pekko-actor", "pekko-actor-typed", "pekko-slf4j")
+        .map("org.apache.pekko" %% _ % pekkoVersion) ++
+      Seq("pekko-testkit", "pekko-actor-testkit-typed")
+        .map("org.apache.pekko" %% _ % pekkoVersion % Test) ++
       Seq(
         playJson,
         guava,
@@ -71,7 +71,7 @@ object Dependencies {
 
   val streamsDependencies = Seq(
     "org.reactivestreams" % "reactive-streams" % "1.0.4",
-    "com.typesafe.akka" %% "akka-stream" % akkaVersion
+    "org.apache.pekko" %% "pekko-stream" % pekkoVersion
   ) ++ specs2CoreDeps.map(_ % Test)
 
   val playServerDependencies = specs2Deps.map(_ % Test) ++ Seq(

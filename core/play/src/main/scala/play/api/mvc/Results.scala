@@ -12,10 +12,10 @@ import java.time.format.DateTimeFormatter
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
-import akka.stream.scaladsl.FileIO
-import akka.stream.scaladsl.Source
-import akka.stream.scaladsl.StreamConverters
-import akka.util.ByteString
+import org.apache.pekko.stream.scaladsl.FileIO
+import org.apache.pekko.stream.scaladsl.Source
+import org.apache.pekko.stream.scaladsl.StreamConverters
+import org.apache.pekko.util.ByteString
 import play.api.http.HeaderNames.*
 import play.api.http.FileMimeTypes
 import play.api.http.*

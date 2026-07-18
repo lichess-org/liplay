@@ -4,7 +4,7 @@
 
 package play.api.data
 
-import akka.annotation.InternalApi
+import org.apache.pekko.annotation.InternalApi
 
 import scala.language.existentials
 import play.api.data.format.*

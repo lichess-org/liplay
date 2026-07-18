@@ -4,7 +4,7 @@
 
 package play.api.http
 
-import akka.annotation.ApiMayChange
+import org.apache.pekko.annotation.ApiMayChange
 
 /**
  * Used as request attribute which gets attached to the request that gets passed to an error handler. Contains
@@ -15,7 +15,7 @@ case class HttpErrorInfo(
     /**
      * The origin of where the error handler was initially called.<br> Play currently adds following values:
      *
-     * <ul> <li>{@code server-backend} - The error handler was called in either the Netty or Akka-HTTP server
+     * <ul> <li>{@code server-backend} - The error handler was called in either the Netty or Pekko-HTTP server
      * backend. <li>{@code csrf-filter} - The error handler was called in CSRF filter code. <li>{@code
      * csp-filter} - The error handler was called in CSP filter code. <li>{@code allowed-hosts-filter} - The
      * error handler was called in Allowed hosts filter code. </ul>

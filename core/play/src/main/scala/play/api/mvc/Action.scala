@@ -4,7 +4,7 @@
 
 package play.api.mvc
 
-import akka.util.ByteString
+import org.apache.pekko.util.ByteString
 import play.api.*
 import play.api.libs.streams.Accumulator
 import play.core.Execution

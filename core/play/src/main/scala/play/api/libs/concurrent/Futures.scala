@@ -4,8 +4,8 @@
 
 package play.api.libs.concurrent
 
-import akka.Done
-import akka.actor.ActorSystem
+import org.apache.pekko.Done
+import org.apache.pekko.actor.ActorSystem
 
 import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.Future
@@ -102,7 +102,7 @@ trait Futures:
 class DefaultFutures(actorSystem: ActorSystem) extends Futures:
   override def timeout[A](timeoutDuration: FiniteDuration)(f: => Future[A]): Future[A] =
     implicit val ec = actorSystem.dispatchers.defaultGlobalDispatcher
-    val timeoutFuture = akka.pattern.after(timeoutDuration, actorSystem.scheduler) {
+    val timeoutFuture = org.apache.pekko.pattern.after(timeoutDuration, actorSystem.scheduler) {
       val msg = s"Timeout after $timeoutDuration"
       Future.failed(new TimeoutException(msg))
     }
@@ -110,11 +110,11 @@ class DefaultFutures(actorSystem: ActorSystem) extends Futures:
 
   override def delayed[A](duration: FiniteDuration)(f: => Future[A]): Future[A] =
     implicit val ec = actorSystem.dispatcher
-    akka.pattern.after(duration, actorSystem.scheduler)(f)
+    org.apache.pekko.pattern.after(duration, actorSystem.scheduler)(f)
 
   override def delay(duration: FiniteDuration): Future[Done] =
     implicit val ec = actorSystem.dispatcher
-    akka.pattern.after(duration, actorSystem.scheduler)(Future.successful(akka.Done))
+    org.apache.pekko.pattern.after(duration, actorSystem.scheduler)(Future.successful(org.apache.pekko.Done))
 
 /**
  * Low priority implicits to add `withTimeout` methods to [[scala.concurrent.Future]].
@@ -165,21 +165,21 @@ trait LowPriorityFuturesImplicits:
      * Creates a future which will resolve to a timeout exception if the given Future has not successfully
      * completed within timeoutDuration.
      *
-     * This version uses an implicit [[akka.util.Timeout]] rather than a
+     * This version uses an implicit [[org.apache.pekko.util.Timeout]] rather than a
      * [[scala.concurrent.duration.FiniteDuration]].
      *
      * Note that timeout is not the same as cancellation. Even in case of timeout, the given future will still
      * complete, even though that completed value is not returned.
      *
-     * @param akkaTimeout
+     * @param pekkoTimeout
      *   the duration after which a Future.failed(TimeoutException) should be thrown.
      * @param futures
      *   the implicit Futures.
      * @return
      *   the future that completes first, either the failed future, or the operation.
      */
-    def withTimeout(using akkaTimeout: akka.util.Timeout, futures: Futures): Future[T] =
-      futures.timeout(akkaTimeout.duration)(future)
+    def withTimeout(using pekkoTimeout: org.apache.pekko.util.Timeout, futures: Futures): Future[T] =
+      futures.timeout(pekkoTimeout.duration)(future)
 
     /**
      * Creates a future which will be executed after the given delay.

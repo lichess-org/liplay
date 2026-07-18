@@ -11,10 +11,10 @@ import java.security.cert.X509Certificate
 import java.time.Instant
 
 import javax.net.ssl.SSLPeerUnverifiedException
-import akka.stream.Materializer
-import akka.stream.scaladsl.Sink
-import akka.stream.scaladsl.Source
-import akka.util.ByteString
+import org.apache.pekko.stream.Materializer
+import org.apache.pekko.stream.scaladsl.Sink
+import org.apache.pekko.stream.scaladsl.Source
+import org.apache.pekko.util.ByteString
 import org.playframework.netty.http.DefaultStreamedHttpResponse
 import org.playframework.netty.http.StreamedHttpRequest
 import io.netty.buffer.ByteBuf

@@ -7,7 +7,7 @@ package play.core.server.netty
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicLong
 
-import akka.stream.Materializer
+import org.apache.pekko.stream.Materializer
 import io.netty.channel.*
 import io.netty.handler.codec.TooLongFrameException
 import io.netty.handler.codec.http.*

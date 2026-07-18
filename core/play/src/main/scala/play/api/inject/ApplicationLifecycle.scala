@@ -9,7 +9,7 @@ import java.util.concurrent.Callable
 import java.util.concurrent.CompletionStage
 import java.util.concurrent.ConcurrentLinkedDeque
 
-import akka.Done
+import org.apache.pekko.Done
 import play.api.Logger
 
 import scala.annotation.tailrec

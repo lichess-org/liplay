@@ -4,7 +4,7 @@
 
 package play.api.http
 
-import akka.util.ByteString
+import org.apache.pekko.util.ByteString
 import play.api.mvc.*
 import play.api.libs.json.*
 import play.api.mvc.MultipartFormData.FilePart

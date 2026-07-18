@@ -9,13 +9,13 @@ import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets.*
 import java.util.concurrent.ThreadLocalRandom
 
-import akka.NotUsed
-import akka.stream.scaladsl.Flow
-import akka.stream.scaladsl.Source
-import akka.stream.stage.*
-import akka.stream.*
-import akka.util.ByteString
-import akka.util.ByteStringBuilder
+import org.apache.pekko.NotUsed
+import org.apache.pekko.stream.scaladsl.Flow
+import org.apache.pekko.stream.scaladsl.Source
+import org.apache.pekko.stream.stage.*
+import org.apache.pekko.stream.*
+import org.apache.pekko.util.ByteString
+import org.apache.pekko.util.ByteStringBuilder
 import play.api.mvc.MultipartFormData
 
 import scala.annotation.tailrec

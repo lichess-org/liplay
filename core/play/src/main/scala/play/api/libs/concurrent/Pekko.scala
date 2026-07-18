@@ -4,15 +4,15 @@
 
 package play.api.libs.concurrent
 
-import akka.Done
-import akka.actor.setup.ActorSystemSetup
-import akka.actor.setup.Setup
-import akka.actor.typed.Scheduler
-import akka.actor.ActorSystem
-import akka.actor.BootstrapSetup
-import akka.actor.ClassicActorSystemProvider
-import akka.actor.CoordinatedShutdown
-import akka.stream.Materializer
+import org.apache.pekko.Done
+import org.apache.pekko.actor.setup.ActorSystemSetup
+import org.apache.pekko.actor.setup.Setup
+import org.apache.pekko.actor.typed.Scheduler
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.actor.BootstrapSetup
+import org.apache.pekko.actor.ClassicActorSystemProvider
+import org.apache.pekko.actor.CoordinatedShutdown
+import org.apache.pekko.stream.Materializer
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigValueFactory
 import org.slf4j.LoggerFactory
@@ -25,9 +25,9 @@ import scala.util.Try
 import scala.annotation.nowarn
 
 /**
- * Components for configuring Akka.
+ * Components for configuring Pekko.
  */
-trait AkkaComponents:
+trait PekkoComponents:
   def environment: Environment
 
   def configuration: Configuration
@@ -49,12 +49,12 @@ trait AkkaComponents:
   implicit lazy val executionContext: ExecutionContext = actorSystem.dispatcher
 
 /**
- * Akka Typed components.
+ * Pekko Typed components.
  */
-trait AkkaTypedComponents:
+trait PekkoTypedComponents:
   def actorSystem: ActorSystem
   implicit lazy val scheduler: Scheduler =
-    import akka.actor.typed.scaladsl.adapter.*
+    import org.apache.pekko.actor.typed.scaladsl.adapter.*
     actorSystem.scheduler.toTyped
 
 object ActorSystemProvider:
@@ -72,7 +72,7 @@ object ActorSystemProvider:
    *   The ActorSystem and a function that can be used to stop it.
    */
   def start(classLoader: ClassLoader, config: Configuration, additionalSetups: Setup*): ActorSystem =
-    val exitJvmPath = "akka.coordinated-shutdown.exit-jvm"
+    val exitJvmPath = "pekko.coordinated-shutdown.exit-jvm"
     if config.get[Boolean](exitJvmPath) then
       // When this setting is enabled, there'll be a deadlock at shutdown. Therefore, we
       // prevent the creation of the Actor System.
@@ -83,30 +83,30 @@ object ActorSystemProvider:
       logger.error(errorMessage)
       throw config.reportError(exitJvmPath, errorMessage)
 
-    val akkaConfig: Config =
-      // normalize timeout values for Akka's use
+    val pekkoConfig: Config =
+      // normalize timeout values for Pekko's use
       // TODO: deprecate this setting (see https://github.com/playframework/playframework/issues/8442)
-      val playTimeoutKey = "play.akka.shutdown-timeout"
+      val playTimeoutKey = "play.pekko.shutdown-timeout"
       val playTimeoutDuration = Try(config.get[Duration](playTimeoutKey)).getOrElse(Duration.Inf)
 
-      // Typesafe config used internally by Akka doesn't support "infinite".
+      // Typesafe config used internally by Pekko doesn't support "infinite".
       // Also, the value expected is an integer so can't use Long.MaxValue.
-      // Finally, Akka requires the delay to be less than a certain threshold.
-      val akkaMaxDelay = Int.MaxValue / 1000
-      val akkaMaxDuration = Duration(akkaMaxDelay, "seconds")
-      val normalisedDuration = playTimeoutDuration.min(akkaMaxDuration)
-      val akkaTimeoutDuration = java.time.Duration.ofMillis(normalisedDuration.toMillis)
+      // Finally, Pekko requires the delay to be less than a certain threshold.
+      val pekkoMaxDelay = Int.MaxValue / 1000
+      val pekkoMaxDuration = Duration(pekkoMaxDelay, "seconds")
+      val normalisedDuration = playTimeoutDuration.min(pekkoMaxDuration)
+      val pekkoTimeoutDuration = java.time.Duration.ofMillis(normalisedDuration.toMillis)
 
-      val akkaTimeoutKey = "akka.coordinated-shutdown.phases.actor-system-terminate.timeout"
-      // Need to manually merge and override akkaTimeoutKey because `null` is meaningful in playTimeoutKey
-      config.underlying.withValue(akkaTimeoutKey, ConfigValueFactory.fromAnyRef(akkaTimeoutDuration))
+      val pekkoTimeoutKey = "pekko.coordinated-shutdown.phases.actor-system-terminate.timeout"
+      // Need to manually merge and override pekkoTimeoutKey because `null` is meaningful in playTimeoutKey
+      config.underlying.withValue(pekkoTimeoutKey, ConfigValueFactory.fromAnyRef(pekkoTimeoutDuration))
 
-    val name = config.get[String]("play.akka.actor-system")
+    val name = config.get[String]("play.pekko.actor-system")
 
-    val bootstrapSetup = BootstrapSetup(Some(classLoader), Some(akkaConfig), None)
+    val bootstrapSetup = BootstrapSetup(Some(classLoader), Some(pekkoConfig), None)
     val actorSystemSetup = ActorSystemSetup(bootstrapSetup +: additionalSetups*)
 
-    logger.debug(s"Starting application default Akka system: $name")
+    logger.debug(s"Starting application default Pekko system: $name")
     ActorSystem(name, actorSystemSetup)
 
 private[play] object CoordinatedShutdownProvider:
@@ -134,7 +134,7 @@ private[play] object CoordinatedShutdownProvider:
 
   private def logWarningWhenRunPhaseConfigIsPresent(actorSystem: ActorSystem): Unit =
     val config = actorSystem.settings.config
-    if config.hasPath("play.akka.run-cs-from-phase") then
+    if config.hasPath("play.pekko.run-cs-from-phase") then
       logger.warn(
-        "Configuration 'play.akka.run-cs-from-phase' was deprecated and has no effect. Play now runs all the CoordinatedShutdown phases."
+        "Configuration 'play.pekko.run-cs-from-phase' was deprecated and has no effect. Play now runs all the CoordinatedShutdown phases."
       )
