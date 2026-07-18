@@ -6,12 +6,12 @@ package play.core.server
 
 import java.net.InetSocketAddress
 
-import akka.Done
-import akka.actor.ActorSystem
-import akka.actor.CoordinatedShutdown
-import akka.stream.Materializer
-import akka.stream.scaladsl.Sink
-import akka.stream.scaladsl.Source
+import org.apache.pekko.Done
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.actor.CoordinatedShutdown
+import org.apache.pekko.stream.Materializer
+import org.apache.pekko.stream.scaladsl.Sink
+import org.apache.pekko.stream.scaladsl.Source
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigMemorySize
 import com.typesafe.config.ConfigValue

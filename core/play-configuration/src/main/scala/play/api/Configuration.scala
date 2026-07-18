@@ -73,7 +73,7 @@ object Configuration:
           ConfigFactory.defaultApplication(parseOptions)
         }
 
-      // Resolve another .conf file so that we can override values in Akka's
+      // Resolve another .conf file so that we can override values in Pekko's
       // reference.conf, but still make it possible for users to override
       // Play's values in their application.conf.
       val playOverridesConfig: Config =

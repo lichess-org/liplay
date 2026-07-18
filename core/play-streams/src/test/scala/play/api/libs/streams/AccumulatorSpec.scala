@@ -4,12 +4,12 @@
 
 package play.api.libs.streams
 
-import akka.NotUsed
-import akka.actor.ActorSystem
-import akka.stream.scaladsl.Flow
-import akka.stream.scaladsl.Sink
-import akka.stream.scaladsl.Source
-import akka.stream.Materializer
+import org.apache.pekko.NotUsed
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.stream.scaladsl.Flow
+import org.apache.pekko.stream.scaladsl.Sink
+import org.apache.pekko.stream.scaladsl.Source
+import org.apache.pekko.stream.Materializer
 import org.reactivestreams.Subscriber
 import org.reactivestreams.Subscription
 import org.specs2.mutable.Specification

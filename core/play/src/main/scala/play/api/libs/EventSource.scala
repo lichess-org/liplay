@@ -4,7 +4,7 @@
 
 package play.api.libs
 
-import akka.stream.scaladsl.Flow
+import org.apache.pekko.stream.scaladsl.Flow
 import play.api.http.ContentTypeOf
 import play.api.http.ContentTypes
 import play.api.http.Writeable
@@ -13,7 +13,7 @@ import play.api.libs.json.Json
 import play.api.libs.json.JsValue
 
 /**
- * This class provides an easy way to use Server Sent Events (SSE) as a chunked encoding, using an Akka
+ * This class provides an easy way to use Server Sent Events (SSE) as a chunked encoding, using a Pekko
  * Source.
  *
  * Please see the <a href="http://dev.w3.org/html5/eventsource/">Server-Sent Events specification</a> for
@@ -24,7 +24,7 @@ import play.api.libs.json.JsValue
  * {{{
  *   import java.time.ZonedDateTime
  *   import java.time.format.DateTimeFormatter
- *   import akka.stream.scaladsl.Source
+ *   import org.apache.pekko.stream.scaladsl.Source
  *   import play.api.http.ContentTypes
  *   import play.api.libs.EventSource
  *   import play.api.mvc._

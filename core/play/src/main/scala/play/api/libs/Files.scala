@@ -14,8 +14,8 @@ import java.time.Clock
 import java.time.Instant
 import java.util.stream
 
-import akka.actor.ActorSystem
-import akka.actor.Cancellable
+import org.apache.pekko.actor.ActorSystem
+import org.apache.pekko.actor.Cancellable
 import com.google.common.base.FinalizablePhantomReference
 import com.google.common.base.FinalizableReferenceQueue
 import com.google.common.collect.Sets
@@ -336,7 +336,7 @@ object Files:
       config: TemporaryFileReaperConfiguration
   ) extends TemporaryFileReaper:
     private val logger = play.api.Logger(this.getClass)
-    private val blockingDispatcherName = "play.akka.blockingIoDispatcher"
+    private val blockingDispatcherName = "play.pekko.blockingIoDispatcher"
     private val blockingExecutionContext = actorSystem.dispatchers.lookup(blockingDispatcherName)
     private var playTempFolder: Option[Path] = None
     private var cancellable: Option[Cancellable] = None

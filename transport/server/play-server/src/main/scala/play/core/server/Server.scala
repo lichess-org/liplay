@@ -4,7 +4,7 @@
 
 package play.core.server
 
-import akka.actor.CoordinatedShutdown
+import org.apache.pekko.actor.CoordinatedShutdown
 import com.typesafe.config.Config
 import play.api.*
 import play.api.http.HttpErrorHandler

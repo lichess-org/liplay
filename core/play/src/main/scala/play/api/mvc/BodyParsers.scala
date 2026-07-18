@@ -10,12 +10,12 @@ import java.nio.charset.*
 import java.nio.file.Files
 import java.util.Locale
 
-import akka.stream.*
-import akka.stream.scaladsl.Flow
-import akka.stream.scaladsl.Sink
-import akka.stream.scaladsl.StreamConverters
-import akka.stream.stage.*
-import akka.util.ByteString
+import org.apache.pekko.stream.*
+import org.apache.pekko.stream.scaladsl.Flow
+import org.apache.pekko.stream.scaladsl.Sink
+import org.apache.pekko.stream.scaladsl.StreamConverters
+import org.apache.pekko.stream.stage.*
+import org.apache.pekko.util.ByteString
 import play.api.*
 import play.api.data.DefaultFormBinding
 import play.api.data.Form
@@ -568,7 +568,7 @@ trait PlayBodyParsers extends BodyParserUtils:
   def text: BodyParser[String] = text(DefaultMaxTextLength)
 
   /**
-   * Buffer the body as a simple [[akka.util.ByteString]].
+   * Buffer the body as a simple [[org.apache.pekko.util.ByteString]].
    *
    * @param maxLength
    *   Max length (in bytes) allowed or returns EntityTooLarge HTTP response.
@@ -577,7 +577,7 @@ trait PlayBodyParsers extends BodyParserUtils:
     tolerantBodyParser("byteString", maxLength, "Error decoding byte string body")((_, bytes) => bytes)
 
   /**
-   * Buffer the body as a simple [[akka.util.ByteString]].
+   * Buffer the body as a simple [[org.apache.pekko.util.ByteString]].
    *
    * Will buffer up to the configured max memory buffer amount, after which point, it will return an
    * EntityTooLarge HTTP response.

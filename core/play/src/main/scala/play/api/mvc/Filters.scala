@@ -4,8 +4,8 @@
 
 package play.api.mvc
 
-import akka.stream.Materializer
-import akka.util.ByteString
+import org.apache.pekko.stream.Materializer
+import org.apache.pekko.util.ByteString
 import play.api.libs.streams.Accumulator
 import scala.concurrent.Promise
 import scala.concurrent.Future

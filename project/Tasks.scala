@@ -11,7 +11,7 @@ object Generators {
       version: String,
       scalaVersion: String,
       sbtVersion: String,
-      akkaVersion: String,
+      pekkoVersion: String,
       dir: File
   ): Seq[File] = {
     val file = dir / "PlayVersion.scala"
@@ -22,7 +22,7 @@ object Generators {
           |  val current = "$version"
           |  val scalaVersion = "$scalaVersion"
           |  val sbtVersion = "$sbtVersion"
-          |  val akkaVersion = "$akkaVersion"
+          |  val pekkoVersion = "$pekkoVersion"
           |}
           |""".stripMargin
 
