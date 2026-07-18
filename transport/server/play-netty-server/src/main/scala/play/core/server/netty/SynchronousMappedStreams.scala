@@ -38,8 +38,8 @@ object SynchronousMappedStreams:
    * This is useful in situations where you want to guarantee that messages produced by the publisher are
    * always handled, but can't guarantee that the subscriber passed to it will always handle them. For
    * example, a publisher that produces Netty `ByteBuf` can't be fed directly into an Pekko streams subscriber
-   * since Pekko streams may drop the message without giving any opportunity to release the `ByteBuf`, this can
-   * be used to consume the `ByteBuf` and then release it.
+   * since Pekko streams may drop the message without giving any opportunity to release the `ByteBuf`, this
+   * can be used to consume the `ByteBuf` and then release it.
    */
   def map[A, B](publisher: Publisher[A], f: A => B): Publisher[B] =
     new SynchronousMappedPublisher(publisher, f)
