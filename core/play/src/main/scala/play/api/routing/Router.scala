@@ -5,8 +5,8 @@
 package play.api.routing
 
 import play.api.libs.typedmap.TypedKey
-import play.api.mvc.Handler
 import play.api.mvc.RequestHeader
+import play.api.mvc.EssentialAction
 import play.api.routing.Router.Routes
 
 /**
@@ -23,7 +23,7 @@ trait Router:
   /**
    * A lifted version of the routes partial function.
    */
-  final def handlerFor(request: RequestHeader): Option[Handler] = routes.lift(request)
+  final def handlerFor(request: RequestHeader): Option[EssentialAction] = routes.lift(request)
 
   /**
    * Compose two routers into one. The resulting router will contain both the routes in `this` as well as
@@ -40,7 +40,7 @@ object Router:
   /**
    * The type of the routes partial function
    */
-  type Routes = PartialFunction[RequestHeader, Handler]
+  type Routes = PartialFunction[RequestHeader, EssentialAction]
 
   /**
    * Request attributes used by the router.

@@ -57,7 +57,7 @@ private[play] class PlayRequestHandler(
 
     val tryRequest: Try[RequestHeader] = modelConversion.convertRequest(channel, request)
 
-    def clientError(statusCode: Int, message: String): (RequestHeader, Handler) =
+    def clientError(statusCode: Int, message: String): (RequestHeader, EssentialAction) =
       val unparsedTarget = modelConversion.createUnparsedRequestTarget(request)
       val requestHeader = modelConversion.createRequestHeader(channel, request, unparsedTarget)
       val result = app.errorHandler.onClientError(
@@ -68,7 +68,7 @@ private[play] class PlayRequestHandler(
       // If there's a problem in parsing the request, then we should close the connection, once done with it
       requestHeader -> Server.actionForResult(result.map(_.withHeaders(HeaderNames.CONNECTION -> "close")))
 
-    val (requestHeader, handler): (RequestHeader, Handler) = tryRequest match
+    val (requestHeader, handler): (RequestHeader, EssentialAction) = tryRequest match
       case Failure(exception: TooLongFrameException) =>
         clientError(Status.REQUEST_URI_TOO_LONG, exception.getMessage)
       case Failure(exception) => clientError(Status.BAD_REQUEST, exception.getMessage)
@@ -80,15 +80,7 @@ private[play] class PlayRequestHandler(
         then clientError(Status.REQUEST_ENTITY_TOO_LARGE, "Request Entity Too Large")
         else Server.getHandlerFor(req, app)
 
-    handler match
-      // execute normal action
-      case action: EssentialAction => handleAction(action, requestHeader, request)
-
-      // This case usually indicates an error in Play's internal routing or handling logic
-      case h =>
-        val ex = new IllegalStateException(s"Netty server doesn't handle Handlers of this type: $h")
-        logger.error(ex.getMessage, ex)
-        throw ex
+    handleAction(handler, requestHeader, request)
 
   // ----------------------------------------------------------------
   // Netty overrides
@@ -177,7 +169,7 @@ private[play] class PlayRequestHandler(
       requestHeader: RequestHeader,
       request: HttpRequest
   ): Future[HttpResponse] =
-    implicit val mat: Materializer = app.materializer
+    given mat: Materializer = app.materializer
     import play.core.Execution.Implicits.trampoline
 
     // Execute the action on the Play default execution context

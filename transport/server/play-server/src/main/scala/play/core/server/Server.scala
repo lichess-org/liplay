@@ -64,11 +64,11 @@ object Server:
   private[server] def getHandlerFor(
       request: RequestHeader,
       application: Application
-  ): (RequestHeader, Handler) =
+  ): (RequestHeader, EssentialAction) =
     @inline def handleErrors(
         errorHandler: HttpErrorHandler,
         req: RequestHeader
-    ): PartialFunction[Throwable, (RequestHeader, Handler)] = {
+    ): PartialFunction[Throwable, (RequestHeader, EssentialAction)] = {
       case e: VirtualMachineError => throw e
       case e: Throwable =>
         val errorResult = errorHandler.onServerError(req, e)
@@ -93,7 +93,7 @@ object Server:
   /**
    * Create a simple [[Handler]] which sends a [[Result]].
    */
-  private[server] def actionForResult(errorResult: Future[Result]): Handler =
+  private[server] def actionForResult(errorResult: Future[Result]): EssentialAction =
     EssentialAction(_ => Accumulator.done(errorResult))
 
   /**

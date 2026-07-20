@@ -32,7 +32,7 @@ object Route:
  * An included router
  */
 class Include(val router: Router):
-  def unapply(request: RequestHeader): Option[Handler] =
+  def unapply(request: RequestHeader): Option[EssentialAction] =
     router.routes.lift(request)
 
 /**
@@ -72,12 +72,14 @@ case class RouteParams(path: Map[String, Either[Throwable, String]], queryString
 abstract class GeneratedRouter extends Router {
   def errorHandler: HttpErrorHandler
 
+  type Handler = EssentialAction
+
   def badRequest(error: String) = ActionBuilder.ignoringBody.async { request =>
     errorHandler.onClientError(request, play.api.http.Status.BAD_REQUEST, error)
   }
 
   def named(name: String)(generator: => Handler) =
-    Handler.Stage.modifyRequest(_.addAttr(play.api.routing.Router.Attrs.ActionName, name), generator)
+    (request: RequestHeader) => (request.addAttr(play.api.routing.Router.Attrs.ActionName, name), generator)
 
   def call(generator: => Handler): Handler =
     generator
@@ -138,32 +140,6 @@ a1 <- pa1.value
       .fold(badRequest, { case (a1, a2, a3, a4, a5, a6) => generator(a1, a2, a3, a4, a5, a6) })
   }
 
-  def call[A1, A2, A3, A4, A5, A6, A7](pa1: Param[A1], pa2: Param[A2], pa3: Param[A3], pa4: Param[A4], pa5: Param[A5], pa6: Param[A6], pa7: Param[A7])(generator: Function7[A1, A2, A3, A4, A5, A6, A7, Handler]): Handler = {
-    (for
-a1 <- pa1.value
- a2 <- pa2.value
- a3 <- pa3.value
- a4 <- pa4.value
- a5 <- pa5.value
- a6 <- pa6.value
- a7 <- pa7.value
-      yield (a1, a2, a3, a4, a5, a6, a7))
-      .fold(badRequest, { case (a1, a2, a3, a4, a5, a6, a7) => generator(a1, a2, a3, a4, a5, a6, a7) })
-  }
-
-  def call[A1, A2, A3, A4, A5, A6, A7, A8](pa1: Param[A1], pa2: Param[A2], pa3: Param[A3], pa4: Param[A4], pa5: Param[A5], pa6: Param[A6], pa7: Param[A7], pa8: Param[A8])(generator: Function8[A1, A2, A3, A4, A5, A6, A7, A8, Handler]): Handler = {
-    (for
-a1 <- pa1.value
- a2 <- pa2.value
- a3 <- pa3.value
- a4 <- pa4.value
- a5 <- pa5.value
- a6 <- pa6.value
- a7 <- pa7.value
- a8 <- pa8.value
-      yield (a1, a2, a3, a4, a5, a6, a7, a8))
-      .fold(badRequest, { case (a1, a2, a3, a4, a5, a6, a7, a8) => generator(a1, a2, a3, a4, a5, a6, a7, a8) })
-  }
   // format: on
 
   def call[T](params: List[Param[?]])(generator: (Seq[?]) => Handler): Handler =
