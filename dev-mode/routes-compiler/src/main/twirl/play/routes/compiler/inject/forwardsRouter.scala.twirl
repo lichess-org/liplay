@@ -35,7 +35,7 @@ case include @ Include(path, router) => {
   private val prefixed_@(dep.ident)_@(pathIndex * 1000 + index) = Include(@(dep.ident))
 }}}}
 
-  val pathRouters: Map[String, PartialFunction[RequestHeader, Handler]] = Map(
+  val pathRouters: Map[String, PartialFunction[RequestHeader, EssentialAction]] = Map(
     @for(((path, rules), pathIndex) <- pathRules.zipWithIndex) {
       "@path" -> @ob
         @for((dep, index) <- rules.zipWithIndex){@dep.rule match {
@@ -57,7 +57,7 @@ case include @ Include(path, router) => {
     }
   )
 
-  val routes: PartialFunction[RequestHeader, Handler] =
+  val routes: PartialFunction[RequestHeader, EssentialAction] =
     @if(pathRules.isEmpty) { Map.empty } else {@ob
       val emptyPathRouter = pathRouters get ""
       Function unlift @ob (req: RequestHeader) =>
