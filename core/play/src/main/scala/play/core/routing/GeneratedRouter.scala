@@ -76,8 +76,9 @@ abstract class GeneratedRouter extends Router {
     errorHandler.onClientError(request, play.api.http.Status.BAD_REQUEST, error)
   }
 
-  def named(name: String)(generator: => EssentialAction) =
-    (request: RequestHeader) => (request.addAttr(play.api.routing.Router.Attrs.ActionName, name), generator)
+  def named(name: String)(generator: => EssentialAction): EssentialAction =
+    EssentialAction: (request: RequestHeader) =>
+      generator(request.addAttr(play.api.routing.Router.Attrs.ActionName, name))
 
   def call(generator: => EssentialAction): EssentialAction =
     generator
