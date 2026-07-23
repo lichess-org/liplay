@@ -21,9 +21,9 @@ trait HttpRequestHandler:
    * will be tagged with routing information. It is also acceptable to simply return the request as is. Play
    * will switch to using the returned request from this point in in its request handling.
    *
-   * The reason why the API allows returning a modified request, rather than just wrapping the Handler in a
-   * new Handler that modifies the request, is so that Play can pass this request to other handlers, such as
-   * error handlers, or filters, and they will get the tagged/modified request.
+   * The reason why the API allows returning a modified request, rather than just wrapping the action in a new
+   * action that modifies the request, is so that Play can pass this request to other handlers, such as error
+   * handlers, or filters, and they will get the tagged/modified request.
    *
    * @param request
    *   The request to handle
@@ -112,7 +112,7 @@ class DefaultHttpRequestHandler(
         request.method match
           // We automatically permit HEAD requests against any GETs without the need to
           // add an explicit mapping in Routes. Since we couldn't route the HEAD request,
-          // try to get a Handler for the equivalent GET request instead. Notes:
+          // try to get an action for the equivalent GET request instead. Notes:
           // 1. The handler returned will still be passed a HEAD request when it is
           //    actually evaluated.
           case HttpVerbs.HEAD =>

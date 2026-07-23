@@ -91,7 +91,7 @@ object Server:
     }
 
   /**
-   * Create a simple [[Handler]] which sends a [[Result]].
+   * Create a simple [[EssentialAction]] which sends a [[Result]].
    */
   private[server] def actionForResult(errorResult: Future[Result]): EssentialAction =
     EssentialAction(_ => Accumulator.done(errorResult))

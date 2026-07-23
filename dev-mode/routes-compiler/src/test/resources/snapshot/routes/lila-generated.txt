@@ -1078,7 +1078,7 @@ final class Routes(
   )
 
 
-  val pathRouters: Map[String, PartialFunction[RequestHeader, Handler]] = Map(
+  val pathRouters: Map[String, PartialFunction[RequestHeader, EssentialAction]] = Map(
     
       "" -> {
         
@@ -2774,7 +2774,7 @@ final class Routes(
     
   )
 
-  val routes: PartialFunction[RequestHeader, Handler] =
+  val routes: PartialFunction[RequestHeader, EssentialAction] =
     {
       val emptyPathRouter = pathRouters get ""
       Function unlift { (req: RequestHeader) =>
