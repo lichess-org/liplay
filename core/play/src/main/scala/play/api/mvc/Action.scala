@@ -19,7 +19,7 @@ import scala.concurrent.*
  * An `EssentialAction` is a `Handler`, which means it is one of the objects that Play uses to handle
  * requests.
  */
-trait EssentialAction extends (RequestHeader => Accumulator[ByteString, Result]):
+trait EssentialAction extends (RequestHeader => Accumulator[ByteString, Result]) with Handler:
   self =>
 
   /** @return itself, for better support in the routes file. */
