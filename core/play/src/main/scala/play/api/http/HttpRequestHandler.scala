@@ -21,16 +21,16 @@ trait HttpRequestHandler:
    * will be tagged with routing information. It is also acceptable to simply return the request as is. Play
    * will switch to using the returned request from this point in in its request handling.
    *
-   * The reason why the API allows returning a modified request, rather than just wrapping the action in a new
-   * action that modifies the request, is so that Play can pass this request to other handlers, such as error
-   * handlers, or filters, and they will get the tagged/modified request.
+   * The reason why the API allows returning a modified request, rather than just wrapping the Handler in a
+   * new Handler that modifies the request, is so that Play can pass this request to other handlers, such as
+   * error handlers, or filters, and they will get the tagged/modified request.
    *
    * @param request
    *   The request to handle
    * @return
    *   The possibly modified/tagged request, and a handler to handle it
    */
-  def handlerForRequest(request: RequestHeader): (RequestHeader, EssentialAction)
+  def handlerForRequest(request: RequestHeader): (RequestHeader, Handler)
 
 /**
  * Implementation of a [HttpRequestHandler] that always returns NotImplemented results
@@ -96,7 +96,7 @@ class DefaultHttpRequestHandler(
     context.isEmpty ||
       (path.startsWith(context) && (path.length == context.length || path.charAt(context.length) == '/'))
 
-  override def handlerForRequest(request: RequestHeader): (RequestHeader, EssentialAction) =
+  override def handlerForRequest(request: RequestHeader): (RequestHeader, Handler) =
     def handleWithStatus(status: Int) =
       ActionBuilder.ignoringBody.async(BodyParsers.utils.empty)(req =>
         errorHandler.onClientError(req, status)
@@ -107,17 +107,18 @@ class DefaultHttpRequestHandler(
      * isn't explicitly routed try routing it as a GET request. Second, if no routing information is present,
      * fall back to a 404 error.
      */
-    def routeWithFallback(request: RequestHeader): EssentialAction =
+    def routeWithFallback(request: RequestHeader): Handler =
       routeRequest(request).getOrElse {
         request.method match
           // We automatically permit HEAD requests against any GETs without the need to
           // add an explicit mapping in Routes. Since we couldn't route the HEAD request,
-          // try to get an action for the equivalent GET request instead. Notes:
+          // try to get a Handler for the equivalent GET request instead. Notes:
           // 1. The handler returned will still be passed a HEAD request when it is
           //    actually evaluated.
           case HttpVerbs.HEAD =>
-            routeRequest(request.withMethod(HttpVerbs.GET)).getOrElse:
-              handleWithStatus(NOT_FOUND)
+            routeRequest(request.withMethod(HttpVerbs.GET)) match
+              case Some(handler: Handler) => handler
+              case None => handleWithStatus(NOT_FOUND)
           case _ =>
             // An Action for a 404 error
             handleWithStatus(NOT_FOUND)
@@ -128,16 +129,21 @@ class DefaultHttpRequestHandler(
     // 3. Modify the handler to do filtering, if necessary
     // 4. Again resolve any handlers that do preprocessing
     val routedHandler = routeWithFallback(request)
-    (request, filterHandler(request, routedHandler))
+    val (preprocessedRequest, preprocessedHandler) = Handler.applyStages(request, routedHandler)
+    val filteredHandler = filterHandler(preprocessedRequest, preprocessedHandler)
+    val (preprocessedPreprocessedRequest, preprocessedFilteredHandler) =
+      Handler.applyStages(preprocessedRequest, filteredHandler)
+    (preprocessedPreprocessedRequest, preprocessedFilteredHandler)
 
   /**
    * Update the given handler so that when the handler is run any filters will also be run. The default
    * behavior is to wrap all [[play.api.mvc.EssentialAction]]s by calling `filterAction`, but to leave other
    * kinds of handlers unchanged.
    */
-  protected def filterHandler(request: RequestHeader, action: EssentialAction): EssentialAction =
-    if inContext(request.path) then filterAction(action)
-    else action
+  protected def filterHandler(request: RequestHeader, handler: Handler): Handler =
+    handler match
+      case action: EssentialAction if inContext(request.path) => filterAction(action)
+      case handler => handler
 
   /**
    * Apply filters to the given action.
@@ -158,5 +164,5 @@ class DefaultHttpRequestHandler(
    * @return
    *   A handler to handle the request, if one can be found
    */
-  def routeRequest(request: RequestHeader): Option[EssentialAction] =
+  def routeRequest(request: RequestHeader): Option[Handler] =
     router().handlerFor(request)
