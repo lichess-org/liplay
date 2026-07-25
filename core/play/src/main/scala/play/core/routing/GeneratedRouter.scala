@@ -72,23 +72,25 @@ case class RouteParams(path: Map[String, Either[Throwable, String]], queryString
 abstract class GeneratedRouter extends Router {
   def errorHandler: HttpErrorHandler
 
+  type Handler = EssentialAction
+
   def badRequest(error: String) = ActionBuilder.ignoringBody.async { request =>
     errorHandler.onClientError(request, play.api.http.Status.BAD_REQUEST, error)
   }
 
-  def named(name: String)(generator: => EssentialAction) =
+  def named(name: String)(generator: => Handler) =
     (request: RequestHeader) => (request.addAttr(play.api.routing.Router.Attrs.ActionName, name), generator)
 
-  def call(generator: => EssentialAction): EssentialAction =
+  def call(generator: => Handler): Handler =
     generator
 
-  def call[P](pa: Param[P])(generator: (P) => EssentialAction): EssentialAction =
+  def call[P](pa: Param[P])(generator: (P) => Handler): Handler =
     pa.value.fold(badRequest, generator)
 
   // Keep the old versions for avoiding compiler failures while building for Scala 2.10,
   // and for avoiding warnings when building for newer Scala versions
   // format: off
-  def call[A1, A2](pa1: Param[A1], pa2: Param[A2])(generator: Function2[A1, A2, EssentialAction]): EssentialAction = {
+  def call[A1, A2](pa1: Param[A1], pa2: Param[A2])(generator: Function2[A1, A2, Handler]): Handler = {
     (for
 a1 <- pa1.value
  a2 <- pa2.value
@@ -96,7 +98,7 @@ a1 <- pa1.value
       .fold(badRequest, { case (a1, a2) => generator(a1, a2) })
   }
 
-  def call[A1, A2, A3](pa1: Param[A1], pa2: Param[A2], pa3: Param[A3])(generator: Function3[A1, A2, A3, EssentialAction]): EssentialAction = {
+  def call[A1, A2, A3](pa1: Param[A1], pa2: Param[A2], pa3: Param[A3])(generator: Function3[A1, A2, A3, Handler]): Handler = {
     (for
 a1 <- pa1.value
  a2 <- pa2.value
@@ -105,7 +107,7 @@ a1 <- pa1.value
       .fold(badRequest, { case (a1, a2, a3) => generator(a1, a2, a3) })
   }
 
-  def call[A1, A2, A3, A4](pa1: Param[A1], pa2: Param[A2], pa3: Param[A3], pa4: Param[A4])(generator: Function4[A1, A2, A3, A4, EssentialAction]): EssentialAction = {
+  def call[A1, A2, A3, A4](pa1: Param[A1], pa2: Param[A2], pa3: Param[A3], pa4: Param[A4])(generator: Function4[A1, A2, A3, A4, Handler]): Handler = {
     (for
 a1 <- pa1.value
  a2 <- pa2.value
@@ -115,7 +117,7 @@ a1 <- pa1.value
       .fold(badRequest, { case (a1, a2, a3, a4) => generator(a1, a2, a3, a4) })
   }
 
-  def call[A1, A2, A3, A4, A5](pa1: Param[A1], pa2: Param[A2], pa3: Param[A3], pa4: Param[A4], pa5: Param[A5])(generator: Function5[A1, A2, A3, A4, A5, EssentialAction]): EssentialAction = {
+  def call[A1, A2, A3, A4, A5](pa1: Param[A1], pa2: Param[A2], pa3: Param[A3], pa4: Param[A4], pa5: Param[A5])(generator: Function5[A1, A2, A3, A4, A5, Handler]): Handler = {
     (for
 a1 <- pa1.value
  a2 <- pa2.value
@@ -126,7 +128,7 @@ a1 <- pa1.value
       .fold(badRequest, { case (a1, a2, a3, a4, a5) => generator(a1, a2, a3, a4, a5) })
   }
 
-  def call[A1, A2, A3, A4, A5, A6](pa1: Param[A1], pa2: Param[A2], pa3: Param[A3], pa4: Param[A4], pa5: Param[A5], pa6: Param[A6])(generator: Function6[A1, A2, A3, A4, A5, A6, EssentialAction]): EssentialAction = {
+  def call[A1, A2, A3, A4, A5, A6](pa1: Param[A1], pa2: Param[A2], pa3: Param[A3], pa4: Param[A4], pa5: Param[A5], pa6: Param[A6])(generator: Function6[A1, A2, A3, A4, A5, A6, Handler]): Handler = {
     (for
 a1 <- pa1.value
  a2 <- pa2.value
@@ -140,7 +142,7 @@ a1 <- pa1.value
 
   // format: on
 
-  def call[T](params: List[Param[?]])(generator: (Seq[?]) => EssentialAction): EssentialAction =
+  def call[T](params: List[Param[?]])(generator: (Seq[?]) => Handler): Handler =
     (params
       .foldLeft[Either[String, Seq[?]]](Right(Seq[T]())) { (seq, param) =>
         seq.flatMap(s => param.value.map(s :+ _))
