@@ -12,7 +12,9 @@ import scala.concurrent.ExecutionContextExecutor
 private[play] object Execution:
 
   object Implicits:
-    implicit def trampoline: ExecutionContextExecutor = Execution.trampoline
+    inline given trampoline: ExecutionContextExecutor = Execution.trampoline
+
+  sealed trait Trampoline extends ExecutionContextExecutor
 
   /**
    * Executes in the current thread. Uses a thread local trampoline to make sure the stack doesn't overflow.
@@ -22,7 +24,7 @@ private[play] object Execution:
    * Blocking should be strictly avoided as it could hog the current thread. Also, since we're running on a
    * single thread, blocking code risks deadlock.
    */
-  object trampoline extends ExecutionContextExecutor:
+  object trampoline extends Trampoline:
     /*
      * A ThreadLocal value is used to track the state of the trampoline in the current
      * thread. When a Runnable is added to the trampoline it uses the ThreadLocal to

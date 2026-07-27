@@ -4,7 +4,7 @@
 
 package play.api.controllers {
   sealed trait TrampolineContextProvider:
-    implicit def trampoline: play.api.libs.streams.Execution.trampoline.type =
+    inline given trampoline: play.api.libs.streams.Execution.Trampoline =
       play.core.Execution.Implicits.trampoline
 }
 
