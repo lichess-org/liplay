@@ -90,7 +90,7 @@ class NettyServer(
    * The event loop
    */
   private val eventLoop =
-    val threadFactory = NamedThreadFactory("netty-event-loop")
+    val threadFactory = NamedThreadFactory("liplay-netty-event-loop")
     transport match
       case Native => new MultiThreadIoEventLoopGroup(threadCount, threadFactory, EpollIoHandler.newFactory())
       case Jdk => new MultiThreadIoEventLoopGroup(threadCount, threadFactory, NioIoHandler.newFactory())
