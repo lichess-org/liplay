@@ -8,4 +8,4 @@ private[play] object Execution:
   def trampoline = play.api.libs.streams.Execution.trampoline
 
   object Implicits:
-    implicit def trampoline: play.api.libs.streams.Execution.trampoline.type = Execution.trampoline
+    inline given trampoline: play.api.libs.streams.Execution.Trampoline = Execution.trampoline

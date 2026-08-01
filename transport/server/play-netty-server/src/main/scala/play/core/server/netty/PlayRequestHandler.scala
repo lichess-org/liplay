@@ -177,7 +177,7 @@ private[play] class PlayRequestHandler(
       requestHeader: RequestHeader,
       request: HttpRequest
   ): Future[HttpResponse] =
-    implicit val mat: Materializer = app.materializer
+    given mat: Materializer = app.materializer
     import play.core.Execution.Implicits.trampoline
 
     // Execute the action on the Play default execution context
