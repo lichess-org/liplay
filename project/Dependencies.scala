@@ -32,7 +32,7 @@ object Dependencies {
   val slf4jApi = "org.slf4j" % "slf4j-api" % slf4jVersion
   val slf4jSimple = "org.slf4j" % "slf4j-simple" % slf4jVersion
 
-  val guava = "com.google.guava" % "guava" % "33.6.0-jre"
+  val guava = "com.google.guava" % "guava" % "33.7.1-jre"
   val findBugs = "com.google.code.findbugs" % "jsr305" % "3.0.2" // Needed by guava
   val mockitoAll = "org.mockito" % "mockito-core" % "4.11.0"
 
