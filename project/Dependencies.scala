@@ -9,7 +9,7 @@ import snapshot4s.BuildInfo.snapshot4sVersion
 object Dependencies {
   val pekkoVersion = "1.7.0"
 
-  val logback = "ch.qos.logback" % "logback-classic" % "1.6.1"
+  val logback = "ch.qos.logback" % "logback-classic" % "1.6.3"
 
   val specs2Version = "4.23.0"
   val specs2CoreDeps = Seq(
@@ -65,7 +65,7 @@ object Dependencies {
 
   val cookieEncodingDependencies = slf4j
 
-  val jimfs = "com.google.jimfs" % "jimfs" % "1.3.1"
+  val jimfs = "com.google.jimfs" % "jimfs" % "1.3.2"
 
   val typesafeConfig = "com.typesafe" % "config" % "1.4.9"
 
