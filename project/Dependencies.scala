@@ -36,9 +36,9 @@ object Dependencies {
   val findBugs = "com.google.code.findbugs" % "jsr305" % "3.0.2" // Needed by guava
   val mockitoAll = "org.mockito" % "mockito-core" % "4.11.0"
 
-  val scalaParserCombinators = "org.scala-lang.modules" %% "scala-parser-combinators" % "2.4.0"
+  val scalaParserCombinators = "org.scala-lang.modules" %% "scala-parser-combinators" % "2.5.0"
 
-  val scalaXml = "org.scala-lang.modules" %% "scala-xml" % "2.4.0"
+  val scalaXml = "org.scala-lang.modules" %% "scala-xml" % "2.5.0"
 
   val junitInterface = "com.github.sbt" % "junit-interface" % "0.13.3"
   val junit = "junit" % "junit" % "4.13.2"
