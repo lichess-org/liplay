@@ -9,7 +9,7 @@ import snapshot4s.BuildInfo.snapshot4sVersion
 object Dependencies {
   val pekkoVersion = "1.7.0"
 
-  val logback = "ch.qos.logback" % "logback-classic" % "1.6.3"
+  val logback = "ch.qos.logback" % "logback-classic" % "1.6.5"
 
   val specs2Version = "4.23.0"
   val specs2CoreDeps = Seq(
