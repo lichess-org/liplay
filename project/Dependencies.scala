@@ -7,9 +7,9 @@ import Keys._
 import snapshot4s.BuildInfo.snapshot4sVersion
 
 object Dependencies {
-  val pekkoVersion = "1.7.0"
+  val pekkoVersion = "1.7.1"
 
-  val logback = "ch.qos.logback" % "logback-classic" % "1.6.3"
+  val logback = "ch.qos.logback" % "logback-classic" % "1.6.5"
 
   val specs2Version = "4.23.0"
   val specs2CoreDeps = Seq(
@@ -27,12 +27,12 @@ object Dependencies {
 
   val playJson = "org.playframework" %% "play-json" % "3.0.6"
 
-  val slf4jVersion = "2.0.19"
+  val slf4jVersion = "2.0.20"
   val slf4j = Seq("slf4j-api", "jul-to-slf4j", "jcl-over-slf4j").map("org.slf4j" % _ % slf4jVersion)
   val slf4jApi = "org.slf4j" % "slf4j-api" % slf4jVersion
   val slf4jSimple = "org.slf4j" % "slf4j-simple" % slf4jVersion
 
-  val guava = "com.google.guava" % "guava" % "33.7.1-jre"
+  val guava = "com.google.guava" % "guava" % "33.7.2-jre"
   val findBugs = "com.google.code.findbugs" % "jsr305" % "3.0.2" // Needed by guava
   val mockitoAll = "org.mockito" % "mockito-core" % "4.11.0"
 
