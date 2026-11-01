@@ -68,7 +68,7 @@ private[play] class PlayRequestHandler(
       // If there's a problem in parsing the request, then we should close the connection, once done with it
       requestHeader -> Server.actionForResult(result.map(_.withHeaders(HeaderNames.CONNECTION -> "close")))
 
-    val (requestHeader, handler): (RequestHeader, Handler) = tryRequest match
+    val (requestHeader: RequestHeader, handler: Handler) = tryRequest match
       case Failure(exception: TooLongFrameException) =>
         clientError(Status.REQUEST_URI_TOO_LONG, exception.getMessage)
       case Failure(exception) => clientError(Status.BAD_REQUEST, exception.getMessage)
