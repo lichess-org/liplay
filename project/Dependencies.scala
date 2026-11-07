@@ -7,7 +7,7 @@ import Keys._
 import snapshot4s.BuildInfo.snapshot4sVersion
 
 object Dependencies {
-  val pekkoVersion = "1.7.1"
+  val pekkoVersion = "2.0.0"
 
   val logback = "ch.qos.logback" % "logback-classic" % "1.6.6"
 
